@@ -1,0 +1,239 @@
+# ChunkBlazer tutorial text, read by ChunkBlazerTutorial. Lives here rather than in the code
+# so the wording can change without touching the plugin.
+#
+# Each step is a [id|button] header, then its title on the first line and the body after it.
+# The button is what the step's button says; a step with no button waits for the player to do
+# something. A blank line starts a new paragraph. Lines starting with # are ignored.
+
+# --- Tutorial Island ---------------------------------------------------------------------
+
+# The Gielinor Guide's house, where a new account starts: x1,y1,x2,y2 in world tiles. It's
+# kept clear of ChunkBlazer GPU's grey, and the tutorial starts when you walk out of it.
+[startroom]
+3086,3099,3097,3114
+
+# A square round Lumbridge's spawn, kept clear (and fenced) while a new account is set up
+# there: x1,y1,x2,y2 in world tiles.
+[lumbridge]
+3218,3214,3226,3222
+
+[welcome|Next]
+Welcome to ChunkBlazer
+The world is split into chunks, and you can only use the ones you've unlocked. Everything is locked for now.
+
+[itaskshow|Confirm]
+Where's your task?
+Pick where your tracked task shows: the side panel, a box on screen (the widget), or both. You can change it later in the task list's Settings.
+
+[iassist|Confirm]
+How much help?
+Pick your assists: outlines on what tasks need, task details, menus and tooltips. Change any of them later in Settings > Assists.
+
+[iunlock|Unlock this chunk]
+Your first chunk
+Unlock the chunk you're standing in. Chunks are free on Tutorial Island.
+
+[imap]
+Your first chunk
+Open the world map (by your minimap) to see it.
+
+[map]
+The world map
+Your chunks are in colour, locked ones are dark. Close the map to carry on.
+
+[walls|Next]
+The walls
+The glowing walls are the edge of your chunks. On the island, walking into a new chunk unlocks it for free.
+
+[tasks|Deal my tasks]
+Tasks and points
+Each chunk has tasks. Finish tasks for points, spend points on chunks.
+
+These practice tasks are worth 0 points.
+
+[deal]
+Your practice tasks
+Click a card to flip it, then again to put it away.
+
+[iorb]
+Your task list
+Click the fire orb by your minimap.
+
+[itrack]
+Track a task
+Click a task to track it.
+
+[iclose]
+Close the task list
+Press Esc or click the cross.
+
+[practice]
+Practice tasks
+Do these as you go through the island.
+
+# Practice tasks, as the island's progress (its TUTORIAL varp) once each is done (0: done by
+# talking to its npc, once dealt), then the category, type, name and description,
+# like a real task's, and what to outline in game when the plugin's own outlines don't cover
+# it: npc:Name or object:Name, or npc:Name:id for an NPC known by id.
+[tasks:practice]
+0|Dialogue|NPC_DIALOGUE|Talk to the Survival Expert|Talk to the Survival Expert, outside the Gielinor Guide's house.|npc:Survival Expert:8503
+360|Smithing|SMITHING|Smith a Bronze Dagger|Smelt a bronze bar and smith a dagger from it on the anvil.|object:Furnace
+0|Dialogue|NPC_DIALOGUE|Talk to the Iron Man Tutor|Talk to the Iron Man tutor, next to the Magic Instructor.|npc:Iron Man tutor:7942
+
+[newchunk|Got it]
+A new chunk
+You walked into a locked chunk. On the island it unlocks for free; on the mainland you'd need points.
+
+[themes|Confirm]
+Pick a look
+Click a card to try a theme, then Confirm. You can change it later in the task list's Settings.
+
+[tokens|Got it]
+Boss Tokens
+Boss chunks cost a Boss Token, not points. You start with 2, and each boss's first kill gives you another.
+
+[mode]
+Choose how you'll play
+This is permanent for this account.
+
+[casual]
+Casual
+Any account, any start. Casual leaderboard.
+
+[competitive]
+Competitive
+New ironmen only (Group too). Main leaderboard. Needs Server Sync.
+
+[leave]
+On to the mainland
+Practice done. Finish the island as normal; you'll pick a mode on the mainland.
+
+[arrive|Choose]
+Welcome to the mainland
+Practice is over: from here it counts. Set up Server Sync and your mode, then unlock Lumbridge.
+
+[sync]
+Server Sync
+Saves your progress online for leaderboards and other computers. Competitive needs it. You can change it later in the side panel.
+
+[node|Got it]
+Group ironman
+Everyone in your group plays their own ChunkBlazer. Chunks, tasks and points aren't shared.
+
+# --- Starting from Lumbridge (the plugin turned on outside Tutorial Island) --------------
+
+[lwelcome|Next]
+Welcome to ChunkBlazer
+The world is split into chunks, and you can only use the ones you've unlocked. Everything is locked until your account is set up.
+
+[lunlock|Next]
+Unlocking chunks
+Spend points to unlock chunks next to ones you own. Each costs a bit more than the last.
+
+[ltasks|Next]
+Tasks and points
+Each chunk has tasks. Finish tasks for points, spend points on chunks.
+
+[ltokens|Next]
+Boss Tokens
+Boss chunks cost a Boss Token, not points. You start with 2, and each boss's first kill gives you another.
+
+[group|Next]
+Group ironman
+Everyone in your group plays their own ChunkBlazer. Chunks, tasks and points aren't shared.
+
+[home|Unlock Lumbridge]
+Your first chunk
+All set. Unlock Lumbridge (and your current chunk on Casual) to get your first tasks.
+
+[verify|Choose again]
+Setting up your account
+Casual: just a moment.
+
+Competitive: when a code shows in chat, type it in public chat.
+
+# --- The game's interface, once a mode is picked ------------------------------------------
+
+[cards]
+Your first tasks
+Click a card to flip it, then again to put it away.
+
+[orb]
+Your task list
+Click the fire orb by your minimap.
+
+[track]
+Track a task
+Click a task to track it.
+
+[close]
+Close the task list
+Press Esc or click the cross.
+
+[taskshow|Confirm]
+Where's your task?
+Pick where your tracked task shows: the side panel, a box on screen (the widget), or both. You can change it later in Settings.
+
+[assist|Confirm]
+How much help?
+Pick your assists: outlines on what tasks need, task details, menus and tooltips. Change any of them later in Settings > Assists.
+
+[tracker|Next]
+The task box
+Your tracked task shows here with its progress. Hover it for details.
+
+[boxmode]
+Bigger or smaller
+Click the little button at the top of the task box to switch it between detailed and compact. On the compact one, hover it first.
+
+[boxbook]
+Put a task aside
+Click the book on the task box to archive this task: it leaves your list until you bring it back. Don't worry, you'll bring it back next.
+
+[archived]
+Archived tasks
+Archived tasks don't show in your list, outlines or menus. Open the task list with the fire orb, then click Archived.
+
+[unarchive]
+Bring it back
+Click the book beside the task you just archived to bring it back.
+
+[newtab]
+The New tab
+Click New: tasks you've just become able to do and your newest chunk's tasks show here. The fire orb glows when there's something new.
+
+[filters]
+Search, filters and sort
+Search by name, filter by skill, tier or type, and change the order: click Filters to have a look. This chunk only, at the bottom, shows tasks where you're standing.
+
+[settings]
+Settings
+Click the cog: your look, task box and assists like outlines and the Tasks menu. You can restart this tutorial there too.
+
+[unlocking|Next]
+Unlocking chunks
+With enough points, walk through a glowing wall to unlock the chunk past it.
+
+[save]
+Save a task
+Click a task's star (or right-click it) to save it.
+
+[sclose]
+Close the task list
+Press Esc or click the cross.
+
+[boss]
+Saved tasks
+Click the saved tasks button to see them. The dragon orb counts your Boss Tokens.
+
+[strack]
+Track a saved task
+Click a task in your saved tasks to track it.
+
+[panel|Next]
+The side panel
+The fire icon on RuneLite's sidebar has your tasks, search and filters, and your settings.
+
+[done|Finish]
+You're ready
+Do tasks, earn points, unlock chunks. Good luck!

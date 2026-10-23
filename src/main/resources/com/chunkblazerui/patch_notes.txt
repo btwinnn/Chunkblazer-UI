@@ -1,0 +1,35 @@
+## Chunk paths and quest calculator
+- Right-click the world map (or Shift + right-click a tile) and pick Path here, or Alt + click the world map (Alt + click again clears it): the path only goes through chunks you've unlocked
+- Stairs, shortcuts, boats, gliders and the like are used when both ends are in your chunks
+- Quests have a Calc button that works out the chunks they still need, plus the ones to walk there
+
+## v1.0.7
+- Slayer task conditionals fixed
+- Thieving task fixes
+- The Boss Token orb opens your saved tasks
+- The Points orb shows the ChunkBlazer logo
+- New star, book and arrow icons
+
+## Task viewer polish
+- Skill icon filter and cleaner dropdowns
+- Map legend can be minimised
+- Clicking a quest in the task viewer no longer closes the task viewer
+- Search always searches everything, not just the current filter
+- Filters no longer hide new tasks opened from the Points orb
+- Search bar moved to the side panel
+- Raw hunter animals count for the meat pouch
+- Fixes for Zamorak monks, Amox, Pete Kayer and GIM accounts
+
+## Old School UI overhaul
+- New Old School styled task window, side panel filters and banner
+- World map, tracker switch, fixed mode window, chunk toggle and long name fixes
+- Map borders on by default
+- Server sync message when using more than one computer
+
+## v1.0.6
+- Containers fix and clean up
+- Font fix
+- Nicer looking windows and a collapsible selected task box
+- Firemaking level needed before a burn counts
+- Pick a mode before tasks and unlocks start (existing accounts are Casual)
+- API key and sync key fixes, auto tracker fix

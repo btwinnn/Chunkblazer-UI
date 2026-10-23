@@ -1,0 +1,552 @@
+/*
+ * Copyright (c) 2026, Vani-Lab
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+package com.chunkblazerui.pathing;
+
+import com.chunkblazerui.ChunkBlazerCore;
+import com.chunkblazerui.NuzlockeTask;
+import com.chunkblazerui.QuestRequirements;
+import java.awt.event.MouseEvent;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.ChatMessageType;
+import net.runelite.api.Client;
+import net.runelite.api.GameState;
+import net.runelite.api.KeyCode;
+import net.runelite.api.MenuAction;
+import net.runelite.api.MenuEntry;
+import net.runelite.api.Player;
+import net.runelite.api.Point;
+import net.runelite.api.Tile;
+import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.GameTick;
+import net.runelite.api.events.MenuOpened;
+import net.runelite.api.gameval.InterfaceID;
+import net.runelite.api.widgets.Widget;
+import net.runelite.api.worldmap.WorldMap;
+import net.runelite.client.callback.ClientThread;
+import net.runelite.client.chat.ChatMessageManager;
+import net.runelite.client.chat.QueuedMessage;
+import net.runelite.client.eventbus.EventBus;
+import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.PluginMessage;
+import net.runelite.client.input.MouseAdapter;
+import net.runelite.client.input.MouseManager;
+import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.util.ColorUtil;
+
+/**
+ * Chunk-aware paths and the quest chunk calculator. Right-click the world map (or
+ * Shift + right-click a tile) and pick "Path here", or Alt + click the world map: the path only goes where your
+ * unlocked chunks let you walk, using stairs, shortcuts, boats and the like when both
+ * ends are in chunks you own. If the spot is behind locked chunks it stops as close as
+ * it can (the end shows red). The path follows you, and is worked out again if you stray, or
+ * when a chunk is unlocked.
+ *
+ * <p>The map data loads in the background the first time either is used.
+ */
+@Slf4j
+@Singleton
+public class ChunkPathing
+{
+	private static final String OPTION_PATH = "Path here";
+	private static final String SHORTEST_PATH = "shortestpath";
+	private static final String OPTION_CLEAR = "Clear path";
+	private static final String TARGET = ColorUtil.wrapWithColorTag("ChunkBlazer", new java.awt.Color(255, 150, 40));
+	// How far off the path you can wander before it's worked out again, in tiles.
+	private static final int OFF_PATH = 4;
+	// Transport requirements (levels, quests, items) are checked again this often, in ticks.
+	private static final int TRANSPORT_REFRESH_TICKS = 50;
+
+	@Inject
+	private Client client;
+	@Inject
+	private ClientThread clientThread;
+	@Inject
+	private ChatMessageManager chat;
+	@Inject
+	private EventBus eventBus;
+	@Inject
+	private OverlayManager overlayManager;
+	@Inject
+	private QuestRequirements quests;
+	@Inject
+	private ChunkBlazerCore core;
+	@Inject
+	private MouseManager mouseManager;
+
+	/** Alt + click on the world map sets a path, or clears the one showing; the click is kept from the map. */
+	private final MouseAdapter altClick = new MouseAdapter()
+	{
+		@Override
+		public MouseEvent mousePressed(MouseEvent event)
+		{
+			if (!event.isAltDown() || event.getButton() != MouseEvent.BUTTON1)
+			{
+				return event;
+			}
+			Widget worldMap = client.getWidget(InterfaceID.Worldmap.MAP_CONTAINER);
+			if (worldMap == null || !worldMap.getBounds().contains(event.getPoint()))
+			{
+				return event;
+			}
+			// With a path showing, Alt + click clears it; otherwise it heads for the spot clicked.
+			int tile = mapTileAt(worldMap, new Point(event.getX(), event.getY()));
+			if (target >= 0)
+			{
+				clientThread.invoke(ChunkPathing.this::clear);
+			}
+			else if (tile >= 0)
+			{
+				clientThread.invoke(() -> pathTo(tile));
+			}
+			event.consume();
+			return event;
+		}
+	};
+
+	private ExecutorService executor;
+	private ChunkPathOverlays overlays;
+
+	private volatile CollisionMap map;
+	private volatile Transports transports;
+	private volatile ChunkCalculator calculator;
+	private volatile boolean loading;
+	private volatile boolean loadFailed;
+
+	// Transports this player can use, by start tile; refreshed on the client thread.
+	private volatile Map<Integer, List<Transports.Link>> usable;
+	private volatile int usableVersion;
+	private final Map<String, ChunkCalculator.Result> results = new ConcurrentHashMap<>();
+	private final Set<String> working = ConcurrentHashMap.newKeySet();
+	private int usableAge = Integer.MAX_VALUE;
+
+	private volatile int target = -1;
+	private volatile int[] path;
+	private volatile boolean reached;
+	private volatile boolean searching;
+	private volatile int progress;
+	private boolean pending;
+	private long unlockStamp;
+	private int cooldown;
+	private final AtomicInteger generation = new AtomicInteger();
+
+	public void startUp()
+	{
+		if (executor == null)
+		{
+			executor = Executors.newSingleThreadExecutor(r ->
+			{
+				Thread thread = new Thread(r, "chunkblazer-path");
+				thread.setDaemon(true);
+				return thread;
+			});
+		}
+		if (overlays == null)
+		{
+			overlays = new ChunkPathOverlays(this, client);
+		}
+		overlays.add(overlayManager);
+		eventBus.register(this);
+		mouseManager.registerMouseListener(altClick);
+	}
+
+	public void shutDown()
+	{
+		eventBus.unregister(this);
+		mouseManager.unregisterMouseListener(altClick);
+		if (overlays != null)
+		{
+			overlays.remove(overlayManager);
+		}
+		clear();
+	}
+
+	// --- Data -----------------------------------------------------------------------
+
+	/** Starts loading the map data if it isn't yet. True once it's there. */
+	public boolean ensureLoaded()
+	{
+		if (calculator != null)
+		{
+			return true;
+		}
+		if (!loading && !loadFailed && executor != null)
+		{
+			loading = true;
+			executor.submit(() ->
+			{
+				try
+				{
+					long started = System.currentTimeMillis();
+					CollisionMap loadedMap = CollisionMap.load();
+					Transports loadedTransports = Transports.load();
+					ChunkCalculator loadedCalculator = new ChunkCalculator(loadedMap, loadedTransports);
+					map = loadedMap;
+					transports = loadedTransports;
+					calculator = loadedCalculator;
+					log.debug("Path data loaded in {} ms: {} regions, {} transports", System.currentTimeMillis() - started,
+						loadedMap.regionIds().size(), loadedTransports.all().size());
+				}
+				catch (Exception | OutOfMemoryError e)
+				{
+					loadFailed = true;
+					log.warn("Could not load the path data", e);
+				}
+				finally
+				{
+					loading = false;
+				}
+			});
+		}
+		return false;
+	}
+
+	public boolean isLoadFailed()
+	{
+		return loadFailed;
+	}
+
+	/** Client thread: transports you can use now, checked again every so often. */
+	private Map<Integer, List<Transports.Link>> usableNow(boolean fresh)
+	{
+		if (transports == null)
+		{
+			return Collections.emptyMap();
+		}
+		if (usable == null || fresh || usableAge >= TRANSPORT_REFRESH_TICKS)
+		{
+			Map<Integer, List<Transports.Link>> now = transports.usable(client);
+			if (!now.equals(usable))
+			{
+				usable = now;
+				usableVersion++;
+			}
+			usableAge = 0;
+		}
+		return usable;
+	}
+
+	// --- Calculator -----------------------------------------------------------------
+
+	/**
+	 * Client thread. The chunks a quest still needs, with the ones to walk there, or null
+	 * while it's being worked out (in the background, so the game doesn't stutter). The
+	 * answer's kept until a chunk is unlocked or the transports you can use change; while it's
+	 * on screen this is just a lookup.
+	 */
+	public ChunkCalculator.Result calculate(NuzlockeTask task)
+	{
+		if (!ensureLoaded() || usable == null || task == null)
+		{
+			return null;
+		}
+		// Worked out again only when a chunk's unlocked (or the transports were checked again).
+		String key = task.getTaskId() + ":" + core.getLastUnlockChangeMs() + ":" + usableVersion;
+		ChunkCalculator.Result known = results.get(key);
+		if (known != null || !working.add(key))
+		{
+			return known;
+		}
+		if (results.size() > 30)
+		{
+			results.clear();
+		}
+		// Everything the game state says, read now on the client thread; the search runs elsewhere.
+		Set<Integer> needed = quests.lockedChunksFor(task);
+		Set<Integer> open = new HashSet<>();
+		Map<Integer, Integer> weights = new HashMap<>();
+		for (int region : map.regionIds())
+		{
+			// Free and charter chunks unlock as you walk in, at no cost, so they're open too.
+			if (quests.reachable(region) || quests.freeToEnter(region))
+			{
+				open.add(region);
+			}
+			else
+			{
+				weights.put(region, quests.unlockWeight(region));
+			}
+		}
+		Player player = client.getLocalPlayer();
+		int here = player == null ? -1 : PathTile.pack(WorldPoint.fromLocalInstance(client, player.getLocalLocation()));
+		Map<Integer, List<Transports.Link>> links = usable;
+		ChunkCalculator calc = calculator;
+		executor.submit(() ->
+		{
+			try
+			{
+				results.put(key, calc.calculate(needed, open::contains, r -> weights.getOrDefault(r, 1), links, here));
+			}
+			catch (RuntimeException e)
+			{
+				log.warn("Chunk calculator failed", e);
+			}
+			finally
+			{
+				working.remove(key);
+			}
+		});
+		return null;
+	}
+
+	// --- Paths ----------------------------------------------------------------------
+
+	public int[] path()
+	{
+		return path;
+	}
+
+	public boolean reached()
+	{
+		return reached;
+	}
+
+	/** Index of the path tile nearest the player; the overlays draw from here on. */
+	public int progress()
+	{
+		return progress;
+	}
+
+	/** Client thread: head for {@code tile}. */
+	public void pathTo(int tile)
+	{
+		// Two paths at once would just be confusing: clear Shortest Path's, if it's installed,
+		// through the message it offers other plugins for that.
+		eventBus.post(new PluginMessage(SHORTEST_PATH, "clear"));
+		target = tile;
+		path = null;
+		reached = false;
+		search();
+	}
+
+	public void clear()
+	{
+		generation.incrementAndGet();
+		target = -1;
+		path = null;
+		searching = false;
+		pending = false;
+	}
+
+	/** Client thread. Starts a search from where the player stands, or waits for the data. */
+	private void search()
+	{
+		Player player = client.getLocalPlayer();
+		if (target < 0 || player == null)
+		{
+			return;
+		}
+		if (!ensureLoaded())
+		{
+			pending = true;
+			searching = true;
+			return;
+		}
+		pending = false;
+		int start = PathTile.pack(WorldPoint.fromLocalInstance(client, player.getLocalLocation()));
+		Set<Integer> open = new HashSet<>();
+		for (int region : map.regionIds())
+		{
+			// Free and charter chunks unlock as you walk in, at no cost, so they're open too.
+			if (quests.reachable(region) || quests.freeToEnter(region))
+			{
+				open.add(region);
+			}
+		}
+		// Wherever you're standing counts, or you couldn't step off it.
+		open.add(PathTile.region(start));
+		Map<Integer, List<Transports.Link>> links = usableNow(false);
+		int goal = target;
+		int run = generation.incrementAndGet();
+		searching = true;
+		unlockStamp = core.getLastUnlockChangeMs();
+		cooldown = 5;
+		CollisionMap tiles = map;
+		executor.submit(() ->
+		{
+			ChunkPathfinder.Result result = ChunkPathfinder.find(tiles, links, open::contains, start, goal,
+				() -> generation.get() != run);
+			if (generation.get() != run)
+			{
+				return;
+			}
+			path = result.path;
+			reached = result.reached;
+			progress = 0;
+			searching = false;
+		});
+	}
+
+	private void message(String text)
+	{
+		chat.queue(QueuedMessage.builder()
+			.type(ChatMessageType.GAMEMESSAGE)
+			.value("<col=ff9628>ChunkBlazer:</col> " + text)
+			.build());
+	}
+
+	@Subscribe
+	public void onGameTick(GameTick event)
+	{
+		usableAge++;
+		// Checked once when the data's loaded; after that only when a path is worked out
+		// (usableNow), not over and over while the calculator's answer sits on screen.
+		if (calculator != null && usable == null && client.getGameState() == GameState.LOGGED_IN)
+		{
+			usableNow(true);
+		}
+		if (target < 0)
+		{
+			return;
+		}
+		if (pending)
+		{
+			if (calculator != null)
+			{
+				search();
+			}
+			return;
+		}
+		Player player = client.getLocalPlayer();
+		int[] tiles = path;
+		if (player == null || tiles == null || searching)
+		{
+			return;
+		}
+		int here = PathTile.pack(WorldPoint.fromLocalInstance(client, player.getLocalLocation()));
+		if (reached && PathTile.distance(here, target) <= 1)
+		{
+			message("You've arrived.");
+			clear();
+			return;
+		}
+		// Follow the player along the path: the nearest tile from a little behind where they were.
+		int from = Math.max(0, progress - 5);
+		int bestIndex = progress;
+		int bestDistance = Integer.MAX_VALUE;
+		for (int i = from; i < tiles.length && i < from + 60; i++)
+		{
+			int d = PathTile.distance(here, tiles[i]);
+			if (d < bestDistance)
+			{
+				bestDistance = d;
+				bestIndex = i;
+			}
+		}
+		progress = bestIndex;
+		if (cooldown > 0)
+		{
+			cooldown--;
+			return;
+		}
+		if (bestDistance > OFF_PATH || core.getLastUnlockChangeMs() != unlockStamp)
+		{
+			search();
+		}
+	}
+
+	// --- Menus ----------------------------------------------------------------------
+
+	/**
+	 * Added only when a right-click menu opens, never while the game builds the menu for
+	 * hovering, so a left-click (dragging the world map) can't pick it.
+	 */
+	@Subscribe
+	public void onMenuOpened(MenuOpened event)
+	{
+		Widget worldMap = client.getWidget(InterfaceID.Worldmap.MAP_CONTAINER);
+		Point mouse = client.getMouseCanvasPosition();
+		if (worldMap != null && mouse != null && worldMap.getBounds().contains(mouse.getX(), mouse.getY()))
+		{
+			int tile = mapTileAt(worldMap, mouse);
+			if (tile >= 0)
+			{
+				add(OPTION_PATH, () -> pathTo(tile));
+			}
+			if (target >= 0)
+			{
+				add(OPTION_CLEAR, this::clear);
+			}
+			return;
+		}
+		if (client.isKeyPressed(KeyCode.KC_SHIFT))
+		{
+			Tile selected = client.getTopLevelWorldView().getSelectedSceneTile();
+			if (selected != null)
+			{
+				int tile = PathTile.pack(WorldPoint.fromLocalInstance(client, selected.getLocalLocation()));
+				add(OPTION_PATH, () -> pathTo(tile));
+			}
+			if (target >= 0)
+			{
+				add(OPTION_CLEAR, this::clear);
+			}
+		}
+	}
+
+	private void add(String option, Runnable action)
+	{
+		for (MenuEntry entry : client.getMenu().getMenuEntries())
+		{
+			if (option.equals(entry.getOption()) && TARGET.equals(entry.getTarget()))
+			{
+				return;
+			}
+		}
+		client.getMenu().createMenuEntry(1)
+			.setOption(option)
+			.setTarget(TARGET)
+			.setType(MenuAction.RUNELITE)
+			.onClick(e -> action.run());
+	}
+
+	/** The world map tile under a point on screen (plane 0), or -1. */
+	private int mapTileAt(Widget widget, Point at)
+	{
+		WorldMap worldMap = client.getWorldMap();
+		if (worldMap == null || worldMap.getWorldMapPosition() == null)
+		{
+			return -1;
+		}
+		java.awt.Rectangle bounds = widget.getBounds();
+		float zoom = worldMap.getWorldMapZoom();
+		Point centre = worldMap.getWorldMapPosition();
+		int x = centre.getX() + (int) Math.floor((at.getX() - (bounds.x + bounds.width / 2)) / zoom);
+		int y = centre.getY() - (int) Math.floor((at.getY() - (bounds.y + bounds.height / 2)) / zoom);
+		return x < 0 || y < 0 ? -1 : PathTile.pack(x, y, 0);
+	}
+}

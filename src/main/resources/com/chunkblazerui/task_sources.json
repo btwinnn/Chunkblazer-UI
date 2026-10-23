@@ -1,0 +1,6841 @@
+{
+ "Obtain_bandit's_brew": {
+  "cost": "650 coins",
+  "npcIds": [
+   687
+  ],
+  "outline": [
+   "Bartender"
+  ],
+  "source": "The Big Heist Lodge",
+  "type": "Shop"
+ },
+ "Obtain_double_ammo_mould": {
+  "cost": "2,000 Foundry Reputation",
+  "level": "15 Smithing",
+  "npcIds": [
+   11468,
+   11469,
+   11470,
+   11472
+  ],
+  "outline": [
+   "Kovac"
+  ],
+  "source": "Giants' Foundry",
+  "type": "Shop"
+ },
+ "Obtain_full_blue_mystic_set": {
+  "rate": "1/28",
+  "source": "Corporeal Beast",
+  "type": "Drop"
+ },
+ "Obtain_full_infinity_set": {
+  "how": "Bought from the Rewards Guardian in the Mage Training Arena for pizazz points.",
+  "npcIds": [
+   5984
+  ],
+  "outline": [
+   "Rewards Guardian"
+  ],
+  "source": "Mage Training Arena",
+  "type": "Shop"
+ },
+ "Obtain_gold_seal": {
+  "how": "Search urns, chests and sarcophagi in Pyramid Plunder (Sophanem), rooms 3-8 (41+ Thieving).",
+  "level": "41 Thieving",
+  "outline": [
+   "Urn",
+   "Sarcophagus",
+   "Grand Gold Chest"
+  ],
+  "source": "Pyramid Plunder",
+  "type": "Other"
+ },
+ "Obtain_golden_scarab": {
+  "how": "Search urns, chests and sarcophagi in Pyramid Plunder (Sophanem), rooms 5-8 (61+ Thieving).",
+  "level": "61 Thieving",
+  "outline": [
+   "Urn",
+   "Sarcophagus",
+   "Grand Gold Chest"
+  ],
+  "source": "Pyramid Plunder",
+  "type": "Other"
+ },
+ "Obtain_golden_statuette": {
+  "how": "Search urns, chests and sarcophagi in Pyramid Plunder (Sophanem), rooms 7-8 (81+ Thieving).",
+  "level": "81 Thieving",
+  "outline": [
+   "Urn",
+   "Sarcophagus",
+   "Grand Gold Chest"
+  ],
+  "source": "Pyramid Plunder",
+  "type": "Other"
+ },
+ "Obtain_kovac's_grog": {
+  "cost": "300 Foundry Reputation",
+  "level": "15 Smithing",
+  "npcIds": [
+   11468,
+   11469,
+   11470,
+   11472
+  ],
+  "outline": [
+   "Kovac"
+  ],
+  "source": "Giants' Foundry",
+  "type": "Shop"
+ },
+ "Obtain_master_reward_casket": {
+  "rate": "Always",
+  "source": "Spiritual mage",
+  "type": "Drop"
+ },
+ "Obtain_metal_key": {
+  "rate": "Always",
+  "source": "Mercenary Captain",
+  "type": "Drop"
+ },
+ "Obtain_milk": {
+  "how": "Use a bucket on a dairy cow (e.g. Lumbridge north farm).",
+  "source": "Dairy cow",
+  "type": "Other"
+ },
+ "Obtain_nardah_teleport_scroll": {
+  "how": "Treasure Trails reward (all tiers except beginner); open a reward casket.",
+  "source": "Treasure Trails",
+  "type": "Reward"
+ },
+ "Obtain_necklace_passage": {
+  "how": "Enchant a jade necklace (Lvl-2 Enchant, 27 Magic).",
+  "level": "27 Magic",
+  "source": "Enchant",
+  "type": "Made"
+ },
+ "Obtain_orange_salamander_claw": {
+  "how": "Orange salamander rare creature part from Hunters' Rumours (Hunter Guild); catch while on a rumour for this creature.",
+  "level": "47 Hunter",
+  "source": "Orange salamander",
+  "type": "Other"
+ },
+ "Obtain_ore_pack": {
+  "cost": "40 coins (value)",
+  "level": "15 Smithing",
+  "npcIds": [
+   11468,
+   11469,
+   11470,
+   11472
+  ],
+  "outline": [
+   "Kovac"
+  ],
+  "source": "Giants' Foundry Reward Shop",
+  "type": "Shop"
+ },
+ "Obtain_papaya_fruit": {
+  "rate": "1/31",
+  "source": "Kurask",
+  "type": "Drop"
+ },
+ "Obtain_pharaoh's_sceptre": {
+  "how": "Found in golden chests and sarcophagi during Pyramid Plunder in Sophanem.",
+  "level": "21 Thieving",
+  "outline": [
+   "Urn",
+   "Sarcophagus",
+   "Grand Gold Chest"
+  ],
+  "source": "Pyramid Plunder",
+  "type": "Other"
+ },
+ "Obtain_phoenix_feather": {
+  "how": "The Golem quest: from the phoenix nest in the Ruins of Uzer area; can be reclaimed if lost.",
+  "source": "Phoenix",
+  "type": "Reward"
+ },
+ "Obtain_pottery_statuette": {
+  "how": "Search urns, chests and sarcophagi in Pyramid Plunder (Sophanem), rooms 1-3 (21+ Thieving).",
+  "level": "21 Thieving",
+  "outline": [
+   "Urn",
+   "Sarcophagus",
+   "Grand Gold Chest"
+  ],
+  "source": "Pyramid Plunder",
+  "type": "Other"
+ },
+ "Obtain_ring_of_shadows": {
+  "how": "Quest reward from Desert Treasure II - The Fallen Empire.",
+  "source": "Desert Treasure II",
+  "type": "Reward"
+ },
+ "Obtain_shantay_pass": {
+  "cost": "5 coins",
+  "how": "Bought from Shantay at the Shantay Pass.",
+  "source": "Shantay",
+  "type": "Shop"
+ },
+ "Obtain_smith's_set": {
+  "cost": "3,500 Foundry Reputation",
+  "level": "15 Smithing",
+  "npcIds": [
+   11468,
+   11469,
+   11470,
+   11472
+  ],
+  "outline": [
+   "Kovac"
+  ],
+  "source": "Giants' Foundry",
+  "type": "Shop"
+ },
+ "Obtain_tenti_pineapple": {
+  "how": "Tourist Trap item from the Bedabin Camp; replacements from Al Shabim until the quest is done.",
+  "source": "Al Shabim",
+  "type": "Reward"
+ },
+ "Obtain_water_talisman": {
+  "rate": "1/18",
+  "source": "Dagannoth Prime",
+  "type": "Drop"
+ },
+ "amoxliatl_equip_glacial_temotli": {
+  "level": "55 Attack",
+  "rate": "1/100",
+  "source": "Amoxliatl",
+  "type": "Drop"
+ },
+ "amoxliatl_obtain_pendant_of_ates": {
+  "rate": "1/25",
+  "source": "Amoxliatl",
+  "type": "Drop"
+ },
+ "amoxliatl_obtain_pet": {
+  "rate": "1/3,000",
+  "source": "Amoxliatl",
+  "type": "Drop"
+ },
+ "barrows_equip_ahrims_set": {
+  "how": "From the Barrows chest after killing the brothers; each piece of Ahrim's comes from the chest.",
+  "level": "70 Defence, 70 Magic",
+  "npcIds": [
+   1671
+  ],
+  "outline": [
+   "Strange Old Man"
+  ],
+  "source": "Barrows chest",
+  "type": "Reward"
+ },
+ "barrows_equip_any_piece": {
+  "how": "Any undamaged Barrows piece, from the Barrows chest after killing the brothers.",
+  "level": "70 Defence",
+  "npcIds": [
+   1671
+  ],
+  "outline": [
+   "Strange Old Man"
+  ],
+  "source": "Barrows chest",
+  "type": "Reward"
+ },
+ "barrows_equip_dharoks_set": {
+  "how": "From the Barrows chest after killing the brothers; each piece of Dharok's comes from the chest.",
+  "level": "70 Defence",
+  "npcIds": [
+   1671
+  ],
+  "outline": [
+   "Strange Old Man"
+  ],
+  "source": "Barrows chest",
+  "type": "Reward"
+ },
+ "barrows_equip_guthans_set": {
+  "how": "From the Barrows chest after killing the brothers; each piece of Guthan's comes from the chest.",
+  "level": "70 Defence",
+  "npcIds": [
+   1671
+  ],
+  "outline": [
+   "Strange Old Man"
+  ],
+  "source": "Barrows chest",
+  "type": "Reward"
+ },
+ "barrows_equip_karils_set": {
+  "how": "From the Barrows chest after killing the brothers; each piece of Karil's comes from the chest.",
+  "level": "70 Defence, 70 Ranged",
+  "npcIds": [
+   1671
+  ],
+  "outline": [
+   "Strange Old Man"
+  ],
+  "source": "Barrows chest",
+  "type": "Reward"
+ },
+ "barrows_equip_torags_set": {
+  "how": "From the Barrows chest after killing the brothers; each piece of Torag's comes from the chest.",
+  "level": "70 Defence",
+  "npcIds": [
+   1671
+  ],
+  "outline": [
+   "Strange Old Man"
+  ],
+  "source": "Barrows chest",
+  "type": "Reward"
+ },
+ "barrows_equip_veracs_set": {
+  "how": "From the Barrows chest after killing the brothers; each piece of Verac's comes from the chest.",
+  "level": "70 Defence",
+  "npcIds": [
+   1671
+  ],
+  "outline": [
+   "Strange Old Man"
+  ],
+  "source": "Barrows chest",
+  "type": "Reward"
+ },
+ "colosseum_equip_blessed_quiver": {
+  "level": "75 Ranged",
+  "part": "Sunfire splinters",
+  "rate": "1/23",
+  "source": "The Hueycoatl",
+  "type": "Drop"
+ },
+ "colosseum_equip_dizanas_quiver": {
+  "how": "Reward for completing the Fortis Colosseum (all 12 waves against Sol Heredit); claim it from the reward chest.",
+  "level": "75 Ranged",
+  "source": "Minimus",
+  "type": "Reward"
+ },
+ "colosseum_equip_echo_boots": {
+  "how": "Combine guardian boots with an echo crystal, a rare reward from the Fortis Colosseum.",
+  "level": "75 Defence",
+  "source": "Echo crystal",
+  "type": "Made"
+ },
+ "colosseum_equip_sunfire_chausses": {
+  "how": "Reward from the Fortis Colosseum wave chests (Minimus).",
+  "level": "60 Prayer, 40 Defence",
+  "npcIds": [
+   12807,
+   12808
+  ],
+  "outline": [
+   "Minimus"
+  ],
+  "source": "Fortis Colosseum",
+  "type": "Reward"
+ },
+ "colosseum_equip_sunfire_cuirass": {
+  "how": "Reward from the Fortis Colosseum wave chests (Minimus).",
+  "level": "60 Prayer, 40 defence",
+  "npcIds": [
+   12807,
+   12808
+  ],
+  "outline": [
+   "Minimus"
+  ],
+  "source": "Fortis Colosseum",
+  "type": "Reward"
+ },
+ "colosseum_equip_sunfire_helm": {
+  "how": "Reward from the Fortis Colosseum wave chests (Minimus).",
+  "level": "60 Prayer, 40 defence",
+  "npcIds": [
+   12807,
+   12808
+  ],
+  "outline": [
+   "Minimus"
+  ],
+  "source": "Fortis Colosseum",
+  "type": "Reward"
+ },
+ "colosseum_equip_tonalztics": {
+  "how": "Reward from the Fortis Colosseum wave chests (Minimus).",
+  "level": "75 Ranged",
+  "npcIds": [
+   12807,
+   12808
+  ],
+  "outline": [
+   "Minimus"
+  ],
+  "source": "Fortis Colosseum",
+  "type": "Reward"
+ },
+ "colosseum_obtain_pet": {
+  "how": "Reward for completing the Fortis Colosseum (defeat Sol Heredit); extra chance by trading Dizana's quivers to Minimus.",
+  "source": "Sol Heredit",
+  "type": "Reward"
+ },
+ "corrupted_gauntlet_equip_crystal_body": {
+  "how": "Sing at a singing bowl (74 Smithing/Crafting) from 150 crystal shards + 3 crystal armour seeds; seeds come from the Gauntlet reward chest.",
+  "level": "70 Defence, 50 Agility",
+  "source": "Crystalline Hunllef",
+  "type": "Made"
+ },
+ "corrupted_gauntlet_equip_crystal_helm": {
+  "how": "Sing at a singing bowl (70 Smithing/Crafting) from 50 crystal shards + 1 crystal armour seed; seeds come from the Gauntlet reward chest.",
+  "level": "70 Defence, 50 Agility",
+  "source": "Crystalline Hunllef",
+  "type": "Made"
+ },
+ "corrupted_gauntlet_equip_crystal_legs": {
+  "how": "Sing at a singing bowl (72 Smithing/Crafting) from 100 crystal shards + 2 crystal armour seeds; seeds come from the Gauntlet reward chest.",
+  "level": "70 Defence, 50 Agility",
+  "source": "Crystalline Hunllef",
+  "type": "Made"
+ },
+ "corrupted_gauntlet_obtain_enhanced_seed": {
+  "how": "Rare reward from the Gauntlet / Corrupted Gauntlet reward chest (Prifddinas).",
+  "source": "The Gauntlet",
+  "type": "Reward"
+ },
+ "corrupted_gauntlet_obtain_pet": {
+  "how": "Pet from the Gauntlet reward chest.",
+  "source": "Gauntlet chest",
+  "type": "Reward"
+ },
+ "cox_catch_kyren_fish": {
+  "how": "Cook a raw kyren fish on a fire inside the Chambers of Xeric (fished in the raid).",
+  "level": "90 Fishing",
+  "source": "Chambers of Xeric",
+  "type": "Made"
+ },
+ "cox_catch_psykk_bat": {
+  "how": "Caught (90 Hunter) in the Chambers of Xeric during the raid.",
+  "level": "90 Hunter",
+  "source": "Psykk bat",
+  "type": "Other"
+ },
+ "cox_equip_ancestral_bottom": {
+  "how": "Chambers of Xeric unique, from the Ancient chest (raid reward chest) at the end of the raid.",
+  "level": "65 Defence, 75 Magic",
+  "source": "Ancient chest",
+  "type": "Reward"
+ },
+ "cox_equip_ancestral_hat": {
+  "how": "Chambers of Xeric unique, from the Ancient chest (raid reward chest) at the end of the raid.",
+  "level": "65 Defence, 75 Magic",
+  "source": "Ancient chest",
+  "type": "Reward"
+ },
+ "cox_equip_ancestral_top": {
+  "how": "Chambers of Xeric unique, from the Ancient chest (raid reward chest) at the end of the raid.",
+  "level": "65 Defence, 75 Magic",
+  "source": "Ancient chest",
+  "type": "Reward"
+ },
+ "cox_equip_dh_crossbow": {
+  "level": "65 Ranged",
+  "rate": "1/15",
+  "source": "Chambers of Xeric",
+  "type": "Other"
+ },
+ "cox_equip_dinhs_bulwark": {
+  "how": "Chambers of Xeric unique, from the Ancient chest at the end of the raid.",
+  "level": "75 Attack, 75 Defence",
+  "source": "Ancient chest",
+  "type": "Reward"
+ },
+ "cox_equip_dragon_claws": {
+  "how": "Chambers of Xeric unique, from the Ancient chest at the end of the raid.",
+  "level": "60 Attack",
+  "source": "Ancient chest",
+  "type": "Reward"
+ },
+ "cox_equip_elder_maul": {
+  "how": "Chambers of Xeric unique, from the Ancient chest at the end of the raid.",
+  "level": "75 Attack, 75 Strength",
+  "source": "Ancient chest",
+  "type": "Reward"
+ },
+ "cox_equip_kodai_wand": {
+  "level": "75 Magic",
+  "rate": "1/30",
+  "source": "Ancient chest",
+  "type": "Made"
+ },
+ "cox_equip_twisted_bow": {
+  "how": "Chambers of Xeric unique, from the Ancient chest at the end of the raid.",
+  "level": "75 Ranged",
+  "source": "Ancient chest",
+  "type": "Reward"
+ },
+ "cox_equip_twisted_buckler": {
+  "how": "Chambers of Xeric unique, from the Ancient chest at the end of the raid.",
+  "level": "75 Defence, 75 Ranged",
+  "source": "Ancient chest",
+  "type": "Reward"
+ },
+ "cox_obtain_metamorphic_dust": {
+  "how": "Tertiary reward from finishing Challenge Mode Chambers of Xeric within the target time.",
+  "source": "Ancient chest",
+  "type": "Reward"
+ },
+ "cox_obtain_olmlet": {
+  "how": "Pet from the Chambers of Xeric reward chest (Ancient chest).",
+  "source": "Ancient chest",
+  "type": "Reward"
+ },
+ "cox_obtain_twisted_kit": {
+  "how": "Tertiary reward from finishing Challenge Mode Chambers of Xeric within the target time.",
+  "source": "Ancient chest",
+  "type": "Reward"
+ },
+ "dagannoth_kings_equip_archers_ring": {
+  "rate": "1/128",
+  "source": "Dagannoth Supreme",
+  "type": "Drop"
+ },
+ "dagannoth_kings_equip_berserker_ring": {
+  "rate": "1/128",
+  "source": "Dagannoth Rex",
+  "type": "Drop"
+ },
+ "dagannoth_kings_equip_mud_battlestaff": {
+  "level": "30 Attack, 30 Magic",
+  "rate": "1/128",
+  "source": "Dagannoth Prime",
+  "type": "Drop"
+ },
+ "dagannoth_kings_equip_seercull": {
+  "level": "50 Ranged",
+  "rate": "1/128",
+  "source": "Dagannoth Supreme",
+  "type": "Drop"
+ },
+ "dagannoth_kings_equip_seers_ring": {
+  "rate": "1/128",
+  "source": "Dagannoth Prime",
+  "type": "Drop"
+ },
+ "dagannoth_kings_equip_warrior_ring": {
+  "rate": "1/128",
+  "source": "Dagannoth Rex",
+  "type": "Drop"
+ },
+ "dagannoth_kings_obtain_pet_prime": {
+  "rate": "1/5,000",
+  "source": "Dagannoth Prime",
+  "type": "Drop"
+ },
+ "dagannoth_kings_obtain_pet_rex": {
+  "rate": "1/5,000",
+  "source": "Dagannoth Rex",
+  "type": "Drop"
+ },
+ "dagannoth_kings_obtain_pet_supreme": {
+  "rate": "1/5,000",
+  "source": "Dagannoth Supreme",
+  "type": "Drop"
+ },
+ "doom_equip_avernic_treads": {
+  "how": "Dropped by the Doom of Mokhaiotl from delve 4+ (1/1,350 at delve 4 to 1/540 at delve 9).",
+  "level": "80 Defence, 80 Strength, 80 Ranged, 80 Magic",
+  "rate": "1/630 (delve 8)",
+  "source": "Doom of Mokhaiotl",
+  "type": "Drop"
+ },
+ "doom_equip_confliction_gauntlets": {
+  "how": "Upgrade a tormented bracelet with Mokhaiotl cloth (cloth from the Doom of Mokhaiotl, ~1/630 at delve 8).",
+  "level": "90 Hitpoints",
+  "source": "Doom of Mokhaiotl",
+  "type": "Made"
+ },
+ "doom_equip_eye_of_ayak": {
+  "how": "Dropped by the Doom of Mokhaiotl from delve 3+ (1/2,000 at delve 3 to 1/540 at delve 9).",
+  "level": "83 Magic",
+  "rate": "1/630 (delve 8)",
+  "source": "Doom of Mokhaiotl",
+  "type": "Drop"
+ },
+ "doom_obtain_mokhaiotl_cloth": {
+  "how": "Dropped by the Doom of Mokhaiotl (1/2,500 at delve 2 to 1/540 at delve 9).",
+  "rate": "1/630 (delve 8)",
+  "source": "Doom of Mokhaiotl",
+  "type": "Drop"
+ },
+ "doom_obtain_pet": {
+  "how": "Doom pet (Dom) from delve 6+: 1/1,000 at delve 6 to 1/250 at delve 9.",
+  "rate": "1/500 (delve 8)",
+  "source": "Doom of Mokhaiotl",
+  "type": "Drop"
+ },
+ "duke_equip_ice_sceptre": {
+  "level": "75 Magic, 60 Strength, 50 Attack",
+  "part": "Ancient icon",
+  "rate": "1/50",
+  "source": "Phantom Muspah",
+  "type": "Drop"
+ },
+ "duke_equip_magus_ring": {
+  "part": "Magus vestige",
+  "rate": "1/720",
+  "source": "Duke Sucellus",
+  "type": "Drop"
+ },
+ "duke_obtain_eye": {
+  "rate": "1/720",
+  "source": "Duke Sucellus",
+  "type": "Drop"
+ },
+ "duke_obtain_frozen_tablet": {
+  "rate": "1/25.8",
+  "source": "Duke Sucellus",
+  "type": "Drop"
+ },
+ "duke_obtain_pet": {
+  "rate": "1/2,500",
+  "source": "Duke Sucellus",
+  "type": "Drop"
+ },
+ "equip_abyssal_whip": {
+  "level": "70 Attack",
+  "rate": "1/512",
+  "source": "Abyssal demon",
+  "type": "Drop"
+ },
+ "equip_adamant_2h_sword": {
+  "level": "30 Attack",
+  "rate": "1/10",
+  "source": "Greater demon",
+  "type": "Drop"
+ },
+ "equip_adamant_axe": {
+  "level": "30 Attack",
+  "rate": "1/16",
+  "source": "Tree spirit",
+  "type": "Drop"
+ },
+ "equip_adamant_battleaxe": {
+  "cost": "4,160 coins (value)",
+  "level": "30 Attack",
+  "npcIds": [
+   2892
+  ],
+  "outline": [
+   "Brian"
+  ],
+  "source": "Brian's Battleaxe Bazaar",
+  "type": "Shop"
+ },
+ "equip_adamant_chainbody": {
+  "cost": "4,800 coins (value)",
+  "level": "30 Defence",
+  "npcIds": [
+   5897
+  ],
+  "outline": [
+   "Wayne"
+  ],
+  "source": "Wayne's Chains",
+  "type": "Shop"
+ },
+ "equip_adamant_full_helm": {
+  "level": "30 Defence",
+  "rate": "Always",
+  "source": "Animated Adamant Armour",
+  "type": "Drop"
+ },
+ "equip_adamant_kiteshield": {
+  "level": "30 Defence",
+  "rate": "1/16",
+  "source": "Ice Troll",
+  "type": "Drop"
+ },
+ "equip_adamant_longsword": {
+  "level": "30 Attack",
+  "rate": "1/13",
+  "source": "Giant Mole",
+  "type": "Drop"
+ },
+ "equip_adamant_mace_sword": {
+  "level": "30 Attack",
+  "rate": "1/32",
+  "source": "Ferocious barbarian spirit",
+  "type": "Drop"
+ },
+ "equip_adamant_platebody": {
+  "level": "30 Defence",
+  "rate": "Always",
+  "source": "Animated Adamant Armour",
+  "type": "Drop"
+ },
+ "equip_adamant_square_shield": {
+  "level": "30 Defence",
+  "rate": "1/100",
+  "source": "Cyclops",
+  "type": "Drop"
+ },
+ "equip_adamant_warhammer": {
+  "level": "30 Attack",
+  "rate": "1/32",
+  "source": "Warped Terrorbird",
+  "type": "Drop"
+ },
+ "equip_ancient_staff": {
+  "cost": "100,000 coins (value)",
+  "level": "50 Attack, 50 Magic",
+  "source": "Eblis",
+  "type": "Shop"
+ },
+ "equip_ancient_wyvern_shield": {
+  "level": "75 Defence, 70 Magic",
+  "part": "Wyvern visage",
+  "rate": "1/10,000",
+  "source": "Ancient Wyvern",
+  "type": "Drop"
+ },
+ "equip_antler_guard": {
+  "how": "Dropped by custodian stalkers in Varlamore; elder stalkers and the Ancient Custodian drop it more often (1/650).",
+  "level": "50 Prayer",
+  "rate": "1/800",
+  "source": "Mature custodian stalker",
+  "type": "Drop"
+ },
+ "equip_apprentice_wand": {
+  "how": "Bought from the Rewards Guardian at the Mage Training Arena for pizazz points.",
+  "level": "50 Magic",
+  "source": "Rewards Guardian",
+  "type": "Shop"
+ },
+ "equip_aranea_boots": {
+  "level": "92 Slayer",
+  "rate": "1/2,000",
+  "source": "Araxyte",
+  "type": "Drop"
+ },
+ "equip_archer_helm": {
+  "cost": "78,000 coins",
+  "level": "45 Defence",
+  "npcIds": [
+   3935
+  ],
+  "outline": [
+   "Skulgrimen"
+  ],
+  "source": "Skulgrimen's Battle Gear",
+  "type": "Shop"
+ },
+ "equip_arclight": {
+  "level": "75 Attack",
+  "part": "Tormented synapse",
+  "rate": "1/500",
+  "source": "Tormented Demon",
+  "type": "Drop"
+ },
+ "equip_barrelchest_anchor": {
+  "cost": "290,000 coins",
+  "level": "60 Attack",
+  "source": "Perdu",
+  "type": "Shop"
+ },
+ "equip_barronite_mace": {
+  "how": "Assemble at the Ruins of Camdozaal from a Barronite handle, guard and head (found while mining/smashing barronite deposits) plus barronite shards.",
+  "level": "40 Attack",
+  "source": "Ruins of Camdozaal",
+  "type": "Made"
+ },
+ "equip_beginner_wand": {
+  "level": "45 Magic",
+  "npcIds": [
+   5984
+  ],
+  "outline": [
+   "Rewards Guardian"
+  ],
+  "source": "Rewards Guardian (mage arena)",
+  "type": "Shop"
+ },
+ "equip_berserker_helm": {
+  "cost": "78,000 coins",
+  "level": "45 Defence",
+  "npcIds": [
+   3935
+  ],
+  "outline": [
+   "Skulgrimen"
+  ],
+  "source": "Skulgrimen's Battle Gear",
+  "type": "Shop"
+ },
+ "equip_black_battleaxe": {
+  "cost": "1,248 coins",
+  "level": "10 Attack",
+  "npcIds": [
+   2892
+  ],
+  "outline": [
+   "Brian"
+  ],
+  "source": "Brian's Battleaxe Bazaar",
+  "type": "Shop"
+ },
+ "equip_black_claws": {
+  "level": "10 Attack",
+  "rate": "1/26",
+  "source": "King Sand Crab",
+  "type": "Drop"
+ },
+ "equip_black_d'hide_body": {
+  "level": "70 Ranged",
+  "rate": "1/21",
+  "source": "Deranged Archaeologist",
+  "type": "Drop"
+ },
+ "equip_black_d'hide_chaps": {
+  "level": "70 Ranged",
+  "rate": "1/43",
+  "source": "Hydra",
+  "type": "Drop"
+ },
+ "equip_black_d'hide_vambraces": {
+  "level": "70 Ranged",
+  "rate": "1/43",
+  "source": "Smoke devil",
+  "type": "Drop"
+ },
+ "equip_black_mask": {
+  "level": "10 Defence, 20 strength, 40 combat",
+  "rate": "1/512",
+  "source": "Cave horror",
+  "type": "Drop"
+ },
+ "equip_black_med_helm": {
+  "level": "10 Defence",
+  "source": "Digsite",
+  "type": "Other"
+ },
+ "equip_black_platebody": {
+  "cost": "3,840 coins",
+  "level": "10 Defence",
+  "npcIds": [
+   4584
+  ],
+  "outline": [
+   "Zenesha"
+  ],
+  "source": "Zenesha's Plate Mail Body Shop",
+  "type": "Shop"
+ },
+ "equip_black_platelegs": {
+  "cost": "1,920 coins (value)",
+  "level": "10 Defence",
+  "npcIds": [
+   2876
+  ],
+  "outline": [
+   "Louie Legs"
+  ],
+  "source": "Louie's Armoured Legs Bazaar",
+  "type": "Shop"
+ },
+ "equip_black_scimitar": {
+  "level": "10 Attack",
+  "source": "Found: Ardougne castle spawn",
+  "type": "Other"
+ },
+ "equip_black_sq_shield": {
+  "level": "10 Defence",
+  "rate": "1/25",
+  "source": "Moss giant",
+  "type": "Drop"
+ },
+ "equip_blessed_spirit_shield": {
+  "level": "70 Defence",
+  "part": "Holy elixir",
+  "rate": "1/170",
+  "source": "Corporeal beast",
+  "type": "Drop"
+ },
+ "equip_blue_wizard_hat": {
+  "rate": "1/16",
+  "source": "Imp",
+  "type": "Drop"
+ },
+ "equip_bone_mace": {
+  "level": "50 Attack",
+  "rate": "1/33",
+  "source": "Historian Aldo",
+  "type": "Made"
+ },
+ "equip_bone_shortbow": {
+  "level": "50 Ranged",
+  "rate": "1/33",
+  "source": "Historian Aldo",
+  "type": "Made"
+ },
+ "equip_bone_staff": {
+  "level": "50 Magic",
+  "rate": "1/33",
+  "source": "Historian Aldo",
+  "type": "Made"
+ },
+ "equip_brine_sabre": {
+  "level": "40 Attack",
+  "rate": "1/512",
+  "source": "Brine rat",
+  "type": "Drop"
+ },
+ "equip_bronze_med_helm": {
+  "source": "Spawns in Draynor manor",
+  "type": "Other"
+ },
+ "equip_brutus_slippers": {
+  "how": "Guaranteed drop from Demonic Brutus (the hard version of Brutus, Lumbridge cow field).",
+  "rate": "Always",
+  "source": "Demonic Brutus",
+  "type": "Drop"
+ },
+ "equip_bryophytas_staff": {
+  "level": "30 Attack, 30 Magic",
+  "part": "Bryophyta's essence",
+  "rate": "1/118",
+  "source": "Bryophyta",
+  "type": "Drop"
+ },
+ "equip_coif": {
+  "cost": "200 coins",
+  "level": "20 Ranged",
+  "npcIds": [
+   2871
+  ],
+  "outline": [
+   "Scavvo"
+  ],
+  "source": "Scavvo's Rune Store",
+  "type": "Shop"
+ },
+ "equip_colossal_blade": {
+  "cost": "5,000 Foundry Reputation",
+  "level": "60 Attack",
+  "npcIds": [
+   11468,
+   11469,
+   11470,
+   11472
+  ],
+  "outline": [
+   "Kovac"
+  ],
+  "source": "Giants' Foundry",
+  "type": "Shop"
+ },
+ "equip_cooking_gauntlets": {
+  "how": "After Family Crest, take the steel gauntlets to Caleb in Catherby to enchant them as cooking gauntlets.",
+  "source": "Caleb",
+  "type": "Reward"
+ },
+ "equip_cow_slippers": {
+  "how": "Dropped by Brutus in the Lumbridge cow field.",
+  "rate": "1/150",
+  "source": "Brutus",
+  "type": "Drop"
+ },
+ "equip_craws_bow": {
+  "level": "60 Ranged",
+  "outline": [
+   "Revenant imp",
+   "Revenant goblin",
+   "Revenant pyrefiend",
+   "Revenant hobgoblin",
+   "Revenant cyclops",
+   "Revenant hellhound",
+   "Revenant demon",
+   "Revenant ork",
+   "Revenant dark beast",
+   "Revenant knight",
+   "Revenant dragon",
+   "Revenant maledictus"
+  ],
+  "rate": "1/5,333",
+  "source": "Revenants",
+  "type": "Drop"
+ },
+ "equip_crimson_kisten": {
+  "level": "85 Strength",
+  "rate": "1/520",
+  "source": "Maggot King",
+  "type": "Drop"
+ },
+ "equip_crystal_body": {
+  "how": "Sing at the singing bowl in Prifddinas (74 Smithing/Crafting) from 150 crystal shards + 3 crystal armour seeds (Gauntlet), or pay Conwenna/Reese.",
+  "level": "70 Defence, 50 Agility",
+  "source": "Singing bowl",
+  "type": "Made"
+ },
+ "equip_crystal_bow": {
+  "cost": "Crystal weapon seed",
+  "level": "70 Ranged",
+  "source": "Completing Regicide",
+  "type": "Reward"
+ },
+ "equip_crystal_halberd": {
+  "cost": "750,000 coins",
+  "how": "Bought from Islwyn in Prifddinas, or sung from a crystal weapon seed (78 Smithing/Crafting).",
+  "level": "70 Attack",
+  "source": "Islwyn",
+  "type": "Shop"
+ },
+ "equip_crystal_helm": {
+  "how": "Sing at the singing bowl in Prifddinas (70 Smithing/Crafting) from 50 crystal shards + 1 crystal armour seed (Gauntlet), or pay Conwenna/Reese.",
+  "level": "70 Defence, 50 Agility",
+  "source": "Singing bowl",
+  "type": "Made"
+ },
+ "equip_crystal_legs": {
+  "how": "Sing at the singing bowl in Prifddinas (72 Smithing/Crafting) from 100 crystal shards + 2 crystal armour seeds (Gauntlet), or pay Conwenna/Reese.",
+  "level": "70 Defence, 50 Agility",
+  "source": "Singing bowl",
+  "type": "Made"
+ },
+ "equip_crystal_shield": {
+  "cost": "Crystal weapon seed",
+  "level": "70 Defence",
+  "source": "Completing Regicide",
+  "type": "Made"
+ },
+ "equip_dagon'hai_hat": {
+  "level": "70 Magic",
+  "rate": "1/256",
+  "source": "Larran's big chest",
+  "type": "Other"
+ },
+ "equip_dagon'hai_robe_bottom": {
+  "level": "70 Magic",
+  "rate": "1/256",
+  "source": "Larran's big chest",
+  "type": "Other"
+ },
+ "equip_dagon'hai_robe_top": {
+  "level": "70 Magic",
+  "rate": "1/256",
+  "source": "Larran's big chest",
+  "type": "Other"
+ },
+ "equip_decorative_armour_(gold_platebody)": {
+  "cost": "12,800 coins (value)",
+  "level": "30 Defence",
+  "source": "Lanthus",
+  "type": "Shop"
+ },
+ "equip_decorative_armour_(red_platebody)": {
+  "cost": "2,000 coins (value)",
+  "level": "5 Defence",
+  "source": "Lanthus",
+  "type": "Shop"
+ },
+ "equip_decorative_armour_(white_platebody)": {
+  "cost": "2,000 coins (value)",
+  "level": "20 Defence",
+  "source": "Lanthus",
+  "type": "Shop"
+ },
+ "equip_decorative_sword_(gold)": {
+  "cost": "500 Castle Wars tickets",
+  "level": "30 Attack",
+  "npcIds": [
+   11650
+  ],
+  "outline": [
+   "Lanthus"
+  ],
+  "source": "Castle Wars",
+  "type": "Shop"
+ },
+ "equip_decorative_sword_(red)": {
+  "cost": "5 Castle Wars tickets",
+  "level": "5 Attack",
+  "npcIds": [
+   11650
+  ],
+  "outline": [
+   "Lanthus"
+  ],
+  "source": "Castle Wars",
+  "type": "Shop"
+ },
+ "equip_decorative_sword_(white)": {
+  "cost": "50 Castle Wars tickets",
+  "level": "20 Attack",
+  "npcIds": [
+   11650
+  ],
+  "outline": [
+   "Lanthus"
+  ],
+  "source": "Castle Wars",
+  "type": "Shop"
+ },
+ "equip_dizana's_max_cape": {
+  "cost": "3,000+ hours",
+  "level": "99 Defence",
+  "source": "99 everything",
+  "type": "Reward"
+ },
+ "equip_dragon_2h_sword": {
+  "how": "Dropped by the Wilderness bosses (Callisto, Vet'ion, Venenatis, Scorpia, Chaos Elemental) and the Kalphite Queen.",
+  "level": "60 Attack",
+  "rate": "1/54",
+  "type": "Drop"
+ },
+ "equip_dragon_axe": {
+  "level": "60 Attack",
+  "rate": "1/10,000",
+  "source": "Reward Cart",
+  "type": "Reward"
+ },
+ "equip_dragon_battleaxe": {
+  "cost": "200,000 coins",
+  "level": "60 Attack",
+  "npcIds": [
+   4924
+  ],
+  "outline": [
+   "Helemos"
+  ],
+  "source": "Happy Heroes' H'emporium",
+  "type": "Shop"
+ },
+ "equip_dragon_boots": {
+  "level": "60 Defence",
+  "rate": "1/128",
+  "source": "Spiritual mage",
+  "type": "Drop"
+ },
+ "equip_dragon_chainbody": {
+  "level": "60 Defence",
+  "rate": "1/2,000",
+  "source": "Thermonuclear Smoke Devil",
+  "type": "Drop"
+ },
+ "equip_dragon_dagger": {
+  "cost": "60,000 coins",
+  "level": "60 Attack",
+  "npcIds": [
+   679
+  ],
+  "outline": [
+   "Rasolo"
+  ],
+  "source": "Rasolo the Wandering Merchant",
+  "type": "Shop"
+ },
+ "equip_dragon_defender": {
+  "level": "60 Defence",
+  "rate": "1/100",
+  "source": "Cyclops",
+  "type": "Drop"
+ },
+ "equip_dragon_full_helm": {
+  "level": "60 Defence",
+  "rate": "1/32,768",
+  "source": "Mithril dragon",
+  "type": "Drop"
+ },
+ "equip_dragon_halberd": {
+  "cost": "325,000 coins",
+  "level": "60 Attack",
+  "npcIds": [
+   3438
+  ],
+  "outline": [
+   "Quartermaster"
+  ],
+  "source": "Tyras Camp",
+  "type": "Shop"
+ },
+ "equip_dragon_hasta": {
+  "level": "60 Attack",
+  "rate": "1/200",
+  "source": "Brimstone chest",
+  "type": "Other"
+ },
+ "equip_dragon_longsword": {
+  "cost": "100,000 coins",
+  "level": "60 Attack",
+  "npcIds": [
+   3201
+  ],
+  "outline": [
+   "Jukat"
+  ],
+  "source": "Zanaris",
+  "type": "Shop"
+ },
+ "equip_dragon_mace": {
+  "cost": "50,000 coins",
+  "level": "60 Attack",
+  "npcIds": [
+   4924
+  ],
+  "outline": [
+   "Helemos"
+  ],
+  "source": "Happy Heroes' H'emporium",
+  "type": "Shop"
+ },
+ "equip_dragon_med_helm": {
+  "level": "60 Defence",
+  "rate": "1/128",
+  "source": "King Black Dragon",
+  "type": "Drop"
+ },
+ "equip_dragon_platelegs": {
+  "level": "60 Defence",
+  "rate": "1/512",
+  "source": "Skeletal Wyvern",
+  "type": "Drop"
+ },
+ "equip_dragon_plateskirt": {
+  "level": "60 Defence",
+  "rate": "1/512",
+  "source": "Skeletal Wyvern",
+  "type": "Drop"
+ },
+ "equip_dragon_scimitar": {
+  "cost": "100,000 coins",
+  "level": "60 Attack",
+  "source": "Daga",
+  "type": "Shop"
+ },
+ "equip_dragon_square": {
+  "cost": "750,000 coins",
+  "level": "60 Defence",
+  "npcIds": [
+   7952
+  ],
+  "outline": [
+   "Erdan"
+  ],
+  "source": "Buy right half",
+  "type": "Made"
+ },
+ "equip_dragon_sword": {
+  "how": "Dropped by wyrms in the Karuulm Slayer Dungeon (62 Slayer); Shadow Wyrms drop it at 1/2,000.",
+  "level": "60 Attack",
+  "rate": "1/2,000 to 1/10,000",
+  "source": "Wyrm",
+  "type": "Other"
+ },
+ "equip_dragon_warhammer": {
+  "how": "Dropped by Lizardman shamans (rate raised from 1/5,000 in May 2024).",
+  "level": "60 Attack",
+  "rate": "1/3,000",
+  "source": "Lizardman shaman",
+  "type": "Drop"
+ },
+ "equip_dragonfire_shield": {
+  "level": "75 Defence",
+  "rate": "1/10,000",
+  "source": "High level Dragons",
+  "type": "Drop"
+ },
+ "equip_eagle_cape": {
+  "how": "From Eagles' Peak; more from the Fancy-dress shop owner (5 eagle feathers, swamp tar, yellow dye, 25 coins).",
+  "level": "27 Hunter",
+  "npcIds": [
+   2887
+  ],
+  "outline": [
+   "Asyff"
+  ],
+  "source": "Fancy-dress shop owner",
+  "type": "Made"
+ },
+ "equip_earthbound_tecpatl": {
+  "how": "Dropped by Earthen Nagua in the Tonali Cavern (Varlamore).",
+  "level": "55 Attack",
+  "rate": "1/400",
+  "source": "Earthen Nagua",
+  "type": "Drop"
+ },
+ "equip_elite_void_knight_robe": {
+  "cost": "200 commendation points",
+  "how": "Upgrade a void knight robe at a Void Knight; needs the Western Provinces hard diary.",
+  "level": "42 Attack, 42 Strength, 42 Defence, 42 Hitpoints, 42 Ranged, 42 Magic, 22 Prayer",
+  "source": "Void Knight",
+  "type": "Shop"
+ },
+ "equip_elite_void_knight_top": {
+  "cost": "200 commendation points",
+  "how": "Upgrade a void knight top at a Void Knight; needs the Western Provinces hard diary.",
+  "level": "42 Attack, 42 Strength, 42 Defence, 42 Hitpoints, 42 Ranged, 42 Magic, 22 Prayer",
+  "source": "Void Knight",
+  "type": "Shop"
+ },
+ "equip_fake_beak": {
+  "how": "From Eagles' Peak: take yellow dye and swamp tar to the Fancy-dress shop owner in Varrock (later ones: 5 eagle feathers, swamp tar, yellow dye, 25 coins).",
+  "level": "27 Hunter",
+  "npcIds": [
+   2887
+  ],
+  "outline": [
+   "Asyff"
+  ],
+  "source": "Fancy-dress shop owner",
+  "type": "Made"
+ },
+ "equip_farmer's_set": {
+  "how": "Bought from the Tithe Farm reward shop (Farmer's strawhat 75 points; other pieces cost more points).",
+  "level": "34 Farming",
+  "npcIds": [
+   6920
+  ],
+  "outline": [
+   "Farmer Gricoller"
+  ],
+  "source": "Tithe Farm",
+  "type": "Shop"
+ },
+ "equip_farseer_helm": {
+  "cost": "78,000 coins",
+  "level": "45 Defence",
+  "source": "Skulgrimen",
+  "type": "Shop"
+ },
+ "equip_ferocious_gloves": {
+  "level": "80 Defence",
+  "part": "Hydra leather",
+  "rate": "1/514",
+  "source": "Alchemical Hydra",
+  "type": "Drop"
+ },
+ "equip_fighter_hat": {
+  "level": "45 Defence",
+  "npcIds": [
+   1656
+  ],
+  "outline": [
+   "Commander Connad"
+  ],
+  "source": "Barbarian Assault",
+  "type": "Reward"
+ },
+ "equip_fighter_torso": {
+  "how": "Bought from Commander Connad at Barbarian Assault: 375 honour points in each role + a Penance Queen kill.",
+  "level": "40 Defence",
+  "source": "Commander Connad",
+  "type": "Shop"
+ },
+ "equip_gnome_amulet": {
+  "how": "Reward from Tree Gnome Village; replacements from King Bolren for free.",
+  "source": "King Bolren",
+  "type": "Reward"
+ },
+ "equip_graahk_headdress": {
+  "cost": "750 coins",
+  "level": "38 Hunter",
+  "source": "Good Graahk fur, bring to clothier",
+  "type": "Shop"
+ },
+ "equip_granite_body": {
+  "cost": "95,000 coins",
+  "level": "50 Defence",
+  "source": "Commander Connad",
+  "type": "Shop"
+ },
+ "equip_granite_boots": {
+  "level": "50 Defence",
+  "rate": "1/600",
+  "source": "Ancient Wyvern",
+  "type": "Drop"
+ },
+ "equip_granite_helm": {
+  "level": "50 Strength, 50 Defence",
+  "rate": "1/128",
+  "source": "Terror Dog",
+  "type": "Drop"
+ },
+ "equip_granite_longsword": {
+  "level": "50 Attack",
+  "npcIds": [
+   7792,
+   7793,
+   7794,
+   7795
+  ],
+  "outline": [
+   "Long-tailed Wyvern",
+   "Spitting Wyvern",
+   "Taloned Wyvern",
+   "Ancient Wyvern"
+  ],
+  "rate": "1/512",
+  "source": "Wyverns",
+  "type": "Other"
+ },
+ "equip_granite_maul": {
+  "level": "50 Attack",
+  "rate": "1/256",
+  "source": "Gargoyle",
+  "type": "Drop"
+ },
+ "equip_granite_shield": {
+  "level": "50 Defence",
+  "rate": "1/128",
+  "source": "Pee Hat",
+  "type": "Drop"
+ },
+ "equip_green_d'hide_chaps": {
+  "level": "40 Ranged",
+  "outline": [
+   "Archer"
+  ],
+  "rate": "1/21",
+  "source": "Archer (Burthorpe)",
+  "type": "Drop"
+ },
+ "equip_guthix_cape": {
+  "how": "Mage Arena I: beat Kolodion, then pray at the Statue of Guthix; afterwards buy from Perdu for 23,000 coins.",
+  "level": "60 Magic",
+  "source": "Kolodion",
+  "type": "Reward"
+ },
+ "equip_guthix_mjolnir": {
+  "source": "The Enchanted Key miniquest",
+  "type": "Reward"
+ },
+ "equip_guthix_staff": {
+  "cost": "80,000 coins",
+  "level": "60 Magic",
+  "source": "Chamber guardian",
+  "type": "Shop"
+ },
+ "equip_halo": {
+  "cost": "75 tickets",
+  "npcIds": [
+   11650
+  ],
+  "outline": [
+   "Lanthus"
+  ],
+  "source": "Castle Wars Ticket Exchange",
+  "type": "Shop"
+ },
+ "equip_healer_hat": {
+  "how": "Bought from Commander Connad at Barbarian Assault: 275 honour points in each role + a Penance Queen kill.",
+  "level": "45 Defence",
+  "source": "Commander Connad",
+  "type": "Shop"
+ },
+ "equip_helm_of_neitiznot": {
+  "level": "55 Defence",
+  "source": "Mawnis Burowgar",
+  "type": "Reward"
+ },
+ "equip_hill_giant_club": {
+  "level": "40 Attack",
+  "rate": "1/118",
+  "source": "Obor",
+  "type": "Shop"
+ },
+ "equip_iban's_staff": {
+  "how": "Reward from the Underground Pass quest (defeat Iban); replacements from the Dark Mage.",
+  "level": "50 Attack",
+  "source": "Iban",
+  "type": "Reward"
+ },
+ "equip_iban's_staff(u)": {
+  "how": "Pay the Dark Mage (tower east of the Underground Pass entrance) to upgrade Iban's staff.",
+  "level": "50 Attack",
+  "source": "Dark Mage",
+  "type": "Made"
+ },
+ "equip_imbued_guthix_cape": {
+  "how": "Mage Arena II: imbue a Guthix cape with the three demi-boss drops (Justiciar Zachariah, Porazdir, Derwen), 75 Magic.",
+  "level": "75 Magic",
+  "source": "Kolodion",
+  "type": "Made"
+ },
+ "equip_imbued_max_cape": {
+  "how": "Imbue a god max cape: combine the imbued god cape (Mage Arena II) with a max cape from Mac.",
+  "level": "99 Defence",
+  "source": "Mac",
+  "type": "Made"
+ },
+ "equip_imbued_saradomin_cape": {
+  "how": "Mage Arena II: imbue a Saradomin cape with the three demi-boss drops (Justiciar Zachariah, Porazdir, Derwen), 75 Magic.",
+  "level": "75 Magic",
+  "source": "Kolodion",
+  "type": "Made"
+ },
+ "equip_imbued_zamorak_cape": {
+  "how": "Mage Arena II: imbue a Zamorak cape with the three demi-boss drops (Justiciar Zachariah, Porazdir, Derwen), 75 Magic.",
+  "level": "75 Magic",
+  "source": "Kolodion",
+  "type": "Made"
+ },
+ "equip_infernal_max_cape": {
+  "how": "Combine an infernal cape (from the Inferno) with a max cape and hood bought from Mac.",
+  "level": "99 Defence",
+  "source": "Mac",
+  "type": "Made"
+ },
+ "equip_iron_platelegs": {
+  "rate": "1/1.1",
+  "source": "Animated Iron Armour",
+  "type": "Drop"
+ },
+ "equip_keris": {
+  "level": "50 Attack",
+  "rate": "Always",
+  "source": "Giant scarab",
+  "type": "Drop"
+ },
+ "equip_klank's_gauntlets": {
+  "how": "Underground Pass quest item (from Klank, the dwarf in the pass).",
+  "source": "Klank",
+  "type": "Reward"
+ },
+ "equip_leaf-bladed_battleaxe": {
+  "level": "65 Attack, 55 Slayer",
+  "rate": "1/1,026",
+  "source": "Kurask",
+  "type": "Drop"
+ },
+ "equip_leaf-bladed_sword": {
+  "level": "50 Attack, 55 Slayer",
+  "rate": "1/384",
+  "source": "Kurask",
+  "type": "Drop"
+ },
+ "equip_light_mystic_hat": {
+  "level": "40 Magic",
+  "npcIds": [
+   417,
+   418,
+   9283,
+   9284,
+   9285,
+   9286
+  ],
+  "outline": [
+   "Basilisk"
+  ],
+  "rate": "1/512",
+  "source": "Basilisk",
+  "type": "Drop"
+ },
+ "equip_mage's_book": {
+  "cost": "Pizazz points",
+  "level": "60 Magic",
+  "source": "Rewards Guardian",
+  "type": "Shop"
+ },
+ "equip_malediction_ward": {
+  "level": "60 Defence",
+  "part": "Malediction shard 1",
+  "rate": "1/256",
+  "source": "Chaos Fanatic",
+  "type": "Drop"
+ },
+ "equip_maple_longbow": {
+  "level": "30 Ranged",
+  "rate": "1/32",
+  "source": "Spiritual ranger",
+  "type": "Drop"
+ },
+ "equip_maple_shortbow": {
+  "how": "Fletch at 50 Fletching: string a maple shortbow (u) with a bow string (cut maple logs with a knife first).",
+  "level": "30 Ranged",
+  "source": "Fletching 50",
+  "type": "Made"
+ },
+ "equip_master_wand": {
+  "cost": "Pizazz points",
+  "level": "60 Magic",
+  "source": "Rewards Guardian",
+  "type": "Other"
+ },
+ "equip_max_cape": {
+  "cost": "2,277,000 coins",
+  "level": "99 Defence",
+  "source": "Mac",
+  "type": "Shop"
+ },
+ "equip_mithril_2h_sword": {
+  "cost": "3,900 coins",
+  "level": "20 Attack",
+  "source": "Armoury, Combat Training Camp",
+  "type": "Shop"
+ },
+ "equip_mithril_battleaxe": {
+  "cost": "1,690 coins",
+  "level": "20 Attack",
+  "npcIds": [
+   2892
+  ],
+  "outline": [
+   "Brian"
+  ],
+  "source": "Brian's Battleaxe Bazaar",
+  "type": "Shop"
+ },
+ "equip_mithril_chainbody": {
+  "cost": "1,950 coins",
+  "level": "20 Defence",
+  "npcIds": [
+   5897
+  ],
+  "outline": [
+   "Wayne"
+  ],
+  "source": "Wayne's Chains! - Chainmail specialist",
+  "type": "Shop"
+ },
+ "equip_mithril_full_helm": {
+  "cost": "1,430 coins",
+  "level": "20 Defence",
+  "npcIds": [
+   2872
+  ],
+  "outline": [
+   "Peksa"
+  ],
+  "source": "Helmet Shop",
+  "type": "Shop"
+ },
+ "equip_mithril_kiteshield": {
+  "level": "20 Defence",
+  "outline": [
+   "Ogress Warrior",
+   "Ogress Shaman"
+  ],
+  "rate": "1/16",
+  "source": "Ogress",
+  "type": "Drop"
+ },
+ "equip_mithril_longsword": {
+  "cost": "1,300 coins",
+  "level": "20 Attack",
+  "source": "Varrock Swordshop",
+  "type": "Shop"
+ },
+ "equip_mithril_mace_sword": {
+  "cost": "760 coins",
+  "level": "20 Attack",
+  "npcIds": [
+   13333
+  ],
+  "outline": [
+   "Spike"
+  ],
+  "source": "Spike's Spikes",
+  "type": "Shop"
+ },
+ "equip_mithril_med_helm": {
+  "cost": "1,014 coins",
+  "level": "20 Defence",
+  "npcIds": [
+   13160
+  ],
+  "outline": [
+   "Thurid"
+  ],
+  "source": "Thurid's Brain Buckets",
+  "type": "Shop"
+ },
+ "equip_mithril_platebody": {
+  "cost": "5,200 coins",
+  "level": "20 Defence",
+  "npcIds": [
+   2882
+  ],
+  "outline": [
+   "Horvik"
+  ],
+  "source": "Horvik's Armour Shop",
+  "type": "Shop"
+ },
+ "equip_mithril_sword": {
+  "level": "20 Attack",
+  "rate": "1/64",
+  "source": "Moss giant",
+  "type": "Made"
+ },
+ "equip_mixed_hide_boots": {
+  "how": "Craft (69 Crafting) from a mixed hide base + sunlight antelope fur, or pay Pellem at the Hunter Guild.",
+  "level": "50 Defence, 60 Ranged",
+  "source": "Pellem",
+  "type": "Made"
+ },
+ "equip_mixed_hide_cape": {
+  "level": "50 Defence, 60 Ranged",
+  "source": "Jaguar fur, mixed hide base, 68 crafting",
+  "type": "Made"
+ },
+ "equip_mixed_hide_legs": {
+  "how": "Craft (71 Crafting) from a mixed hide base + 3 fox furs, or pay Pellem at the Hunter Guild.",
+  "level": "50 Defence, 60 Ranged",
+  "source": "Pellem",
+  "type": "Made"
+ },
+ "equip_mixed_hide_top": {
+  "level": "50 Defence, 60 Ranged",
+  "source": "Sunlight antelope fur, mixed hide base, 72 crafting",
+  "type": "Made"
+ },
+ "equip_mooleta": {
+  "rate": "1/30",
+  "source": "Brutus",
+  "type": "Drop"
+ },
+ "equip_mythical_cape": {
+  "cost": "10,000 coins (value)",
+  "source": "Jack",
+  "type": "Shop"
+ },
+ "equip_neitiznot_faceguard": {
+  "level": "70 Defence",
+  "npcIds": [
+   9293
+  ],
+  "outline": [
+   "Basilisk Knight"
+  ],
+  "rate": "1/5,000",
+  "source": "Basilisk Knight",
+  "type": "Made"
+ },
+ "equip_neitiznot_shield": {
+  "level": "25 Defence",
+  "source": "Arctic pine logs,bronze nails, rope, 56 Woodcutting",
+  "type": "Made"
+ },
+ "equip_noxious_halberd": {
+  "level": "80 Attack",
+  "rate": "1/200",
+  "source": "Three components from Araxxor",
+  "type": "Drop"
+ },
+ "equip_occult_necklace": {
+  "level": "70 Magic",
+  "rate": "1/512",
+  "source": "Smoke devil",
+  "type": "Drop"
+ },
+ "equip_odium_ward": {
+  "level": "60 Defence",
+  "part": "Odium shard 1",
+  "rate": "1/256",
+  "source": "Chaos Fanatic",
+  "type": "Drop"
+ },
+ "equip_orange": {
+  "how": "Sit at the capybara picnic; the capybara rolls an orange to you.",
+  "source": "Capybara",
+  "type": "Other"
+ },
+ "equip_penance_boots": {
+  "cost": "100 Honour points in each role",
+  "how": "Bought from Commander Connad at Barbarian Assault.",
+  "level": "40 Defence",
+  "source": "Commander Connad",
+  "type": "Shop"
+ },
+ "equip_penance_gloves": {
+  "cost": "150 Honour points in each role",
+  "how": "Bought from Commander Connad at Barbarian Assault.",
+  "level": "40 Defence",
+  "source": "Commander Connad",
+  "type": "Shop"
+ },
+ "equip_penance_skirt": {
+  "level": "60 Ranged, 40 Defence",
+  "npcIds": [
+   1656
+  ],
+  "outline": [
+   "Commander Connad"
+  ],
+  "source": "Barbarian Assault",
+  "type": "Reward"
+ },
+ "equip_pink_skirt": {
+  "cost": "2 coins",
+  "npcIds": [
+   13340,
+   15606,
+   15607
+  ],
+  "outline": [
+   "Floria"
+  ],
+  "source": "Floria's Fashion",
+  "type": "Shop"
+ },
+ "equip_proselyte_hauberk": {
+  "cost": "12,000 coins",
+  "level": "30 Defence",
+  "npcIds": [
+   4687
+  ],
+  "outline": [
+   "Sir Tiffy Cashien"
+  ],
+  "source": "Proselyte Temple Knight Armoury",
+  "type": "Shop"
+ },
+ "equip_proselyte_sallet": {
+  "cost": "8,000 coins",
+  "level": "30 Defence",
+  "npcIds": [
+   4687
+  ],
+  "outline": [
+   "Sir Tiffy Cashien"
+  ],
+  "source": "Proselyte Temple Knight Armoury",
+  "type": "Made"
+ },
+ "equip_proselyte_tassets_or_cuisse": {
+  "how": "Bought from the Temple Knights (e.g. Sir Vyvin) after The Slug Menace / Witch's Haven quests, or from Sir Tiffy in Falador Park.",
+  "level": "30 Defence",
+  "source": "Sir Vyvin",
+  "type": "Shop"
+ },
+ "equip_pyromancer's_set": {
+  "how": "Supply crate reward from subduing the Wintertodt.",
+  "level": "50 Firemaking",
+  "source": "Reward Cart",
+  "type": "Reward"
+ },
+ "equip_raiments_of_eye_set": {
+  "cost": "400 abyssal pearls",
+  "level": "27 Runecraft",
+  "npcIds": [
+   11404
+  ],
+  "outline": [
+   "Apprentice Felix"
+  ],
+  "source": "Guardians of the Rift",
+  "type": "Shop"
+ },
+ "equip_ranger_boots": {
+  "level": "40 Ranged",
+  "part": "Pegasian crystal",
+  "rate": "1/512",
+  "source": "Cerberus",
+  "type": "Drop"
+ },
+ "equip_ranger_hat": {
+  "how": "Bought from Commander Connad at Barbarian Assault: 275 honour points in each role + a Penance Queen kill.",
+  "level": "45 Defence",
+  "source": "Commander Connad",
+  "type": "Shop"
+ },
+ "equip_red_d'hide_body": {
+  "level": "60 Ranged",
+  "rate": "1/32",
+  "source": "Crazy Archaeologist",
+  "type": "Drop"
+ },
+ "equip_red_d'hide_vambraces": {
+  "level": "60 Ranged",
+  "rate": "1/18",
+  "source": "Dagannoth Supreme",
+  "type": "Drop"
+ },
+ "equip_reinforced_goggles": {
+  "cost": "Free",
+  "how": "Free during A Porcine of Interest; extra pairs from any Slayer Master for 100 coins.",
+  "outline": [
+   "Turael",
+   "Spria",
+   "Mazchna",
+   "Achtryn",
+   "Vannaka",
+   "Chaeldar",
+   "Konar quo Maten",
+   "Nieve",
+   "Steve",
+   "Duradel",
+   "Kuradal",
+   "Krystilia"
+  ],
+  "source": "Slayer Master",
+  "type": "Shop"
+ },
+ "equip_right_eye_patch": {
+  "cost": "2 coins",
+  "npcIds": [
+   2887
+  ],
+  "outline": [
+   "Asyff"
+  ],
+  "source": "Fancy Dress Shop",
+  "type": "Shop"
+ },
+ "equip_rune_2h_sword": {
+  "level": "40 Attack",
+  "rate": "1/43",
+  "source": "Deranged Archaeologist",
+  "type": "Drop"
+ },
+ "equip_rune_axe": {
+  "cost": "40,960 coins",
+  "level": "40 Attack",
+  "npcIds": [
+   7240
+  ],
+  "outline": [
+   "Perry"
+  ],
+  "source": "Perry's Chop-chop Shop",
+  "type": "Shop"
+ },
+ "equip_rune_battleaxe": {
+  "level": "40 Attack",
+  "rate": "1/128",
+  "source": "Ice troll",
+  "type": "Drop"
+ },
+ "equip_rune_boots": {
+  "level": "40 Defence",
+  "rate": "1/112",
+  "source": "Greater Nechryael",
+  "type": "Drop"
+ },
+ "equip_rune_chainbody": {
+  "cost": "50,000 coins",
+  "level": "40 Defence",
+  "npcIds": [
+   2871
+  ],
+  "outline": [
+   "Scavvo"
+  ],
+  "source": "Scavvo's Rune Store",
+  "type": "Shop"
+ },
+ "equip_rune_crossbow": {
+  "level": "61 Ranged",
+  "rate": "1/26",
+  "source": "Crazy Archaeologist",
+  "type": "Drop"
+ },
+ "equip_rune_dagger": {
+  "level": "40 Attack",
+  "rate": "1/25",
+  "source": "Zamorak Warrior",
+  "type": "Made"
+ },
+ "equip_rune_dart": {
+  "level": "40 Ranged",
+  "rate": "1/25",
+  "source": "Chaos Elemental",
+  "type": "Drop"
+ },
+ "equip_rune_defender": {
+  "level": "40 Defence",
+  "rate": "1/50",
+  "source": "Cyclops",
+  "type": "Drop"
+ },
+ "equip_rune_hasta": {
+  "level": "40 Attack",
+  "rate": "1/12",
+  "source": "Brutal Black Dragon",
+  "type": "Drop"
+ },
+ "equip_rune_kiteshield": {
+  "level": "40 Defence",
+  "rate": "1/16",
+  "type": "Drop"
+ },
+ "equip_rune_longsword": {
+  "level": "40 Attack",
+  "type": "Made"
+ },
+ "equip_rune_mace": {
+  "cost": "18,720 coins",
+  "level": "40 Attack",
+  "npcIds": [
+   13333
+  ],
+  "outline": [
+   "Spike"
+  ],
+  "source": "Spike's Spikes",
+  "type": "Shop"
+ },
+ "equip_rune_med_helm": {
+  "level": "40 Defence",
+  "type": "Drop"
+ },
+ "equip_rune_pickaxe": {
+  "cost": "41,600 coins",
+  "level": "40 Attack",
+  "npcIds": [
+   8686
+  ],
+  "outline": [
+   "Nurmof"
+  ],
+  "source": "Pickaxe-Is-Mine",
+  "type": "Shop"
+ },
+ "equip_rune_platelegs": {
+  "level": "40 Defence",
+  "rate": "Always",
+  "source": "Animated Rune Armour",
+  "type": "Drop"
+ },
+ "equip_rune_rune_full_helm": {
+  "level": "40 Defence",
+  "type": "Made"
+ },
+ "equip_rune_rune_platebody": {
+  "cost": "84,500 coins",
+  "level": "40 Defence",
+  "source": "Oziach",
+  "type": "Shop"
+ },
+ "equip_rune_scimitar": {
+  "level": "40 Attack",
+  "rate": "1/50",
+  "source": "Zamorak Warrior",
+  "type": "Drop"
+ },
+ "equip_rune_square_shield": {
+  "level": "40 Defence",
+  "rate": "1/128",
+  "source": "Scarab mage",
+  "type": "Drop"
+ },
+ "equip_rune_sword": {
+  "cost": "20,800 coins",
+  "level": "40 Attack",
+  "npcIds": [
+   2871
+  ],
+  "outline": [
+   "Scavvo"
+  ],
+  "source": "Scavvo's Rune Store",
+  "type": "Shop"
+ },
+ "equip_rune_thrownaxe": {
+  "level": "40 Ranged",
+  "rate": "1/26",
+  "source": "Dagannoth Supreme",
+  "type": "Drop"
+ },
+ "equip_rune_warhammer": {
+  "level": "40 Attack",
+  "type": "Made"
+ },
+ "equip_runner_hat": {
+  "how": "Bought from Commander Connad at Barbarian Assault: 275 honour points in each role + a Penance Queen kill.",
+  "level": "45 Defence",
+  "source": "Commander Connad",
+  "type": "Shop"
+ },
+ "equip_saradomin_cape": {
+  "how": "Mage Arena I: beat Kolodion, then pray at the Statue of Saradomin; afterwards buy from Perdu for 23,000 coins.",
+  "level": "60 Magic",
+  "source": "Kolodion",
+  "type": "Reward"
+ },
+ "equip_saradomin_mjolnir": {
+  "source": "The Enchanted Key miniquest",
+  "type": "Reward"
+ },
+ "equip_saradomin_staff": {
+  "cost": "80,000 coins",
+  "level": "60 Magic",
+  "source": "Chamber guardian",
+  "type": "Shop"
+ },
+ "equip_shaman_mask": {
+  "rate": "1/1,200",
+  "source": "Ogress Shaman",
+  "type": "Drop"
+ },
+ "equip_smoke_battlestaff": {
+  "level": "30 Magic",
+  "rate": "1/512",
+  "source": "Thermonuclear smoke devil",
+  "type": "Drop"
+ },
+ "equip_spirit_shield": {
+  "level": "45 Defence, 55 Prayer",
+  "rate": "1/64",
+  "source": "Corporeal Beast",
+  "type": "Drop"
+ },
+ "equip_splitbark_body": {
+  "level": "40 Defence, 40 Magic",
+  "rate": "1/25",
+  "source": "Chaos Fanatic",
+  "type": "Made"
+ },
+ "equip_splitbark_legs": {
+  "level": "40 Defence, 40 Magic",
+  "rate": "1/25",
+  "source": "Chaos Fanatic",
+  "type": "Made"
+ },
+ "equip_steel_battleaxe": {
+  "cost": "650 coins",
+  "level": "5 Attack",
+  "npcIds": [
+   10619
+  ],
+  "outline": [
+   "Bob"
+  ],
+  "source": "Bob's Brilliant Axes",
+  "type": "Shop"
+ },
+ "equip_steel_dagger": {
+  "level": "5 Attack",
+  "outline": [
+   "H.A.M. Member"
+  ],
+  "rate": "1/51",
+  "source": "H.A.M. Member (pickpocket)",
+  "type": "Drop"
+ },
+ "equip_steel_longsword": {
+  "cost": "500 coins",
+  "level": "5 Attack",
+  "source": "Varrock Swordshop",
+  "type": "Shop"
+ },
+ "equip_steel_med_helm": {
+  "cost": "300 coins",
+  "level": "5 Defence",
+  "npcIds": [
+   2872
+  ],
+  "outline": [
+   "Peksa"
+  ],
+  "source": "Helmet Shop, Barbarian Village",
+  "type": "Shop"
+ },
+ "equip_steel_scimitar": {
+  "cost": "400 coins",
+  "level": "5 Attack",
+  "npcIds": [
+   2875
+  ],
+  "outline": [
+   "Zeke"
+  ],
+  "source": "Zeke's Superior Scimitars",
+  "type": "Shop"
+ },
+ "equip_studded_body": {
+  "cost": "850 coins",
+  "level": "20 Defence",
+  "npcIds": [
+   2882
+  ],
+  "outline": [
+   "Horvik"
+  ],
+  "source": "Horvik's Armour Shop",
+  "type": "Shop"
+ },
+ "equip_sunspear": {
+  "how": "Quest reward from The Blood Moon Rises; replacements from Efaritay's Supplies in Castle Drakan for 100,000 coins.",
+  "source": "The Blood Moon Rises",
+  "type": "Reward"
+ },
+ "equip_teacher_wand": {
+  "how": "Bought from the Rewards Guardian at the Mage Training Arena for pizazz points.",
+  "level": "55 Magic",
+  "type": "Shop"
+ },
+ "equip_tecu_salamander": {
+  "how": "Caught at 79 Hunter south-east of Ralos' Rise (net + rope trap).",
+  "level": "79 Hunter",
+  "source": "Tecu salamander",
+  "type": "Other"
+ },
+ "equip_thammarons_sceptre": {
+  "level": "60 Magic",
+  "outline": [
+   "Revenant imp",
+   "Revenant goblin",
+   "Revenant pyrefiend",
+   "Revenant hobgoblin",
+   "Revenant cyclops",
+   "Revenant hellhound",
+   "Revenant demon",
+   "Revenant ork",
+   "Revenant dark beast",
+   "Revenant knight",
+   "Revenant dragon",
+   "Revenant maledictus"
+  ],
+  "source": "Revenants",
+  "type": "Drop"
+ },
+ "equip_trident_of_the_seas": {
+  "level": "75 Magic",
+  "rate": "1/200",
+  "source": "Cave kraken",
+  "type": "Drop"
+ },
+ "equip_trident_of_the_seas_e": {
+  "level": "75 Magic",
+  "source": "sacrifice ten tentacles to Lieve McCracken",
+  "type": "Reward"
+ },
+ "equip_viggoras_chainmace": {
+  "level": "60 Attack",
+  "outline": [
+   "Revenant imp",
+   "Revenant goblin",
+   "Revenant pyrefiend",
+   "Revenant hobgoblin",
+   "Revenant cyclops",
+   "Revenant hellhound",
+   "Revenant demon",
+   "Revenant ork",
+   "Revenant dark beast",
+   "Revenant knight",
+   "Revenant dragon",
+   "Revenant maledictus"
+  ],
+  "source": "Revenants",
+  "type": "Drop"
+ },
+ "equip_void_knight_gloves": {
+  "cost": "150 Pest Control commendation points",
+  "how": "Bought from a Void Knight at the Void Knight Outpost.",
+  "level": "42 Attack, 42 Strength, 42 Defence, 42 Hitpoints, 42 Ranged, 42 Magic, 22 Prayer",
+  "source": "Void Knight",
+  "type": "Shop"
+ },
+ "equip_void_knight_mace": {
+  "cost": "250 Pest Control commendation points",
+  "how": "Bought from a Void Knight at the Void Knight Outpost. Needs 42 in each combat stat and 22 Prayer.",
+  "level": "42 Attack, 42 Strength, 42 Defence, 42 Hitpoints, 42 Ranged, 42 Magic, 22 Prayer",
+  "source": "Void Knight",
+  "type": "Shop"
+ },
+ "equip_void_knight_robe": {
+  "cost": "250 Pest Control commendation points",
+  "how": "Bought from a Void Knight at the Void Knight Outpost. Needs 42 in each combat stat and 22 Prayer.",
+  "level": "42 Attack, 42 Strength, 42 Defence, 42 Hitpoints, 42 Ranged, 42 Magic, 22 Prayer",
+  "source": "Void Knight",
+  "type": "Shop"
+ },
+ "equip_void_knight_top": {
+  "cost": "250 Pest Control commendation points",
+  "how": "Bought from a Void Knight at the Void Knight Outpost. Needs 42 in each combat stat and 22 Prayer.",
+  "level": "42 Attack, 42 Strength, 42 Defence, 42 Hitpoints, 42 Ranged, 42 Magic, 22 Prayer",
+  "source": "Void Knight",
+  "type": "Shop"
+ },
+ "equip_void_mage_helm": {
+  "cost": "200 Pest Control commendation points",
+  "how": "Bought from a Void Knight at the Void Knight Outpost.",
+  "level": "42 Attack, 42 Strength, 42 Defence, 42 Hitpoints, 42 Ranged, 42 Magic, 22 Prayer",
+  "source": "Void Knight",
+  "type": "Shop"
+ },
+ "equip_void_melee_helm": {
+  "cost": "200 Pest Control commendation points",
+  "how": "Bought from a Void Knight at the Void Knight Outpost.",
+  "level": "42 Attack, 42 Strength, 42 Defence, 42 Hitpoints, 42 Ranged, 42 Magic, 22 Prayer",
+  "source": "Void Knight",
+  "type": "Shop"
+ },
+ "equip_void_ranger_helm": {
+  "cost": "200 Pest Control commendation points",
+  "how": "Bought from a Void Knight at the Void Knight Outpost.",
+  "level": "42 Attack, 42 Strength, 42 Defence, 42 Hitpoints, 42 Ranged, 42 Magic, 22 Prayer",
+  "source": "Void Knight",
+  "type": "Shop"
+ },
+ "equip_warm_gloves": {
+  "how": "Supply crate reward from subduing the Wintertodt.",
+  "level": "50 Firemaking",
+  "source": "Reward Cart",
+  "type": "Reward"
+ },
+ "equip_warped_sceptre": {
+  "level": "62 Magic",
+  "rate": "1/320",
+  "source": "Warped Terrorbird",
+  "type": "Drop"
+ },
+ "equip_warrior_helm": {
+  "cost": "78,000 coins",
+  "level": "45 Defence",
+  "npcIds": [
+   3935
+  ],
+  "outline": [
+   "Skulgrimen"
+  ],
+  "source": "Skulgrimen's Battle Gear",
+  "type": "Shop"
+ },
+ "equip_willow_shortbow": {
+  "cost": "200 coins (value)",
+  "level": "20 Ranged",
+  "npcIds": [
+   2883
+  ],
+  "outline": [
+   "Lowe"
+  ],
+  "source": "Lowe's Archery Emporium",
+  "type": "Shop"
+ },
+ "equip_xerician_hat": {
+  "how": "Craft (14 Crafting) from Xerician fabric + thread; fabric is dropped by Lizardman shamans and found in the Shayzien/Xeric's Shrine area.",
+  "level": "10 Defence, 20 Magic",
+  "source": "Xerician fabric",
+  "type": "Made"
+ },
+ "equip_xerician_robe": {
+  "how": "Craft (17 Crafting) from Xerician fabric + thread; fabric is dropped by Lizardman shamans.",
+  "level": "10 Defence, 20 Magic",
+  "source": "Xerician fabric",
+  "type": "Made"
+ },
+ "equip_xerician_top": {
+  "how": "Craft (22 Crafting) from Xerician fabric + thread; fabric is dropped by Lizardman shamans.",
+  "level": "10 Defence, 20 Magic",
+  "source": "Xerician fabric",
+  "type": "Made"
+ },
+ "equip_yak_hide_body": {
+  "level": "20 Defence",
+  "part": "Yak-hide",
+  "rate": "Always",
+  "source": "Yak",
+  "type": "Drop"
+ },
+ "equip_yak_hide_legs": {
+  "level": "20 Defence",
+  "part": "Yak-hide",
+  "rate": "Always",
+  "source": "Yak",
+  "type": "Drop"
+ },
+ "equip_zamorak_cape": {
+  "how": "Mage Arena I: beat Kolodion, then pray at the Statue of Zamorak; afterwards buy from Perdu for 23,000 coins.",
+  "level": "60 Magic",
+  "source": "Kolodion",
+  "type": "Reward"
+ },
+ "equip_zamorak_mjolnir": {
+  "how": "Reward from the Enchanted Key miniquest (dig up the treasure in the right spots); one per account.",
+  "source": "Enchanted key",
+  "type": "Reward"
+ },
+ "equip_zamorak_monk_robe_bottom": {
+  "rate": "1/20",
+  "source": "Monk of Zamorak",
+  "type": "Drop"
+ },
+ "equip_zamorak_monk_robe_top": {
+  "rate": "1/20",
+  "source": "Monk of Zamorak",
+  "type": "Drop"
+ },
+ "equip_zamorak_staff": {
+  "cost": "80,000 coins",
+  "level": "60 Magic",
+  "source": "Chamber guardian",
+  "type": "Shop"
+ },
+ "equip_zombie_axe": {
+  "level": "65 Attack",
+  "outline": [
+   "Armoured zombie"
+  ],
+  "part": "Broken zombie axe",
+  "rate": "1/600",
+  "source": "Armoured zombie (Zemouregal's Fort)",
+  "type": "Drop"
+ },
+ "giant_mole_craft_gem_sack": {
+  "how": "Craft at 81 Crafting with needle + thread: gem bag (Prospector Percy) + gem tote + immaculate mole skin (Giant Mole).",
+  "level": "81 Crafting",
+  "type": "Made"
+ },
+ "giant_mole_obtain_pet": {
+  "rate": "1/3,000",
+  "source": "Giant Mole",
+  "type": "Drop"
+ },
+ "gwd_graardor_equip_bgs": {
+  "level": "75 Attack",
+  "part": "Bandos hilt",
+  "rate": "1/508",
+  "source": "General Graardor",
+  "type": "Drop"
+ },
+ "gwd_graardor_equip_boots": {
+  "level": "65 Defence",
+  "rate": "1/381",
+  "source": "General Graardor",
+  "type": "Drop"
+ },
+ "gwd_graardor_equip_chestplate": {
+  "level": "65 Defence",
+  "rate": "1/381",
+  "source": "General Graardor",
+  "type": "Drop"
+ },
+ "gwd_graardor_equip_tassets": {
+  "level": "65 Defence",
+  "rate": "1/381",
+  "source": "General Graardor",
+  "type": "Drop"
+ },
+ "gwd_graardor_obtain_pet": {
+  "rate": "1/5,000",
+  "source": "General Graardor",
+  "type": "Drop"
+ },
+ "gwd_kreearra_equip_ags": {
+  "level": "75 Attack",
+  "part": "Armadyl hilt",
+  "rate": "1/508",
+  "source": "Kree'arra",
+  "type": "Drop"
+ },
+ "gwd_kreearra_equip_chainskirt": {
+  "level": "70 Defence, 70 Ranged",
+  "rate": "1/381",
+  "source": "Kree'arra",
+  "type": "Drop"
+ },
+ "gwd_kreearra_equip_chestplate": {
+  "level": "70 Defence, 70 Ranged",
+  "rate": "1/381",
+  "source": "Kree'arra",
+  "type": "Drop"
+ },
+ "gwd_kreearra_equip_helm": {
+  "level": "70 Defence, 70 Ranged",
+  "rate": "1/381",
+  "source": "Kree'arra",
+  "type": "Drop"
+ },
+ "gwd_kreearra_obtain_pet": {
+  "rate": "1/5,000",
+  "source": "Kree'arra",
+  "type": "Drop"
+ },
+ "gwd_kril_equip_staff_of_light": {
+  "level": "75 Attack, 75 Magic",
+  "rate": "1/254",
+  "source": "Saradomin's light + Staff of the dead",
+  "type": "Made"
+ },
+ "gwd_kril_equip_staff_of_the_dead": {
+  "level": "75 Attack, 75 Magic",
+  "rate": "1/508",
+  "source": "K'ril Tsutsaroth",
+  "type": "Drop"
+ },
+ "gwd_kril_equip_steam_battlestaff": {
+  "level": "30 Attack, 30 Magic",
+  "rate": "1/127",
+  "source": "K'ril Tsutsaroth",
+  "type": "Drop"
+ },
+ "gwd_kril_equip_zammy_spear": {
+  "level": "70 Attack",
+  "rate": "1/127",
+  "source": "K'ril Tsutsaroth",
+  "type": "Drop"
+ },
+ "gwd_kril_equip_zgs": {
+  "level": "75 Attack",
+  "part": "Zamorak hilt",
+  "rate": "1/508",
+  "source": "K'ril Tsutsaroth",
+  "type": "Drop"
+ },
+ "gwd_kril_obtain_pet": {
+  "rate": "1/5,000",
+  "source": "K'ril Tsutsaroth",
+  "type": "Drop"
+ },
+ "gwd_nex_equip_torva_body": {
+  "level": "80 Defence",
+  "part": "Torva platebody (damaged)",
+  "rate": "1/258",
+  "source": "Nex",
+  "type": "Drop"
+ },
+ "gwd_nex_equip_torva_helm": {
+  "level": "80 Defence",
+  "part": "Torva full helm (damaged)",
+  "rate": "1/258",
+  "source": "Nex",
+  "type": "Drop"
+ },
+ "gwd_nex_equip_torva_legs": {
+  "level": "80 Defence",
+  "part": "Torva platelegs (damaged)",
+  "rate": "1/258",
+  "source": "Nex",
+  "type": "Drop"
+ },
+ "gwd_nex_equip_zaryte_vambraces": {
+  "level": "80 Ranged, 45 Defence",
+  "rate": "1/172",
+  "source": "Nex",
+  "type": "Drop"
+ },
+ "gwd_nex_equip_zcb": {
+  "level": "80 Ranged",
+  "part": "Nihil horn",
+  "rate": "1/258",
+  "source": "Nex",
+  "type": "Drop"
+ },
+ "gwd_nex_mix_ancient_brew": {
+  "level": "85 Herblore",
+  "rate": "1/9",
+  "source": "Phantom Muspah",
+  "type": "Drop"
+ },
+ "gwd_nex_obtain_pet": {
+  "rate": "1/500",
+  "source": "Nex",
+  "type": "Drop"
+ },
+ "gwd_zilyana_equip_acb": {
+  "level": "70 Ranged",
+  "rate": "1/508",
+  "source": "Commander Zilyana",
+  "type": "Drop"
+ },
+ "gwd_zilyana_equip_sara_sword": {
+  "level": "70 Attack",
+  "rate": "1/127",
+  "source": "Commander Zilyana",
+  "type": "Drop"
+ },
+ "gwd_zilyana_equip_sgs": {
+  "level": "75 Attack",
+  "rate": "1/508",
+  "source": "Commander Zilyana, hilt",
+  "type": "Drop"
+ },
+ "gwd_zilyana_obtain_pet": {
+  "rate": "1/5,000",
+  "source": "Commander Zilyana",
+  "type": "Drop"
+ },
+ "hueycoatl_equip_dragonhunter_wand": {
+  "level": "65 Magic",
+  "rate": "1/105",
+  "source": "The Hueycoatl",
+  "type": "Drop"
+ },
+ "hueycoatl_equip_tome_of_earth": {
+  "level": "50 Magic",
+  "rate": "1/90",
+  "source": "The Hueycoatl",
+  "type": "Drop"
+ },
+ "hueycoatl_obtain_pet": {
+  "rate": "1/400",
+  "source": "The Hueycoatl",
+  "type": "Drop"
+ },
+ "inferno_equip_infernal_cape": {
+  "how": "Reward for completing the Inferno (defeat TzKal-Zuk).",
+  "source": "TzKal-Zuk",
+  "type": "Reward"
+ },
+ "inferno_obtain_pet": {
+  "rate": "1/100",
+  "source": "TzKal-Zuk",
+  "type": "Drop"
+ },
+ "jad_equip_fire_cape": {
+  "source": "Defeat Jad",
+  "type": "Reward"
+ },
+ "jad_obtain_pet": {
+  "rate": "1/200",
+  "source": "TzTok-Jad",
+  "type": "Drop"
+ },
+ "kalphite_queen_obtain_head": {
+  "rate": "1/128",
+  "source": "Kalphite Queen",
+  "type": "Drop"
+ },
+ "kalphite_queen_obtain_pet": {
+  "rate": "1/3,000",
+  "source": "Kalphite Queen",
+  "type": "Drop"
+ },
+ "leviathan_equip_smoke_sceptre": {
+  "level": "75 Magic, 60 Strength, 50 Attack",
+  "part": "Ancient icon",
+  "rate": "1/50",
+  "source": "Phantom Muspah",
+  "type": "Drop"
+ },
+ "leviathan_equip_venator_ring": {
+  "part": "Venator vestige",
+  "rate": "1/768",
+  "source": "The Leviathan",
+  "type": "Drop"
+ },
+ "leviathan_obtain_lure": {
+  "rate": "1/768",
+  "source": "The Leviathan",
+  "type": "Drop"
+ },
+ "leviathan_obtain_pet": {
+  "rate": "1/2,500",
+  "source": "The Leviathan",
+  "type": "Drop"
+ },
+ "leviathan_obtain_scarred_tablet": {
+  "rate": "1/25.8",
+  "source": "The Leviathan",
+  "type": "Drop"
+ },
+ "moons_of_peril_equip_any_piece": {
+  "how": "From the Lunar Chest in Neypotzli after defeating the Moons of Peril (Blood, Blue and Eclipse Moon).",
+  "level": "50 Defence + 75 Strength/Magic/Ranged (Blood/Blue/Eclipse set)",
+  "source": "Lunar Chest",
+  "type": "Reward"
+ },
+ "moons_of_peril_equip_blood_set": {
+  "how": "From the Lunar Chest in Neypotzli after the Moons of Peril (Blood Moon set pieces).",
+  "level": "50 Defence, 75 Strength",
+  "source": "Lunar Chest",
+  "type": "Reward"
+ },
+ "moons_of_peril_equip_blue_set": {
+  "how": "From the Lunar Chest in Neypotzli after the Moons of Peril (Blue Moon set pieces).",
+  "level": "50 Defence, 75 Magic",
+  "source": "Lunar Chest",
+  "type": "Reward"
+ },
+ "moons_of_peril_equip_eclipse_set": {
+  "how": "From the Lunar Chest in Neypotzli after the Moons of Peril (Eclipse Moon set pieces).",
+  "level": "50 Defence, 75 Ranged",
+  "source": "Lunar Chest",
+  "type": "Reward"
+ },
+ "obtain_Alchemist_set": {
+  "cost": "380 coins (value)",
+  "level": "60 Herblore",
+  "npcIds": [
+   13920,
+   13921
+  ],
+  "outline": [
+   "Supervisor Lalo"
+  ],
+  "source": "Mixology Rewards",
+  "type": "Shop"
+ },
+ "obtain_Coal_Bag": {
+  "cost": "100 golden nuggets",
+  "how": "Bought from Prospector Percy's Nugget Shop at the Motherlode Mine.",
+  "level": "30 Mining",
+  "npcIds": [
+   6562
+  ],
+  "outline": [
+   "Prospector Percy"
+  ],
+  "source": "Prospector Percy",
+  "type": "Shop"
+ },
+ "obtain_Gem_Bag": {
+  "cost": "100 golden nuggets",
+  "level": "30 Mining",
+  "npcIds": [
+   6562
+  ],
+  "outline": [
+   "Prospector Percy"
+  ],
+  "source": "Prospector Percy's Nugget Shop",
+  "type": "Shop"
+ },
+ "obtain_Tecu_Salamander": {
+  "how": "Caught at 79 Hunter south-east of Ralos' Rise (net + rope trap); adults are rare.",
+  "level": "79 Hunter",
+  "source": "Tecu salamander",
+  "type": "Other"
+ },
+ "obtain_Torstol": {
+  "level": "75 Herblore",
+  "rate": "1/124",
+  "source": "Zulrah",
+  "type": "Drop"
+ },
+ "obtain_a_plant_cure": {
+  "how": "Bought from farming shops, e.g. Sarah's Farming Shop (south of Falador); one cure per diseased patch.",
+  "source": "Sarah",
+  "type": "Shop"
+ },
+ "obtain_a_soiled_page": {
+  "rate": "1/14",
+  "source": "The Hueycoatl",
+  "type": "Drop"
+ },
+ "obtain_abyssal_lantern": {
+  "cost": "1,500 abyssal pearls",
+  "how": "Bought from Temple Supplies or Apprentice Felix at the Temple of the Eye; or 1/700 from the Rewards Guardian.",
+  "level": "27 Runecraft",
+  "npcIds": [
+   11404
+  ],
+  "outline": [
+   "Apprentice Felix"
+  ],
+  "source": "Guardians of the Rift",
+  "type": "Shop"
+ },
+ "obtain_abyssal_needle": {
+  "how": "Bought from the Rewards Guardian (Guardians of the Rift, Temple of the Eye) for abyssal pearls.",
+  "level": "27 Runecraft",
+  "source": "Rewards Guardian",
+  "type": "Shop"
+ },
+ "obtain_adamant_seeds": {
+  "rate": "1/45",
+  "source": "Zombie pirate",
+  "type": "Drop"
+ },
+ "obtain_adamantite_ore": {
+  "rate": "Always",
+  "source": "Slagilith",
+  "type": "Drop"
+ },
+ "obtain_adept_potion_pack": {
+  "cost": "200 coins (value)",
+  "level": "60 Herblore",
+  "npcIds": [
+   13920,
+   13921
+  ],
+  "outline": [
+   "Supervisor Lalo"
+  ],
+  "source": "Mixology Rewards",
+  "type": "Shop"
+ },
+ "obtain_alchemical_hydra_heads": {
+  "level": "95 Slayer",
+  "rate": "1/256",
+  "source": "Alchemical Hydra",
+  "type": "Drop"
+ },
+ "obtain_alchemist's_amulet": {
+  "cost": "1,050 coins (value)",
+  "level": "60 Herblore",
+  "npcIds": [
+   13920,
+   13921
+  ],
+  "outline": [
+   "Supervisor Lalo"
+  ],
+  "source": "Mixology Rewards",
+  "type": "Shop"
+ },
+ "obtain_alchemist's_signet": {
+  "how": "Dropped by Elder custodian stalkers in Varlamore; the Ancient Custodian drops it more often (6/124).",
+  "rate": "2/124",
+  "source": "Elder custodian stalker",
+  "type": "Drop"
+ },
+ "obtain_amulet_of_avarice": {
+  "outline": [
+   "Revenant imp",
+   "Revenant goblin",
+   "Revenant pyrefiend",
+   "Revenant hobgoblin",
+   "Revenant cyclops",
+   "Revenant hellhound",
+   "Revenant demon",
+   "Revenant ork",
+   "Revenant dark beast",
+   "Revenant knight",
+   "Revenant dragon",
+   "Revenant maledictus"
+  ],
+  "source": "Revenants",
+  "type": "Drop"
+ },
+ "obtain_amulet_of_the_damned": {
+  "how": "Found in silver and gold shade chests in the Shade Catacombs (Mort'ton).",
+  "source": "Shade Catacombs",
+  "type": "Other"
+ },
+ "obtain_amy's_saw": {
+  "cost": "500 Carpenter points",
+  "npcIds": [
+   6439,
+   7417
+  ],
+  "outline": [
+   "Amy"
+  ],
+  "source": "Mahogany Homes Reward Shop",
+  "type": "Shop"
+ },
+ "obtain_amylase_pack": {
+  "cost": "10 marks of grace",
+  "npcIds": [
+   5919
+  ],
+  "outline": [
+   "Grace"
+  ],
+  "source": "Grace's Graceful Clothing",
+  "type": "Shop"
+ },
+ "obtain_an_amulet_mould": {
+  "cost": "5 coins",
+  "npcIds": [
+   2879
+  ],
+  "outline": [
+   "Dommik"
+  ],
+  "source": "Al Kharid",
+  "type": "Shop"
+ },
+ "obtain_ancient_crystal": {
+  "outline": [
+   "Revenant imp",
+   "Revenant goblin",
+   "Revenant pyrefiend",
+   "Revenant hobgoblin",
+   "Revenant cyclops",
+   "Revenant hellhound",
+   "Revenant demon",
+   "Revenant ork",
+   "Revenant dark beast",
+   "Revenant knight",
+   "Revenant dragon",
+   "Revenant maledictus"
+  ],
+  "source": "Revenants",
+  "type": "Drop"
+ },
+ "obtain_ancient_effigy": {
+  "outline": [
+   "Revenant imp",
+   "Revenant goblin",
+   "Revenant pyrefiend",
+   "Revenant hobgoblin",
+   "Revenant cyclops",
+   "Revenant hellhound",
+   "Revenant demon",
+   "Revenant ork",
+   "Revenant dark beast",
+   "Revenant knight",
+   "Revenant dragon",
+   "Revenant maledictus"
+  ],
+  "source": "Revenants",
+  "type": "Drop"
+ },
+ "obtain_ancient_emblem": {
+  "outline": [
+   "Revenant imp",
+   "Revenant goblin",
+   "Revenant pyrefiend",
+   "Revenant hobgoblin",
+   "Revenant cyclops",
+   "Revenant hellhound",
+   "Revenant demon",
+   "Revenant ork",
+   "Revenant dark beast",
+   "Revenant knight",
+   "Revenant dragon",
+   "Revenant maledictus"
+  ],
+  "source": "Revenants",
+  "type": "Drop"
+ },
+ "obtain_ancient_halo": {
+  "cost": "450 Last Man Standing points",
+  "npcIds": [
+   8721
+  ],
+  "outline": [
+   "Justine"
+  ],
+  "source": "Justine's stuff for the Last Shopper Standing",
+  "type": "Shop"
+ },
+ "obtain_ancient_medallion": {
+  "outline": [
+   "Revenant imp",
+   "Revenant goblin",
+   "Revenant pyrefiend",
+   "Revenant hobgoblin",
+   "Revenant cyclops",
+   "Revenant hellhound",
+   "Revenant demon",
+   "Revenant ork",
+   "Revenant dark beast",
+   "Revenant knight",
+   "Revenant dragon",
+   "Revenant maledictus"
+  ],
+  "source": "Revenants",
+  "type": "Drop"
+ },
+ "obtain_ancient_relic": {
+  "outline": [
+   "Revenant imp",
+   "Revenant goblin",
+   "Revenant pyrefiend",
+   "Revenant hobgoblin",
+   "Revenant cyclops",
+   "Revenant hellhound",
+   "Revenant demon",
+   "Revenant ork",
+   "Revenant dark beast",
+   "Revenant knight",
+   "Revenant dragon",
+   "Revenant maledictus"
+  ],
+  "source": "Revenants",
+  "type": "Drop"
+ },
+ "obtain_ancient_shard": {
+  "rate": "1/226",
+  "source": "Black demon",
+  "type": "Drop"
+ },
+ "obtain_ancient_statuette": {
+  "outline": [
+   "Revenant imp",
+   "Revenant goblin",
+   "Revenant pyrefiend",
+   "Revenant hobgoblin",
+   "Revenant cyclops",
+   "Revenant hellhound",
+   "Revenant demon",
+   "Revenant ork",
+   "Revenant dark beast",
+   "Revenant knight",
+   "Revenant dragon",
+   "Revenant maledictus"
+  ],
+  "source": "Revenants",
+  "type": "Drop"
+ },
+ "obtain_ancient_talisman": {
+  "how": "Found excavating during The Dig Site quest (level 3 dig site).",
+  "source": "The Dig Site",
+  "type": "Reward"
+ },
+ "obtain_ancient_totem": {
+  "outline": [
+   "Revenant imp",
+   "Revenant goblin",
+   "Revenant pyrefiend",
+   "Revenant hobgoblin",
+   "Revenant cyclops",
+   "Revenant hellhound",
+   "Revenant demon",
+   "Revenant ork",
+   "Revenant dark beast",
+   "Revenant knight",
+   "Revenant dragon",
+   "Revenant maledictus"
+  ],
+  "source": "Revenants",
+  "type": "Drop"
+ },
+ "obtain_angler_set": {
+  "how": "Bought from Alry the Angler (Lake Molch) for Molch pearls; also random from Fishing Trawler.",
+  "level": "15 Fishing",
+  "source": "Alry the Angler",
+  "type": "Shop"
+ },
+ "obtain_antique_lamp_historian_minas": {
+  "how": "Varrock Museum quiz/miniquest: answer Historian Minas' questions about quests for a lamp.",
+  "source": "Historian Minas",
+  "type": "Reward"
+ },
+ "obtain_antler_guard": {
+  "how": "Dropped by custodian stalkers in Varlamore; elder stalkers and the Ancient Custodian drop it more often (1/650).",
+  "rate": "1/800",
+  "source": "Mature custodian stalker",
+  "type": "Drop"
+ },
+ "obtain_apatura's_note": {
+  "how": "After 150 Hunters' Rumours, Apatura gives her key to the guildmaster's chest holding the note.",
+  "level": "46 Hunter",
+  "source": "Apatura",
+  "type": "Reward"
+ },
+ "obtain_ape_atoll_teleport_tablet": {
+  "how": "Make on the Arceuus lectern (90 Magic, Arceuus spellbook): dark essence block, 2 law, 2 soul, 2 blood.",
+  "level": "90 Magic",
+  "outline": [
+   "Lectern"
+  ],
+  "source": "Arceuus lectern",
+  "type": "Made"
+ },
+ "obtain_apprentice_potion_pack": {
+  "cost": "145 coins (value)",
+  "level": "60 Herblore",
+  "npcIds": [
+   13920,
+   13921
+  ],
+  "outline": [
+   "Supervisor Lalo"
+  ],
+  "source": "Mixology Rewards",
+  "type": "Shop"
+ },
+ "obtain_araxyte_fang": {
+  "level": "92 Slayer",
+  "rate": "1/600",
+  "source": "Araxxor",
+  "type": "Drop"
+ },
+ "obtain_araxyte_head": {
+  "level": "92 Slayer",
+  "rate": "1/250",
+  "source": "Araxxor",
+  "type": "Drop"
+ },
+ "obtain_arcane_sigil": {
+  "rate": "1/1,365",
+  "source": "Corporeal Beast",
+  "type": "Drop"
+ },
+ "obtain_arceuus_libarary_teleport_tablet": {
+  "how": "Make on the Arceuus lectern (6 Magic, Arceuus spellbook): dark essence block, 1 law, 2 earth.",
+  "level": "6 Magic",
+  "outline": [
+   "Lectern"
+  ],
+  "source": "Arceuus lectern",
+  "type": "Made"
+ },
+ "obtain_archery_ticket": {
+  "how": "Shoot at the Ranging Guild target range (200 coins per 10 shots).",
+  "source": "Ranging Guild",
+  "type": "Reward"
+ },
+ "obtain_ardougne_cloak_1": {
+  "how": "Complete the easy Ardougne Diary; claim from Two-pints in the Flying Horse Inn.",
+  "source": "Two-pints",
+  "type": "Reward"
+ },
+ "obtain_armadyl_halo": {
+  "cost": "450 Last Man Standing points",
+  "npcIds": [
+   8721
+  ],
+  "outline": [
+   "Justine"
+  ],
+  "source": "Justine's stuff for the Last Shopper Standing",
+  "type": "Shop"
+ },
+ "obtain_asgarnian_ale(m)": {
+  "how": "Brew in a vat (24 Cooking): water, barley malt, Asgarnian hops, ale yeast; mature it (m) and collect with a beer glass (Port Phasmatys brewery).",
+  "level": "24 Cooking",
+  "source": "Brewing vat",
+  "type": "Made"
+ },
+ "obtain_axeman's_folly(m)": {
+  "level": "49 Cooking",
+  "part": "Oak roots",
+  "rate": "1/9.8",
+  "source": "Grimy Lizard",
+  "type": "Drop"
+ },
+ "obtain_bale_of_flax": {
+  "how": "Common loot from rummaging vale offerings (Vale Totems, Auburnvale).",
+  "level": "20 Fletching",
+  "rate": "50/399",
+  "source": "Vale Totems",
+  "type": "Reward"
+ },
+ "obtain_bandos_halo": {
+  "cost": "450 Last Man Standing points",
+  "npcIds": [
+   8721
+  ],
+  "outline": [
+   "Justine"
+  ],
+  "source": "Justine's stuff for the Last Shopper Standing",
+  "type": "Shop"
+ },
+ "obtain_barbarian_teleport_tablet": {
+  "how": "Make on the Lunar lectern (75 Magic, Lunar spellbook): soft clay, 2 law, 3 fire, 2 astral runes.",
+  "level": "75 Magic",
+  "outline": [
+   "Lectern"
+  ],
+  "source": "Lunar lectern",
+  "type": "Made"
+ },
+ "obtain_barrows_teleport_tablet": {
+  "how": "Make on the Arceuus lectern (83 Magic, Arceuus spellbook): dark essence block, 2 law, 2 soul, 1 blood.",
+  "level": "83 Magic",
+  "type": "Made"
+ },
+ "obtain_basic_elemental_staff": {
+  "rate": "1/21",
+  "source": "Waterfiend",
+  "type": "Shop"
+ },
+ "obtain_basic_quetzal_whistle": {
+  "level": "46 Hunter",
+  "part": "Willow logs",
+  "rate": "1/128",
+  "source": "Swamp Crab",
+  "type": "Drop"
+ },
+ "obtain_basilisk_head": {
+  "level": "40 Slayer",
+  "npcIds": [
+   417,
+   418,
+   9283,
+   9284,
+   9285,
+   9286
+  ],
+  "outline": [
+   "Basilisk"
+  ],
+  "rate": "1/2,000",
+  "source": "Basilisk",
+  "type": "Drop"
+ },
+ "obtain_battlefront_teleport_tablet": {
+  "how": "Make on the Arceuus lectern (23 Magic, Arceuus spellbook): dark essence block, 1 law, 1 earth, 1 fire.",
+  "level": "23 Magic",
+  "outline": [
+   "Lectern"
+  ],
+  "source": "Arceuus lectern",
+  "type": "Made"
+ },
+ "obtain_bearhead": {
+  "rate": "Always",
+  "source": "The Kendal",
+  "type": "Drop"
+ },
+ "obtain_beginner_clue": {
+  "rate": "1/30",
+  "source": "Gunthor the brave",
+  "type": "Drop"
+ },
+ "obtain_beginner_clue_scroll": {
+  "rate": "1/30",
+  "source": "Gunthor the brave",
+  "type": "Drop"
+ },
+ "obtain_bird's_egg": {
+  "how": "Search a bird nest from Woodcutting, or loot a bird house.",
+  "source": "Bird nest",
+  "type": "Other"
+ },
+ "obtain_bird_nest": {
+  "how": "Falls from trees while Woodcutting (bird nest); also from Wyson for mole parts.",
+  "source": "Woodcutting",
+  "type": "Other"
+ },
+ "obtain_black_bead": {
+  "rate": "1/26",
+  "source": "Imp",
+  "type": "Drop"
+ },
+ "obtain_black_cape": {
+  "rate": "Always",
+  "source": "Highwayman",
+  "type": "Drop"
+ },
+ "obtain_black_dragon_leather": {
+  "how": "Tan a black dragonhide with a tanner (e.g. Crafting Guild tanner) for 20 coins.",
+  "source": "Tanner",
+  "type": "Made"
+ },
+ "obtain_black_knife": {
+  "rate": "1/6.2",
+  "source": "Cyclops",
+  "type": "Drop"
+ },
+ "obtain_black_nails": {
+  "outline": [
+   "Zombie"
+  ],
+  "rate": "1/26",
+  "source": "Zombie (Tarn's Lair)",
+  "type": "Drop"
+ },
+ "obtain_black_robe": {
+  "rate": "1/43",
+  "source": "Dark wizard",
+  "type": "Drop"
+ },
+ "obtain_black_tourmaline_core": {
+  "level": "75 Slayer",
+  "outline": [
+   "Dusk",
+   "Dawn"
+  ],
+  "rate": "1/1,000 (2 rolls)",
+  "source": "Grotesque Guardians",
+  "type": "Drop"
+ },
+ "obtain_blamish_snail_slime": {
+  "part": "Lean snail",
+  "rate": "Always",
+  "source": "Bark Blamish Snail",
+  "type": "Drop"
+ },
+ "obtain_blasted_ore": {
+  "how": "Detonate a hard rock face in the Lovakengj blast mine.",
+  "level": "43 Mining",
+  "source": "Blast mine",
+  "type": "Other"
+ },
+ "obtain_blessed_bone_statuette": {
+  "how": "Occasional loot from stealing valuables in Civitas illa Fortis.",
+  "level": "50 Thieving",
+  "source": "Stealing valuables",
+  "type": "Other"
+ },
+ "obtain_blood_essence": {
+  "rate": "1/82",
+  "source": "Nex",
+  "type": "Drop"
+ },
+ "obtain_blood_shard": {
+  "how": "Dropped by Vyrewatch Sentinels in Darkmeyer; also 1/5,000 from pickpocketing vyres (82 Thieving).",
+  "rate": "1/1,500",
+  "source": "Vyrewatch sentinel",
+  "type": "Drop"
+ },
+ "obtain_bloodbark_set": {
+  "part": "Splitbark body",
+  "rate": "1/26",
+  "source": "Chaos Fanatic",
+  "type": "Drop"
+ },
+ "obtain_blue_burgh_token": {
+  "how": "Reward token from escorting on the Burgh de Rott Ramble minigame (blue = hardest route).",
+  "source": "Burgh de Rott Ramble",
+  "type": "Reward"
+ },
+ "obtain_blue_butterfly_wing": {
+  "how": "Rare creature part from catching a sapphire glacialis (Hunters' Rumours).",
+  "level": "46 Hunter",
+  "source": "Sapphire glacialis",
+  "type": "Other"
+ },
+ "obtain_blue_dragon_leather": {
+  "source": "Blue dragon",
+  "type": "Drop"
+ },
+ "obtain_blue_dye": {
+  "how": "Give Aggie (Draynor Village) 2 woad leaves + 5 coins; also sold by Oronwen (Lletya).",
+  "source": "Aggie",
+  "type": "Made"
+ },
+ "obtain_blue_temple_trekking_token": {
+  "how": "Reward token from the Temple Trekking minigame (blue = hardest route).",
+  "source": "Temple Trekking",
+  "type": "Reward"
+ },
+ "obtain_bolt_pouch": {
+  "cost": "1,500 coins",
+  "source": "Hirko",
+  "type": "Shop"
+ },
+ "obtain_bolt_rack": {
+  "how": "Bought from Ak-Haranu's Exotic Shop (Port Phasmatys) for Castle Wars tickets; also from Barrows chests.",
+  "source": "Ak-Haranu",
+  "type": "Shop"
+ },
+ "obtain_bone_shards": {
+  "rate": "1/28",
+  "source": "Amoxliatl",
+  "type": "Drop"
+ },
+ "obtain_book_arcane_knowledge": {
+  "how": "Reward for finding a requested book for an NPC in the Arceuus Library.",
+  "source": "Arceuus Library",
+  "type": "Reward"
+ },
+ "obtain_book_balance": {
+  "how": "Horror from the Deep reward; replacements from Jossik at the Lighthouse.",
+  "source": "Jossik",
+  "type": "Reward"
+ },
+ "obtain_book_darkness": {
+  "how": "Bought from Jossik at the Lighthouse after Horror from the Deep; or made from 4 torn ancient pages (Treasure Trails).",
+  "source": "Jossik",
+  "type": "Shop"
+ },
+ "obtain_book_law": {
+  "cost": "200 coins (value)",
+  "source": "Jossik",
+  "type": "Shop"
+ },
+ "obtain_book_war": {
+  "cost": "200 coins (value)",
+  "source": "Jossik",
+  "type": "Shop"
+ },
+ "obtain_bottomless_bucket": {
+  "level": "65 Farming",
+  "rate": "1/35",
+  "source": "Hespori",
+  "type": "Drop"
+ },
+ "obtain_bottomless_milk_bucket": {
+  "how": "Dropped by Brutus in the Lumbridge cow field.",
+  "rate": "4/150",
+  "source": "Brutus",
+  "type": "Drop"
+ },
+ "obtain_bow_string_spool": {
+  "cost": "250 Vale research points",
+  "how": "Bought from the Vale Research Exchange in Auburnvale; or ~1/200 from vale offerings.",
+  "level": "20 Fletching",
+  "npcIds": [
+   14577,
+   14578,
+   14582
+  ],
+  "outline": [
+   "Ranulph"
+  ],
+  "source": "Vale Research Exchange",
+  "type": "Shop"
+ },
+ "obtain_bowman_hat": {
+  "how": "Kill 40 chompy birds, then talk to Rantz.",
+  "level": "5 Fletching, 30 Cooking, 30 Ranged",
+  "source": "Rantz",
+  "type": "Reward"
+ },
+ "obtain_bowmaster_hat": {
+  "how": "Kill 700 chompy birds, then talk to Rantz (Feldip Hills).",
+  "level": "5 Fletching, 30 Cooking, 30 Ranged",
+  "source": "Rantz",
+  "type": "Reward"
+ },
+ "obtain_bracelet_of_ethereum": {
+  "outline": [
+   "Revenant imp",
+   "Revenant goblin",
+   "Revenant pyrefiend",
+   "Revenant hobgoblin",
+   "Revenant cyclops",
+   "Revenant hellhound",
+   "Revenant demon",
+   "Revenant ork",
+   "Revenant dark beast",
+   "Revenant knight",
+   "Revenant dragon",
+   "Revenant maledictus"
+  ],
+  "source": "Revenants",
+  "type": "Drop"
+ },
+ "obtain_braindeath_rum": {
+  "rate": "1/128",
+  "source": "Sorebones",
+  "type": "Drop"
+ },
+ "obtain_brass_necklace": {
+  "outline": [
+   "Cave goblin"
+  ],
+  "rate": "1/50",
+  "source": "Cave goblin (monster)",
+  "type": "Drop"
+ },
+ "obtain_brassica_halo": {
+  "cost": "450 Last Man Standing points",
+  "npcIds": [
+   8721
+  ],
+  "outline": [
+   "Justine"
+  ],
+  "source": "Justine's stuff for the Last Shopper Standing",
+  "type": "Shop"
+ },
+ "obtain_brimstone_ring": {
+  "how": "Combine the hydra's eye, fang and heart, all dropped by the Alchemical Hydra.",
+  "level": "95 Slayer",
+  "source": "Alchemical Hydra",
+  "type": "Made"
+ },
+ "obtain_bronze_fist_flag": {
+  "cost": "3,000 pieces of eight",
+  "source": "Honest Jimmy",
+  "type": "Shop"
+ },
+ "obtain_bronze_scimitar": {
+  "rate": "1/26",
+  "source": "Ork",
+  "type": "Drop"
+ },
+ "obtain_bruma_torch": {
+  "how": "Supply crate reward from subduing the Wintertodt.",
+  "level": "50 Firemaking",
+  "source": "Reward Cart",
+  "type": "Reward"
+ },
+ "obtain_brutus_pet": {
+  "how": "Brutus's pet, Beef.",
+  "rate": "1/1,000",
+  "source": "Brutus",
+  "type": "Drop"
+ },
+ "obtain_bryne's_coronation_speech": {
+  "how": "Found on a bookshelf in the Arceuus Library (Grand Library); fetched for Professor Gracklebone, Villia or Sam.",
+  "source": "Arceuus Library",
+  "type": "Other"
+ },
+ "obtain_bryophyta_essence": {
+  "rate": "1/118",
+  "source": "Bryophyta",
+  "type": "Drop"
+ },
+ "obtain_bucket_of_bloodwood_sap": {
+  "how": "Cut a bloodwood tree (or the engorged bloodwood tree) in Vampyrium with a bucket in your inventory.",
+  "level": "77 Woodcutting",
+  "source": "Bloodwood tree",
+  "type": "Other"
+ },
+ "obtain_bullroarer": {
+  "how": "Give a complete Kharazi Jungle map (Legends' Quest) to the forester outside the Kharazi Jungle.",
+  "source": "Forester",
+  "type": "Reward"
+ },
+ "obtain_burnt_page": {
+  "how": "Supply crate reward from subduing the Wintertodt; also traded from Ignisia for Wintertodt items.",
+  "level": "50 Firemaking",
+  "source": "Reward Cart",
+  "type": "Reward"
+ },
+ "obtain_cadantine": {
+  "how": "Clean a grimy cadantine (65 Herblore); grimy herbs drop from many monsters or grow from seeds (67 Farming).",
+  "level": "65 Herblore",
+  "source": "Grimy cadantine",
+  "type": "Other"
+ },
+ "obtain_cadava_berries": {
+  "rate": "1/32",
+  "source": "Imp",
+  "type": "Drop"
+ },
+ "obtain_caerula_berries": {
+  "how": "Pick caerula bushes just north-east of the Twilight Temple.",
+  "source": "Caerula bush",
+  "type": "Other"
+ },
+ "obtain_calcified_acorn": {
+  "cost": "900 termites",
+  "how": "Bought from Worm Tongue at the Colossal Wyrm Agility course.",
+  "level": "50 Agility",
+  "npcIds": [
+   13981,
+   13982
+  ],
+  "outline": [
+   "Worm Tongue"
+  ],
+  "source": "Worm Tongue",
+  "type": "Shop"
+ },
+ "obtain_calcite": {
+  "rate": "1/6.6",
+  "source": "Ancient Zygomite",
+  "type": "Drop"
+ },
+ "obtain_camulet": {
+  "how": "Quest reward from Enakhra's Lament (Lazim at the Desert Quarry).",
+  "source": "Enakhra's Lament",
+  "type": "Reward"
+ },
+ "obtain_candle": {
+  "rate": "1/26",
+  "source": "Cave bug",
+  "type": "Drop"
+ },
+ "obtain_cape_of_legends": {
+  "cost": "675 coins",
+  "source": "Siegfried Erkle",
+  "type": "Shop"
+ },
+ "obtain_carpenter_set": {
+  "how": "Bought from Amy (Mahogany Homes) with Carpenter points (shirt 800 points).",
+  "npcIds": [
+   6439,
+   7417
+  ],
+  "outline": [
+   "Amy"
+  ],
+  "source": "Amy",
+  "type": "Shop"
+ },
+ "obtain_carrallanger_teleport_tablet": {
+  "how": "Make on the ancient lectern in the Ancient Pyramid (84 Magic, Ancient spellbook): soft clay, 2 law, 2 soul runes.",
+  "level": "84 Magic",
+  "outline": [
+   "Lectern"
+  ],
+  "source": "Ancient lectern",
+  "type": "Made"
+ },
+ "obtain_catherby_teleport_tablet": {
+  "how": "Make on the Lunar lectern (87 Magic, Lunar spellbook): soft clay, 3 law, 10 water, 3 astral runes.",
+  "level": "87 Magic",
+  "outline": [
+   "Lectern"
+  ],
+  "source": "Lunar lectern",
+  "type": "Made"
+ },
+ "obtain_cave_nightshade": {
+  "how": "Spawns in the skavid caves near Gu'Tanoth.",
+  "source": "Skavid caves",
+  "type": "Other"
+ },
+ "obtain_cavern_key": {
+  "rate": "Always",
+  "source": "Experiment",
+  "type": "Drop"
+ },
+ "obtain_celestial_ring_(uncharged)": {
+  "how": "Bought from Dusuri's Star Shop for stardust (from mining shooting stars).",
+  "level": "10 Mining",
+  "npcIds": [
+   10630,
+   10631
+  ],
+  "outline": [
+   "Dusuri"
+  ],
+  "source": "Dusuri",
+  "type": "Shop"
+ },
+ "obtain_cemetery_teleport_tablet": {
+  "how": "Make on the Arceuus lectern (71 Magic, Arceuus spellbook): dark essence block, 1 law, 1 soul, 1 blood.",
+  "level": "71 Magic",
+  "outline": [
+   "Lectern"
+  ],
+  "source": "Arceuus lectern",
+  "type": "Made"
+ },
+ "obtain_chaos_gauntlets": {
+  "how": "Family Crest reward: bring steel gauntlets to Johnathon to enchant them.",
+  "source": "Johnathon",
+  "type": "Reward"
+ },
+ "obtain_charcoal": {
+  "how": "Bought from Obli's General Store (Shilo Village), Jiminua's Jungle Store or Gunslik (Keldagrim).",
+  "source": "Obli",
+  "type": "Shop"
+ },
+ "obtain_chef's_delight(m)": {
+  "level": "54 Cooking",
+  "part": "Chocolate dust",
+  "rate": "Always",
+  "source": "Dessourt",
+  "type": "Drop"
+ },
+ "obtain_chinchompa_tuft": {
+  "how": "Grey chinchompa rare creature part from Hunters' Rumours (Hunter Guild); catch while on a rumour for this creature.",
+  "level": "53 Hunter",
+  "source": "Grey chinchompa",
+  "type": "Other"
+ },
+ "obtain_chugging_barrel": {
+  "how": "Bought from the Mastering Mixology reward shop for Mox, Aga and Lye resin.",
+  "level": "60 Herblore",
+  "npcIds": [
+   13920,
+   13921
+  ],
+  "outline": [
+   "Supervisor Lalo"
+  ],
+  "source": "Mixology rewards",
+  "type": "Shop"
+ },
+ "obtain_circlet_water": {
+  "how": "Reward from Beneath Cursed Sands (Maisa); reclaim from the High Priest of Sophanem for 10,000 coins.",
+  "source": "Maisa",
+  "type": "Reward"
+ },
+ "obtain_claws_of_callisto": {
+  "rate": "1/196",
+  "source": "Callisto",
+  "type": "Drop"
+ },
+ "obtain_climbing_boots": {
+  "cost": "12 coins",
+  "source": "Tenzing",
+  "type": "Shop"
+ },
+ "obtain_coagulated_venom": {
+  "level": "92 Slayer",
+  "rate": "Always",
+  "source": "Araxxor",
+  "type": "Drop"
+ },
+ "obtain_colossal_wyrm_teleport": {
+  "cost": "40 termites",
+  "level": "50 Agility",
+  "npcIds": [
+   13981,
+   13982
+  ],
+  "outline": [
+   "Worm Tongue"
+  ],
+  "source": "Worm Tongue's Wares",
+  "type": "Shop"
+ },
+ "obtain_combat_bracelet_(4)": {
+  "how": "Enchant a dragonstone bracelet (Lvl-5 Enchant, 68 Magic) and charge it in the Heroes' Guild fountain (Legends' Guild area).",
+  "level": "68 Magic",
+  "source": "Enchant",
+  "type": "Made"
+ },
+ "obtain_condensed_gold": {
+  "cost": "10,400,000 coins",
+  "source": "Stonemason",
+  "type": "Shop"
+ },
+ "obtain_cowhide": {
+  "rate": "Always",
+  "source": "Cow",
+  "type": "Drop"
+ },
+ "obtain_crystal_crown": {
+  "how": "Use a crystal of an elf clan (Lliann's Wares, Prifddinas) on a crystal crown (crown from Elven crystal chests).",
+  "source": "Lliann",
+  "type": "Made"
+ },
+ "obtain_crystal_saw": {
+  "how": "Sing a crystal saw seed at the singing bowl in Brimstail's cave (Tree Gnome Stronghold).",
+  "source": "Brimstail",
+  "type": "Made"
+ },
+ "obtain_crystal_tool_seed": {
+  "rate": "1/200",
+  "source": "Zalcano",
+  "type": "Drop"
+ },
+ "obtain_cursed_amulet_of_magic": {
+  "outline": [
+   "Necromancer"
+  ],
+  "rate": "1/5",
+  "source": "Necromancer (Great Kourend)",
+  "type": "Drop"
+ },
+ "obtain_curved_bone": {
+  "rate": "1/5012.5",
+  "source": "Hill Giant",
+  "type": "Drop"
+ },
+ "obtain_cut_jade": {
+  "how": "Cut an uncut jade (13 Crafting); uncut jade from gem rocks, pickpocketing in Civitas illa Fortis or the gem drop table.",
+  "level": "13 Crafting",
+  "source": "Crafting",
+  "type": "Made"
+ },
+ "obtain_cutthroat_flag": {
+  "cost": "2,000 pieces of eight",
+  "source": "Honest Jimmy",
+  "type": "Shop"
+ },
+ "obtain_daeyalt_shard": {
+  "how": "Mine daeyalt essence in the Darkmeyer essence mine (after Sins of the Father).",
+  "level": "60 Mining",
+  "source": "Daeyalt essence",
+  "type": "Other"
+ },
+ "obtain_dark_acorn": {
+  "cost": "3,000 hallowed marks",
+  "level": "52 Agility",
+  "npcIds": [
+   9639,
+   9640
+  ],
+  "outline": [
+   "Mysterious Stranger"
+  ],
+  "source": "Mysterious Stranger (Hallowed Sepulchre)",
+  "type": "Shop"
+ },
+ "obtain_dark_claw": {
+  "rate": "1/25",
+  "source": "Skotizo",
+  "type": "Drop"
+ },
+ "obtain_dark_dye": {
+  "cost": "300 hallowed marks",
+  "level": "52 Agility",
+  "npcIds": [
+   9639,
+   9640
+  ],
+  "outline": [
+   "Mysterious Stranger"
+  ],
+  "source": "Mysterious Hallowed Goods",
+  "type": "Shop"
+ },
+ "obtain_dark_fishing_bait": {
+  "rate": "1/1.6",
+  "source": "Ankou",
+  "type": "Drop"
+ },
+ "obtain_dark_key": {
+  "how": "Loot the chest in the Isle of Souls Dungeon; opens the dark chests under the Crumbling Tower.",
+  "source": "Isle of Souls chest",
+  "type": "Other"
+ },
+ "obtain_dark_totem": {
+  "rate": "1/128",
+  "source": "Skotizo",
+  "type": "Drop"
+ },
+ "obtain_digsite_pendant": {
+  "how": "Enchant a ruby necklace with the Digsite spell (49 Magic, after The Dig Site, learnt from an archaeologist).",
+  "level": "49 Magic",
+  "source": "Enchant",
+  "type": "Made"
+ },
+ "obtain_digsite_vase": {
+  "how": "Quest item: search upstairs in Peer the Seer's house during The Fremennik Trials.",
+  "source": "Peer the Seer",
+  "type": "Other"
+ },
+ "obtain_dirty_arrowtips": {
+  "how": "Loot from rummaging vale offerings (Vale Totems, Auburnvale).",
+  "level": "20 Fletching",
+  "rate": "80/399",
+  "source": "Vale Totems",
+  "type": "Reward"
+ },
+ "obtain_dragon_archer_hat": {
+  "how": "Kill 2,250 chompy birds, then talk to Rantz (Feldip Hills).",
+  "level": "5 Fletching, 30 Cooking, 30 Ranged",
+  "source": "Rantz",
+  "type": "Reward"
+ },
+ "obtain_dragon_axe": {
+  "rate": "1/128",
+  "source": "Dagannoth Prime",
+  "type": "Drop"
+ },
+ "obtain_dragon_bitter": {
+  "how": "Brew at a fermenting vat (39 Cooking): bucket of water, barley malt, 4 Krandorian hops, ale yeast; take with beer glasses.",
+  "source": "Brewing",
+  "type": "Made"
+ },
+ "obtain_dragon_harpoon": {
+  "rate": "1/2,000",
+  "source": "Shadow Wyrm",
+  "type": "Drop"
+ },
+ "obtain_dragon_metal_lump": {
+  "rate": "1/5,000",
+  "source": "Rune dragon",
+  "type": "Drop"
+ },
+ "obtain_dragon_metal_slice": {
+  "rate": "1/5,000",
+  "source": "Adamant dragon",
+  "type": "Drop"
+ },
+ "obtain_dragon_pickaxe": {
+  "rate": "1/256",
+  "source": "Chaos Elemental",
+  "type": "Drop"
+ },
+ "obtain_dragon_warhammer": {
+  "how": "Dropped by Lizardman shamans (rate raised from 1/5,000 in May 2024).",
+  "rate": "1/3,000",
+  "source": "Lizardman shaman",
+  "type": "Drop"
+ },
+ "obtain_drakes_claw": {
+  "rate": "1/512",
+  "source": "Guardian Drake",
+  "type": "Drop"
+ },
+ "obtain_drakes_tooth": {
+  "rate": "1/512",
+  "source": "Guardian Drake",
+  "type": "Drop"
+ },
+ "obtain_draynor_manor_teleport_tablet": {
+  "how": "Make on the Arceuus lectern (17 Magic, Arceuus spellbook): dark essence block, 1 law, 1 earth, 1 water.",
+  "level": "17 Magic",
+  "outline": [
+   "Lectern"
+  ],
+  "source": "Arceuus lectern",
+  "type": "Made"
+ },
+ "obtain_dwarf_multi-cannon_barrel": {
+  "cost": "200,625 coins",
+  "npcIds": [
+   1400
+  ],
+  "outline": [
+   "Nulodion"
+  ],
+  "source": "Multicannon parts for sale",
+  "type": "Shop"
+ },
+ "obtain_dwarf_multi-cannon_base": {
+  "cost": "200,625 coins",
+  "npcIds": [
+   1400
+  ],
+  "outline": [
+   "Nulodion"
+  ],
+  "source": "Multicannon parts for sale",
+  "type": "Shop"
+ },
+ "obtain_dwarf_multi-cannon_furnace": {
+  "cost": "200,625 coins",
+  "npcIds": [
+   1400
+  ],
+  "outline": [
+   "Nulodion"
+  ],
+  "source": "Multicannon parts for sale",
+  "type": "Shop"
+ },
+ "obtain_dwarf_multi-cannon_stand": {
+  "cost": "200,625 coins",
+  "npcIds": [
+   1400
+  ],
+  "outline": [
+   "Nulodion"
+  ],
+  "source": "Multicannon parts for sale",
+  "type": "Shop"
+ },
+ "obtain_dwarf_weed": {
+  "rate": "1/124",
+  "source": "Zulrah",
+  "type": "Drop"
+ },
+ "obtain_dwarven_rock_cake": {
+  "how": "The Fishing Contest / Rock cake: Rohak makes it during the quest (4 Asgoldian ales, egg, water, flour, milk).",
+  "source": "Rohak",
+  "type": "Reward"
+ },
+ "obtain_dynamite": {
+  "cost": "575 coins",
+  "source": "Thirus",
+  "type": "Shop"
+ },
+ "obtain_earth_talisman": {
+  "rate": "1/13",
+  "source": "Dagannoth Prime",
+  "type": "Drop"
+ },
+ "obtain_earthbound_tecpatl": {
+  "how": "Dropped by Earthen Nagua in the Tonali Cavern (Varlamore).",
+  "rate": "1/400",
+  "source": "Earthen Nagua",
+  "type": "Drop"
+ },
+ "obtain_easy_reward_casket": {
+  "how": "Reward casket from finishing an easy clue scroll.",
+  "source": "Treasure Trails",
+  "type": "Reward"
+ },
+ "obtain_eathram_rada_extract": {
+  "how": "Found on a bookshelf in the Arceuus Library (Grand Library); fetched for Professor Gracklebone, Villia or Sam.",
+  "source": "Arceuus Library",
+  "type": "Other"
+ },
+ "obtain_eclipse_red": {
+  "cost": "1,000 coins (value)",
+  "source": "The Flaming Arrow",
+  "type": "Shop"
+ },
+ "obtain_ecto-token": {
+  "how": "Worship at the Ectofuntus (bonemeal + bucket of slime), then claim tokens from a ghost disciple.",
+  "source": "Ghost disciple",
+  "type": "Reward"
+ },
+ "obtain_ectophial": {
+  "cost": "4,600 coins",
+  "source": "Perdu",
+  "type": "Shop"
+ },
+ "obtain_ecumenical_key": {
+  "rate": "1/60",
+  "source": "Goblin",
+  "type": "Drop"
+ },
+ "obtain_egg": {
+  "rate": "1/26",
+  "source": "Imp",
+  "type": "Drop"
+ },
+ "obtain_elder_chaos_set": {
+  "rate": "1/1,419",
+  "source": "Elder Chaos druid",
+  "type": "Drop"
+ },
+ "obtain_elder_venator_fang": {
+  "how": "Dropped by the Maggot King.",
+  "rate": "1/340",
+  "source": "Maggot King",
+  "type": "Drop"
+ },
+ "obtain_elite_reward_casket": {
+  "rate": "Always",
+  "source": "Rock Crab",
+  "type": "Drop"
+ },
+ "obtain_elysian_sigil": {
+  "rate": "1/4,095",
+  "source": "Corporeal Beast",
+  "type": "Drop"
+ },
+ "obtain_enchanted_gem": {
+  "cost": "1 coin",
+  "how": "Bought from any Slayer Master (e.g. Turael, Mazchna).",
+  "outline": [
+   "Turael",
+   "Spria",
+   "Mazchna",
+   "Achtryn",
+   "Vannaka",
+   "Chaeldar",
+   "Konar quo Maten",
+   "Nieve",
+   "Steve",
+   "Duradel",
+   "Kuradal",
+   "Krystilia"
+  ],
+  "source": "Slayer Master",
+  "type": "Shop"
+ },
+ "obtain_enchanted_lyre(i)": {
+  "part": "Raw sea turtle",
+  "rate": "1/100",
+  "source": "Duke Sucellus",
+  "type": "Drop"
+ },
+ "obtain_energy_potion_4": {
+  "how": "Mix at 26 Herblore: harralander + chocolate dust (4 doses from a full potion); also sold in some shops.",
+  "level": "26 Herblore",
+  "source": "Herblore",
+  "type": "Made"
+ },
+ "obtain_enhanced_quetzal_whistle": {
+  "level": "46 Hunter",
+  "part": "Willow logs",
+  "rate": "1/128",
+  "source": "Swamp Crab",
+  "type": "Drop"
+ },
+ "obtain_ensouled_bear_head": {
+  "rate": "1/25",
+  "source": "Black bear",
+  "type": "Drop"
+ },
+ "obtain_ensouled_chaos_druid_head": {
+  "rate": "1/35",
+  "source": "Chaos druid",
+  "type": "Drop"
+ },
+ "obtain_ensouled_dagannoth_head": {
+  "rate": "1/40",
+  "source": "Dagannoth",
+  "type": "Drop"
+ },
+ "obtain_ensouled_demon_head": {
+  "rate": "1/35",
+  "source": "Black demon",
+  "type": "Drop"
+ },
+ "obtain_ensouled_dog_head": {
+  "rate": "1/25",
+  "source": "Guard dog",
+  "type": "Drop"
+ },
+ "obtain_ensouled_dragon_head": {
+  "rate": "1/28",
+  "source": "Brutal green dragon",
+  "type": "Drop"
+ },
+ "obtain_ensouled_goblin_head": {
+  "rate": "1/30",
+  "source": "Goblin",
+  "type": "Drop"
+ },
+ "obtain_ensouled_hellhound_head": {
+  "rate": "1/40",
+  "source": "Hellhound",
+  "type": "Drop"
+ },
+ "obtain_ensouled_horror_head": {
+  "level": "58 Slayer",
+  "rate": "1/30",
+  "source": "Cave horror",
+  "type": "Drop"
+ },
+ "obtain_ensouled_ogre_head": {
+  "rate": "1/30",
+  "source": "Ogre",
+  "type": "Drop"
+ },
+ "obtain_ensouled_scorpion_head": {
+  "rate": "1/25",
+  "source": "Scorpion",
+  "type": "Drop"
+ },
+ "obtain_ensouled_troll_head": {
+  "rate": "1/20",
+  "source": "Ice troll grunt",
+  "type": "Drop"
+ },
+ "obtain_ensouled_unicorn_head": {
+  "rate": "1/35",
+  "source": "Unicorn",
+  "type": "Drop"
+ },
+ "obtain_ent_branch": {
+  "cost": "20 Vale research points",
+  "how": "Bought from the Vale Research Exchange; or common from vale offerings (65/399).",
+  "level": "20 Fletching",
+  "npcIds": [
+   14577,
+   14578,
+   14582
+  ],
+  "outline": [
+   "Ranulph"
+  ],
+  "source": "Vale Research Exchange",
+  "type": "Shop"
+ },
+ "obtain_ent_seed": {
+  "how": "Found while chopping oak or better trees in Varlamore (rate is per log).",
+  "level": "15 Woodcutting",
+  "rate": "1/400",
+  "source": "Woodcutting",
+  "type": "Other"
+ },
+ "obtain_eternal_crystal": {
+  "level": "91 Slayer",
+  "rate": "1/512",
+  "source": "Cerberus",
+  "type": "Drop"
+ },
+ "obtain_eternal_glory": {
+  "how": "Charge an amulet of glory at the Fountain of Rune (Wilderness); each charge has a small chance to make it eternal.",
+  "rate": "1/25,000",
+  "source": "Fountain of Rune",
+  "type": "Made"
+ },
+ "obtain_evil_chicken_piece": {
+  "how": "Offer bird's eggs at the shrine in the Woodcutting Guild (rate is per egg).",
+  "level": "60 Woodcutting",
+  "rate": "1/300",
+  "source": "Bird's nest shrine",
+  "type": "Reward"
+ },
+ "obtain_expert_dragon_archer_hat": {
+  "how": "Kill 4,000 chompy birds, then talk to Rantz (Feldip Hills).",
+  "level": "5 Fletching, 30 Cooking, 30 Ranged",
+  "source": "Rantz",
+  "type": "Reward"
+ },
+ "obtain_expert_hat": {
+  "how": "Kill 1,300 chompy birds, then talk to Rantz (Feldip Hills).",
+  "level": "5 Fletching, 30 Cooking, 30 Ranged",
+  "source": "Rantz",
+  "type": "Reward"
+ },
+ "obtain_expert_mining_gloves": {
+  "how": "Pay Belona in the Mining Guild 40 unidentified minerals to combine mining gloves and superior mining gloves.",
+  "level": "60 Mining",
+  "source": "Belona",
+  "type": "Made"
+ },
+ "obtain_expert_ogre_dragon_archer_hat": {
+  "how": "Kill 3,000 chompy birds, then talk to Rantz (Feldip Hills).",
+  "level": "5 Fletching, 30 Cooking, 30 Ranged",
+  "source": "Rantz",
+  "type": "Reward"
+ },
+ "obtain_expert_potion_pack": {
+  "cost": "400 coins (value)",
+  "level": "60 Herblore",
+  "npcIds": [
+   13920,
+   13921
+  ],
+  "outline": [
+   "Supervisor Lalo"
+  ],
+  "source": "Mixology Rewards",
+  "type": "Shop"
+ },
+ "obtain_fangs_of_venenatis": {
+  "rate": "1/196",
+  "source": "Venenatis",
+  "type": "Drop"
+ },
+ "obtain_fayrg_bones": {
+  "how": "Loot ogre coffins in the Jiggig burial tombs.",
+  "level": "20 Thieving",
+  "source": "Ogre coffin",
+  "type": "Other"
+ },
+ "obtain_feathers": {
+  "rate": "Always",
+  "source": "Seagull",
+  "type": "Drop"
+ },
+ "obtain_fedora": {
+  "rate": "1/128",
+  "source": "Crazy archaeologist",
+  "type": "Drop"
+ },
+ "obtain_feldip_hills_teleport_scroll": {
+  "how": "Treasure Trails reward (all tiers except beginner); open a reward casket.",
+  "source": "Treasure Trails",
+  "type": "Reward"
+ },
+ "obtain_felling_axe_handle": {
+  "cost": "10,000 anima-infused bark",
+  "npcIds": [
+   11427
+  ],
+  "outline": [
+   "Friendly Forester"
+  ],
+  "source": "Forestry Shop",
+  "type": "Shop"
+ },
+ "obtain_fenkenstrain's_castle_teleport_tablet": {
+  "how": "Make on the Arceuus lectern (48 Magic, Arceuus spellbook): dark essence block, 1 law, 1 earth, 1 soul.",
+  "level": "48 Magic",
+  "outline": [
+   "Lectern"
+  ],
+  "source": "Arceuus lectern",
+  "type": "Made"
+ },
+ "obtain_fenkenstrain_castle_teleport": {
+  "how": "Make on the Arceuus lectern (48 Magic, Arceuus spellbook): dark essence block, 1 law, 1 earth, 1 soul.",
+  "level": "48 Magic",
+  "outline": [
+   "Lectern"
+  ],
+  "source": "Arceuus lectern",
+  "type": "Made"
+ },
+ "obtain_fire_feather": {
+  "rate": "Always",
+  "source": "Entrana firebird",
+  "type": "Drop"
+ },
+ "obtain_fire_talisman": {
+  "rate": "1/20",
+  "source": "Fire wizard",
+  "type": "Drop"
+ },
+ "obtain_fish_barrel": {
+  "how": "Fish at the Tempoross reward pool (Ruins of Unkah) with reward permits.",
+  "level": "35 Fishing",
+  "source": "Reward pool",
+  "type": "Reward"
+ },
+ "obtain_fish_sack": {
+  "cost": "1,000 Molch pearls",
+  "how": "Bought from Alry the Angler on Molch Island; pearls come from aerial fishing.",
+  "level": "43 Fishing, 35 Hunter",
+  "source": "Alry the Angler",
+  "type": "Shop"
+ },
+ "obtain_fish_sack_barrel": {
+  "how": "Use a fish sack (Alry the Angler, 1,000 Molch pearls) on a fish barrel (Tempoross reward).",
+  "level": "43 Fishing, 35 Hunter",
+  "source": "Alry the Angler",
+  "type": "Made"
+ },
+ "obtain_fishing_bait": {
+  "rate": "1/3",
+  "source": "Ankou",
+  "type": "Drop"
+ },
+ "obtain_flax": {
+  "rate": "1/21",
+  "source": "Kurask",
+  "type": "Drop"
+ },
+ "obtain_fletching_knife": {
+  "cost": "350 Vale research points",
+  "how": "Bought from the Vale Research Exchange in Auburnvale; or 3/1,000 from vale offerings.",
+  "level": "20 Fletching",
+  "npcIds": [
+   14577,
+   14578,
+   14582
+  ],
+  "outline": [
+   "Ranulph"
+  ],
+  "source": "Vale Research Exchange",
+  "type": "Shop"
+ },
+ "obtain_forester_hat": {
+  "how": "Kill 400 chompy birds, then talk to Rantz (Feldip Hills).",
+  "level": "5 Fletching, 30 Cooking, 30 Ranged",
+  "source": "Rantz",
+  "type": "Reward"
+ },
+ "obtain_forestry_kit": {
+  "cost": "Free",
+  "how": "From the Forestry Shop in Draynor Village, Seers' Village or Prifddinas.",
+  "npcIds": [
+   11427
+  ],
+  "outline": [
+   "Friendly Forester"
+  ],
+  "source": "Forestry Shop",
+  "type": "Shop"
+ },
+ "obtain_forestry_set": {
+  "cost": "1,250 anima-infused bark",
+  "npcIds": [
+   11427
+  ],
+  "outline": [
+   "Friendly Forester"
+  ],
+  "source": "Forestry Shop",
+  "type": "Shop"
+ },
+ "obtain_forgotten_cemetery_teleport": {
+  "how": "Make on the Arceuus lectern (71 Magic, Arceuus spellbook): dark essence block, 1 law, 1 soul, 1 blood.",
+  "level": "71 Magic",
+  "outline": [
+   "Lectern"
+  ],
+  "source": "Arceuus lectern",
+  "type": "Made"
+ },
+ "obtain_fox_fluff": {
+  "how": "Pyre fox rare creature part from Hunters' Rumours (Hunter Guild); catch while on a rumour for this creature.",
+  "level": "57 Hunter",
+  "source": "Pyre fox",
+  "type": "Other"
+ },
+ "obtain_gem_bag_stardust": {
+  "cost": "300 stardust",
+  "level": "10 Mining",
+  "npcIds": [
+   10630,
+   10631
+  ],
+  "outline": [
+   "Dusuri"
+  ],
+  "source": "Dusuri",
+  "type": "Shop"
+ },
+ "obtain_giant_pouch": {
+  "rate": "1/42",
+  "source": "Abyssal leech",
+  "type": "Drop"
+ },
+ "obtain_gilded_smile_flag": {
+  "cost": "2,000 pieces of eight",
+  "source": "Honest Jimmy",
+  "type": "Shop"
+ },
+ "obtain_glarial's_pebble": {
+  "how": "Free Golrie from the dungeon under Tree Gnome Village; he gives the pebble (free replacements).",
+  "source": "Golrie",
+  "type": "Reward"
+ },
+ "obtain_gloves_of_silence": {
+  "how": "Bring 2 dark kebbit furs (Piscatoris falconry, 57 Hunter) and 600 coins to Pellem / the Fancy Clothes Store.",
+  "level": "57 Hunter",
+  "source": "Pellem",
+  "type": "Made"
+ },
+ "obtain_gnome_goggles": {
+  "how": "Gnome Restaurant reward from Captain Daerkin or Captain Ninto (hard deliveries).",
+  "npcIds": [
+   2656
+  ],
+  "outline": [
+   "Aluft Gianne snr."
+  ],
+  "rate": "1/17",
+  "source": "Gnome Restaurant",
+  "type": "Reward"
+ },
+ "obtain_gnome_scarf": {
+  "how": "Gnome Restaurant reward from Captain Daerkin or Captain Ninto (hard deliveries).",
+  "npcIds": [
+   2656
+  ],
+  "outline": [
+   "Aluft Gianne snr."
+  ],
+  "rate": "1/17",
+  "source": "Gnome Restaurant",
+  "type": "Reward"
+ },
+ "obtain_gnomeball": {
+  "how": "Win a game of Gnome Ball (score 5 goals) at the Gnome Stronghold field.",
+  "source": "Gnome ball",
+  "type": "Reward"
+ },
+ "obtain_goblin_mail": {
+  "rate": "1/13",
+  "source": "Goblin",
+  "type": "Drop"
+ },
+ "obtain_gold_bar": {
+  "rate": "1/26",
+  "source": "Skeleton brute",
+  "type": "Drop"
+ },
+ "obtain_gold_coffin": {
+  "how": "Bring gold locks and a broken coffin to Dampe at the Shade Catacombs entrance in Mort'ton.",
+  "source": "Dampe",
+  "type": "Made"
+ },
+ "obtain_gold_leaf": {
+  "cost": "130,000 coins",
+  "source": "Stonemason",
+  "type": "Shop"
+ },
+ "obtain_gold_ring": {
+  "rate": "1/13",
+  "source": "Mummy",
+  "type": "Drop"
+ },
+ "obtain_golden_feather": {
+  "how": "Found on a pedestal in the caves under Eagles' Peak (Eagles' Peak quest).",
+  "source": "Eagles' Peak",
+  "type": "Other"
+ },
+ "obtain_golden_tench": {
+  "how": "Caught while aerial fishing at Lake Molch.",
+  "level": "43 Fishing, 35 Hunter",
+  "rate": "1/20,000",
+  "source": "Aerial fishing",
+  "type": "Other"
+ },
+ "obtain_goldsmith_gauntlets": {
+  "how": "Family Crest reward: bring steel gauntlets to Avan in the Al Kharid mine.",
+  "source": "Avan",
+  "type": "Reward"
+ },
+ "obtain_gout_tuber": {
+  "how": "Rare reward from Tai Bwo Wannai Cleanup.",
+  "source": "Tai Bwo Wannai Cleanup",
+  "type": "Reward"
+ },
+ "obtain_goutweed": {
+  "how": "Sneak past the troll guards in the storeroom under Burntmeat's kitchen (Eadgar's Ruse).",
+  "source": "Troll Stronghold",
+  "type": "Other"
+ },
+ "obtain_graahk_horn_spur": {
+  "how": "Horned graahk rare creature part from Hunters' Rumours (Hunter Guild); catch while on a rumour for this creature.",
+  "level": "46 Hunter",
+  "source": "Horned graahk",
+  "type": "Other"
+ },
+ "obtain_graceful_crafting_kit": {
+  "cost": "650 termites",
+  "how": "Bought from Worm Tongue's Wares (Colossal Wyrm Agility); needs a full graceful set.",
+  "level": "50 Agility",
+  "npcIds": [
+   13981,
+   13982
+  ],
+  "outline": [
+   "Worm Tongue"
+  ],
+  "source": "Worm Tongue",
+  "type": "Shop"
+ },
+ "obtain_graceful_set": {
+  "how": "Bought from Grace in the Rogues' Den with marks of grace (rooftop agility).",
+  "npcIds": [
+   5919
+  ],
+  "outline": [
+   "Grace"
+  ],
+  "source": "Grace",
+  "type": "Shop"
+ },
+ "obtain_granite_gloves": {
+  "level": "75 Slayer",
+  "outline": [
+   "Dusk",
+   "Dawn"
+  ],
+  "rate": "1/500 (2 rolls)",
+  "source": "Grotesque Guardians",
+  "type": "Drop"
+ },
+ "obtain_granite_hammer": {
+  "level": "75 Slayer",
+  "outline": [
+   "Dusk",
+   "Dawn"
+  ],
+  "rate": "1/750 (2 rolls)",
+  "source": "Grotesque Guardians",
+  "type": "Drop"
+ },
+ "obtain_granite_ring": {
+  "level": "75 Slayer",
+  "outline": [
+   "Dusk",
+   "Dawn"
+  ],
+  "rate": "1/500 (2 rolls)",
+  "source": "Grotesque Guardians",
+  "type": "Drop"
+ },
+ "obtain_green_dragon_leather": {
+  "how": "Tan a green dragonhide with a tanner (e.g. Crafting Guild tanner) for 20 coins.",
+  "source": "Tanner",
+  "type": "Made"
+ },
+ "obtain_greenman's_ale(m)": {
+  "how": "Brew at a fermenting vat (29 Cooking): bucket of water, barley malt, 2 harralander, ale yeast; mature batch for (m).",
+  "level": "29 Cooking",
+  "source": "Brewing",
+  "type": "Made"
+ },
+ "obtain_greenman_mask": {
+  "cost": "500 Vale research points",
+  "how": "Bought from the Vale Research Exchange in Auburnvale; or 1/500 from vale offerings.",
+  "level": "20 Fletching",
+  "npcIds": [
+   14577,
+   14578,
+   14582
+  ],
+  "outline": [
+   "Ranulph"
+  ],
+  "source": "Vale Research Exchange",
+  "type": "Shop"
+ },
+ "obtain_gricollar's_can": {
+  "cost": "200 points",
+  "how": "Bought from Farmer Gricoller at the Tithe Farm.",
+  "level": "34 Farming",
+  "source": "Farmer Gricoller",
+  "type": "Shop"
+ },
+ "obtain_grimy_avantoe": {
+  "rate": "1/35",
+  "source": "Aberrant spectre",
+  "type": "Drop"
+ },
+ "obtain_grimy_cadantine": {
+  "rate": "1/52",
+  "source": "Aberrant spectre",
+  "type": "Drop"
+ },
+ "obtain_grimy_dwarf_weed": {
+  "rate": "1/16",
+  "source": "Kree'arra",
+  "type": "Drop"
+ },
+ "obtain_grimy_guam": {
+  "rate": "1/4.3",
+  "source": "Suqah",
+  "type": "Drop"
+ },
+ "obtain_grimy_harralander": {
+  "rate": "1/15",
+  "source": "Aberrant spectre",
+  "type": "Drop"
+ },
+ "obtain_grimy_irit": {
+  "rate": "1/26",
+  "source": "Aberrant spectre",
+  "type": "Drop"
+ },
+ "obtain_grimy_kwuarm": {
+  "rate": "1/6",
+  "source": "Fever spider",
+  "type": "Drop"
+ },
+ "obtain_grimy_lantadyme": {
+  "rate": "1/16",
+  "source": "K'ril Tsutsaroth",
+  "type": "Drop"
+ },
+ "obtain_grimy_marrentill": {
+  "rate": "1/5.2",
+  "source": "Suqah",
+  "type": "Drop"
+ },
+ "obtain_grimy_ranarr": {
+  "rate": "1/16",
+  "source": "Growler",
+  "type": "Drop"
+ },
+ "obtain_grimy_snapdragon": {
+  "rate": "1/16",
+  "source": "General Graardor",
+  "type": "Drop"
+ },
+ "obtain_grimy_tarromin": {
+  "rate": "1/12",
+  "source": "Aberrant spectre",
+  "type": "Drop"
+ },
+ "obtain_grimy_torstol": {
+  "rate": "1/63",
+  "source": "Kalphite Queen",
+  "type": "Drop"
+ },
+ "obtain_guild_history_excerpt": {
+  "how": "Talk to Guildmaster Apatura after 100 Hunters' Rumours.",
+  "level": "46 Hunter",
+  "source": "Guildmaster Apatura",
+  "type": "Reward"
+ },
+ "obtain_guild_hunter_set": {
+  "how": "Opened from hunters' loot sacks earned from Hunters' Rumours.",
+  "level": "46 Hunter",
+  "source": "Hunters' loot sack",
+  "type": "Reward"
+ },
+ "obtain_guthixian_icon": {
+  "cost": "500 Last Man Standing points",
+  "npcIds": [
+   8721
+  ],
+  "outline": [
+   "Justine"
+  ],
+  "source": "Justine's stuff for the Last Shopper Standing",
+  "type": "Shop"
+ },
+ "obtain_hallowed_focus": {
+  "cost": "100 hallowed marks",
+  "level": "52 Agility",
+  "npcIds": [
+   9639,
+   9640
+  ],
+  "outline": [
+   "Mysterious Stranger"
+  ],
+  "source": "Mysterious Hallowed Goods",
+  "type": "Shop"
+ },
+ "obtain_hallowed_grapple": {
+  "cost": "100 hallowed marks",
+  "level": "52 Agility",
+  "npcIds": [
+   9639,
+   9640
+  ],
+  "outline": [
+   "Mysterious Stranger"
+  ],
+  "source": "Mysterious Hallowed Goods",
+  "type": "Shop"
+ },
+ "obtain_hallowed_hammer": {
+  "cost": "100 hallowed marks",
+  "level": "52 Agility",
+  "npcIds": [
+   9639,
+   9640
+  ],
+  "outline": [
+   "Mysterious Stranger"
+  ],
+  "source": "Mysterious Hallowed Goods",
+  "type": "Shop"
+ },
+ "obtain_hallowed_ring": {
+  "cost": "250 hallowed marks",
+  "how": "Bought from the Mysterious Hallowed Goods shop in the Hallowed Sepulchre.",
+  "level": "52 Agility",
+  "npcIds": [
+   9639,
+   9640
+  ],
+  "outline": [
+   "Mysterious Stranger"
+  ],
+  "source": "Hallowed Sepulchre",
+  "type": "Shop"
+ },
+ "obtain_hallowed_sack": {
+  "cost": "100 hallowed marks",
+  "level": "52 Agility",
+  "npcIds": [
+   9639,
+   9640
+  ],
+  "outline": [
+   "Mysterious Stranger"
+  ],
+  "source": "Mysterious Hallowed Goods",
+  "type": "Shop"
+ },
+ "obtain_hallowed_symbol": {
+  "cost": "100 hallowed marks",
+  "level": "52 Agility",
+  "npcIds": [
+   9639,
+   9640
+  ],
+  "outline": [
+   "Mysterious Stranger"
+  ],
+  "source": "Mysterious Hallowed Goods",
+  "type": "Shop"
+ },
+ "obtain_hangover_cure": {
+  "part": "Chocolate dust",
+  "rate": "Always",
+  "source": "Dessourt",
+  "type": "Drop"
+ },
+ "obtain_hard_reward_casket": {
+  "how": "Reward casket from finishing a hard clue scroll.",
+  "source": "Treasure Trails",
+  "type": "Reward"
+ },
+ "obtain_harmony_island_teleport_tablet": {
+  "how": "Make on the Arceuus lectern (65 Magic, Arceuus spellbook): dark essence block, 1 law, 1 soul, 1 nature.",
+  "level": "65 Magic",
+  "outline": [
+   "Lectern"
+  ],
+  "source": "Arceuus lectern",
+  "type": "Made"
+ },
+ "obtain_helmet_of_the_moon": {
+  "source": "Chest (moon key)",
+  "type": "Drop"
+ },
+ "obtain_holy_book": {
+  "how": "Quest gives the empty cover; complete with 4 Saradomin pages from Treasure Trails. Replacement cover from Jossik.",
+  "source": "Horror from the Deep",
+  "type": "Made"
+ },
+ "obtain_holy_elixir": {
+  "rate": "1/171",
+  "source": "Corporeal Beast",
+  "type": "Drop"
+ },
+ "obtain_hosidius_blueprints": {
+  "cost": "500 Carpenter points",
+  "npcIds": [
+   6439,
+   7417
+  ],
+  "outline": [
+   "Amy"
+  ],
+  "source": "Mahogany Homes Reward Shop",
+  "type": "Shop"
+ },
+ "obtain_hosidius_letter": {
+  "how": "Found on a bookshelf in the Arceuus Library (Grand Library); fetched for Professor Gracklebone, Villia or Sam.",
+  "source": "Arceuus Library",
+  "type": "Other"
+ },
+ "obtain_house_key": {
+  "how": "Pickpocket wealthy citizens in Civitas illa Fortis (50 Thieving).",
+  "source": "Wealthy citizen",
+  "type": "Other"
+ },
+ "obtain_hydra_leather": {
+  "level": "95 Slayer",
+  "rate": "1/514",
+  "source": "Alchemical Hydra",
+  "type": "Drop"
+ },
+ "obtain_hydra_tail": {
+  "how": "Dropped by the Alchemical Hydra in the Karuulm Slayer Dungeon (95 Slayer); regular hydras drop it far more rarely.",
+  "level": "95 Slayer",
+  "rate": "1/513",
+  "source": "Alchemical Hydra",
+  "type": "Drop"
+ },
+ "obtain_hydras_claw": {
+  "level": "95 Slayer",
+  "rate": "1/1,001",
+  "source": "Alchemical Hydra",
+  "type": "Drop"
+ },
+ "obtain_ice_gloves": {
+  "rate": "Always",
+  "source": "Ice Queen",
+  "type": "Drop"
+ },
+ "obtain_ice_plateau_teleport": {
+  "how": "Make on the Lunar lectern (89 Magic, Lunar spellbook): soft clay, 3 law, 8 water, 3 astral runes.",
+  "level": "89 Magic",
+  "outline": [
+   "Lectern"
+  ],
+  "source": "Lunar lectern",
+  "type": "Made"
+ },
+ "obtain_ideology_of_darkness": {
+  "how": "Found on a bookshelf in the Arceuus Library (Grand Library); fetched for Professor Gracklebone, Villia or Sam.",
+  "source": "Arceuus Library",
+  "type": "Other"
+ },
+ "obtain_imbued_ring": {
+  "part": "Seers ring",
+  "rate": "1/128",
+  "source": "Dagannoth Prime",
+  "type": "Drop"
+ },
+ "obtain_imcando_hammer": {
+  "cost": "1,250 barronite shards",
+  "how": "Broken hammer from the Barronite Crusher in Camdozaal (1/300 deposits); Ramarno repairs it.",
+  "level": "14 Mining",
+  "source": "Ramarno",
+  "type": "Made"
+ },
+ "obtain_intelligence": {
+  "rate": "Always",
+  "source": "Gang boss",
+  "type": "Drop"
+ },
+ "obtain_iorwerth_teleport_scroll": {
+  "how": "Treasure Trails reward (all tiers except beginner); open a reward casket.",
+  "source": "Treasure Trails",
+  "type": "Reward"
+ },
+ "obtain_jar_of_chemicals": {
+  "level": "95 Slayer",
+  "rate": "1/2,000",
+  "source": "Alchemical Hydra",
+  "type": "Drop"
+ },
+ "obtain_jar_of_darkness": {
+  "rate": "1/200",
+  "source": "Skotizo",
+  "type": "Drop"
+ },
+ "obtain_jar_of_dirt": {
+  "level": "87 Slayer",
+  "rate": "1/1,000",
+  "source": "Kraken",
+  "type": "Drop"
+ },
+ "obtain_jar_of_smoke": {
+  "level": "93 Slayer",
+  "rate": "1/2,000",
+  "source": "Thermonuclear smoke devil",
+  "type": "Drop"
+ },
+ "obtain_jar_of_spirits": {
+  "rate": "1/1,000",
+  "source": "Corporeal Beast",
+  "type": "Drop"
+ },
+ "obtain_jar_of_stone": {
+  "level": "75 Slayer",
+  "outline": [
+   "Dusk",
+   "Dawn"
+  ],
+  "rate": "1/5,000",
+  "source": "Grotesque Guardians",
+  "type": "Drop"
+ },
+ "obtain_jar_of_venom": {
+  "level": "92 Slayer",
+  "rate": "1/1,500",
+  "source": "Araxxor",
+  "type": "Drop"
+ },
+ "obtain_jug_of_blessed_sunfire_wine": {
+  "part": "Sunfire splinters",
+  "rate": "1/23",
+  "source": "The Hueycoatl",
+  "type": "Drop"
+ },
+ "obtain_jug_of_blessed_wine": {
+  "how": "Bless a jug of wine at the exposed altar south of the Teomat (30 Prayer).",
+  "level": "30 Prayer",
+  "source": "Teomat altar",
+  "type": "Made"
+ },
+ "obtain_juniper_charcoal": {
+  "how": "Burn juniper logs in the charcoal furnaces at the Hosidius charcoal burners.",
+  "source": "Charcoal furnace",
+  "type": "Made"
+ },
+ "obtain_karamjan_rum": {
+  "cost": "30 coins (value)",
+  "outline": [
+   "Zambo"
+  ],
+  "source": "Karamja Wines, Spirits, and Beers",
+  "type": "Shop"
+ },
+ "obtain_kasonde's_journal": {
+  "how": "Search the tent east of the chasm in the Kebos Lowlands (starts The Garden of Death).",
+  "source": "Kasonde",
+  "type": "Other"
+ },
+ "obtain_kbd_heads": {
+  "rate": "1/128",
+  "source": "King Black Dragon",
+  "type": "Drop"
+ },
+ "obtain_kebbity_tuft": {
+  "how": "Kebbit rare creature part from Hunters' Rumours (Hunter Guild); catch while on a rumour for this creature.",
+  "level": "46 Hunter",
+  "source": "Kebbit",
+  "type": "Other"
+ },
+ "obtain_khali_brew": {
+  "cost": "5 coins",
+  "source": "Khazard barman",
+  "type": "Shop"
+ },
+ "obtain_kharedst's_memoirs": {
+  "how": "Client of Kourend item from Veos at the Port Piscarilius docks (also Land's End).",
+  "source": "Veos",
+  "type": "Reward"
+ },
+ "obtain_khazard_teleport_tablet": {
+  "how": "Make on the Lunar lectern (78 Magic, Lunar spellbook): soft clay, 2 law, 4 water, 2 astral runes.",
+  "level": "78 Magic",
+  "outline": [
+   "Lectern"
+  ],
+  "source": "Lunar lectern",
+  "type": "Made"
+ },
+ "obtain_killing_of_king": {
+  "how": "Found on a bookshelf in the Arceuus Library (Grand Library); fetched for Professor Gracklebone, Villia or Sam.",
+  "source": "Arceuus Library",
+  "type": "Other"
+ },
+ "obtain_kitten": {
+  "how": "Reward from Gertrude's Cat; further kittens from Gertrude in Varrock.",
+  "source": "Gertrude",
+  "type": "Reward"
+ },
+ "obtain_kraken_tentacle": {
+  "level": "87 Slayer",
+  "rate": "1/400",
+  "source": "Kraken",
+  "type": "Drop"
+ },
+ "obtain_kyatt_set": {
+  "how": "Bring kyatt fur (or tatty kyatt fur) + 200 coins to the Fancy Clothes Store in Varrock, Pellem in the Hunter Guild, or the Prifddinas seamstress. Fur from sabre-toothed kyatts (Rellekka Hunter area).",
+  "level": "55 Hunter",
+  "npcIds": [
+   2887
+  ],
+  "outline": [
+   "Asyff"
+  ],
+  "source": "Fancy Clothes Store",
+  "type": "Made"
+ },
+ "obtain_kyatt_tooth_chip": {
+  "how": "Sabre-toothed kyatt rare creature part from Hunters' Rumours (Hunter Guild); catch while on a rumour for this creature.",
+  "level": "55 Hunter",
+  "source": "Sabre-toothed kyatt",
+  "type": "Other"
+ },
+ "obtain_lantadyme": {
+  "how": "Clean a grimy lantadyme (67 Herblore); grimy herbs drop from many monsters or grow from seeds (73 Farming).",
+  "level": "67 Herblore",
+  "source": "Grimy lantadyme",
+  "type": "Other"
+ },
+ "obtain_large_enriched_bone": {
+  "how": "Deposit cleaned large fossils (or unidentified large fossil) in the mycelium pool on Fossil Island.",
+  "source": "Mycelium pool",
+  "type": "Made"
+ },
+ "obtain_large_jerboa_tail": {
+  "how": "Embertailed jerboa rare creature part from Hunters' Rumours (Hunter Guild); catch while on a rumour for this creature.",
+  "level": "46 Hunter",
+  "source": "Embertailed jerboa",
+  "type": "Other"
+ },
+ "obtain_large_pouch": {
+  "rate": "1/42",
+  "source": "Abyssal leech",
+  "type": "Drop"
+ },
+ "obtain_large_water_container": {
+  "how": "Given by Petrified Pete when entering the Volcanic Mine.",
+  "level": "50 Mining",
+  "source": "Petrified Pete",
+  "type": "Reward"
+ },
+ "obtain_larran's_key": {
+  "rate": "1/58",
+  "source": "Chaos Elemental",
+  "type": "Drop"
+ },
+ "obtain_lava_staff": {
+  "rate": "1/43",
+  "source": "Lava dragon",
+  "type": "Drop"
+ },
+ "obtain_lizardman_fangs": {
+  "rate": "1/4.8",
+  "source": "Lizardman brute",
+  "type": "Drop"
+ },
+ "obtain_log_basket": {
+  "cost": "5,000 anima-infused bark",
+  "npcIds": [
+   11427
+  ],
+  "outline": [
+   "Friendly Forester"
+  ],
+  "source": "Forestry Shop",
+  "type": "Shop"
+ },
+ "obtain_log_brace": {
+  "cost": "3,000 anima-infused bark",
+  "npcIds": [
+   11427
+  ],
+  "outline": [
+   "Friendly Forester"
+  ],
+  "source": "Forestry Shop",
+  "type": "Shop"
+ },
+ "obtain_long_bone": {
+  "rate": "1/400",
+  "source": "Hill Giant",
+  "type": "Drop"
+ },
+ "obtain_loop_half_of_moon_key": {
+  "rate": "1/128",
+  "source": "Gorak",
+  "type": "Drop"
+ },
+ "obtain_lucky_shot_flag": {
+  "cost": "4,000 pieces of eight",
+  "source": "Honest Jimmy",
+  "type": "Shop"
+ },
+ "obtain_magic_stone": {
+  "how": "Bought from the Keldagrim Stonemason (used for the Construction magic stone).",
+  "source": "Stonemason",
+  "type": "Shop"
+ },
+ "obtain_magic_whistle": {
+  "how": "Holy Grail quest item: top floor of Draynor Manor while carrying a holy table napkin.",
+  "source": "Draynor Manor",
+  "type": "Other"
+ },
+ "obtain_mahogany_plank": {
+  "rate": "Always",
+  "source": "The Mimic",
+  "type": "Drop"
+ },
+ "obtain_major_master_scroll_case": {
+  "how": "Earned for completing 75 master clue scrolls.",
+  "source": "Reward casket (master)",
+  "type": "Reward"
+ },
+ "obtain_malediction_shard_1": {
+  "rate": "1/256",
+  "source": "Chaos Fanatic",
+  "type": "Drop"
+ },
+ "obtain_malediction_shard_2": {
+  "rate": "1/256",
+  "source": "Crazy archaeologist",
+  "type": "Drop"
+ },
+ "obtain_malediction_shard_3": {
+  "rate": "1/256",
+  "source": "Scorpia",
+  "type": "Drop"
+ },
+ "obtain_marble_block": {
+  "cost": "325,000 coins",
+  "npcIds": [
+   3098,
+   3889
+  ],
+  "outline": [
+   "Stonemason"
+  ],
+  "source": "Keldagrim",
+  "type": "Shop"
+ },
+ "obtain_marksman_hat": {
+  "how": "Kill 125 chompy birds, then talk to Rantz (Feldip Hills).",
+  "level": "5 Fletching, 30 Cooking, 30 Ranged",
+  "source": "Rantz",
+  "type": "Reward"
+ },
+ "obtain_mask_of_ranul": {
+  "rate": "1/1,000",
+  "source": "Undead Druid",
+  "type": "Drop"
+ },
+ "obtain_medium_clue_anagram_step_a_heart": {
+  "rate": "Always",
+  "source": "Bloodthirsty Cockathrice",
+  "type": "Drop"
+ },
+ "obtain_medium_enriched_bone": {
+  "how": "Deposit cleaned medium fossils in the mycelium pool on Fossil Island.",
+  "source": "Mycelium pool",
+  "type": "Made"
+ },
+ "obtain_medium_pouch": {
+  "rate": "1/42",
+  "source": "Abyssal leech",
+  "type": "Drop"
+ },
+ "obtain_medium_reward_casket": {
+  "how": "Reward casket from finishing a medium clue scroll.",
+  "source": "Treasure Trails",
+  "type": "Reward"
+ },
+ "obtain_mind_altar_teleport_tablet": {
+  "how": "Make on the Arceuus lectern (28 Magic, Arceuus spellbook): dark essence block, 1 law, 2 mind.",
+  "level": "28 Magic",
+  "outline": [
+   "Lectern"
+  ],
+  "source": "Arceuus lectern",
+  "type": "Made"
+ },
+ "obtain_mining_gloves": {
+  "cost": "40 unidentified minerals",
+  "level": "60 Mining",
+  "source": "Belona",
+  "type": "Shop"
+ },
+ "obtain_minor_master_scroll_case": {
+  "how": "Earned for completing 25 master clue scrolls (shows on the 25th master reward casket).",
+  "source": "Reward casket (master)",
+  "type": "Reward"
+ },
+ "obtain_mint_cake": {
+  "how": "Rare Gnome Restaurant reward (Brambickle, Wingstone, Penwie deliveries).",
+  "npcIds": [
+   2656
+  ],
+  "outline": [
+   "Aluft Gianne snr."
+  ],
+  "source": "Gnome Restaurant",
+  "type": "Reward"
+ },
+ "obtain_molch_pearl": {
+  "how": "Earned while aerial fishing on Molch Island (or trade a golden tench to Alry for 100).",
+  "level": "43 Fishing, 35 Hunter",
+  "source": "Aerial fishing",
+  "type": "Other"
+ },
+ "obtain_monk's_robe_bottom": {
+  "how": "Spawns on the table upstairs in Edgeville Monastery (31 Prayer to enter).",
+  "level": "31 Prayer",
+  "source": "Edgeville Monastery",
+  "type": "Other"
+ },
+ "obtain_monk's_robe_top": {
+  "how": "Spawns on the table upstairs in Edgeville Monastery (31 Prayer to enter).",
+  "level": "31 Prayer",
+  "source": "Edgeville Monastery",
+  "type": "Other"
+ },
+ "obtain_monkey_talisman": {
+  "cost": "1,000 coins (value)",
+  "npcIds": [
+   5251
+  ],
+  "outline": [
+   "Tutab"
+  ],
+  "source": "Tutab's Magical Market",
+  "type": "Shop"
+ },
+ "obtain_moonclan_teleport_tablet": {
+  "how": "Make on the Lunar lectern (69 Magic, Lunar spellbook): soft clay, 1 law, 2 earth, 2 astral runes.",
+  "level": "69 Magic",
+  "outline": [
+   "Lectern"
+  ],
+  "source": "Lunar lectern",
+  "type": "Made"
+ },
+ "obtain_moonlight_antelope_hoof_shard": {
+  "how": "Moonlight antelope rare creature part from Hunters' Rumours (Hunter Guild); catch while on a rumour for this creature.",
+  "level": "91 Hunter",
+  "source": "Moonlight antelope",
+  "type": "Other"
+ },
+ "obtain_moonlight_mead(m)": {
+  "how": "Brew in a vat (44 Cooking): water, barley malt, a mushroom, ale yeast; mature it (m), collect with a beer glass.",
+  "level": "44 Cooking",
+  "source": "Brewing vat",
+  "type": "Made"
+ },
+ "obtain_moonlight_moth_wing": {
+  "how": "Moonlight moth rare creature part from Hunters' Rumours (Hunter Guild); catch while on a rumour for this creature.",
+  "level": "85 Hunter",
+  "source": "Moonlight moth",
+  "type": "Other"
+ },
+ "obtain_mort_myre_fungus": {
+  "rate": "1/35",
+  "source": "Zygomite",
+  "type": "Drop"
+ },
+ "obtain_mortton_teleport_scroll": {
+  "how": "Treasure Trails reward (all tiers except beginner); open a reward casket.",
+  "source": "Treasure Trails",
+  "type": "Reward"
+ },
+ "obtain_mos_leharmless_teleport_scroll": {
+  "how": "Treasure Trails reward (all tiers except beginner); open a reward casket.",
+  "source": "Treasure Trails",
+  "type": "Reward"
+ },
+ "obtain_mossy_key": {
+  "rate": "1/150",
+  "source": "Moss giant",
+  "type": "Drop"
+ },
+ "obtain_muddy_key": {
+  "rate": "1/18",
+  "source": "Chaos dwarf",
+  "type": "Drop"
+ },
+ "obtain_mystic_air_water_earth_fire_staff": {
+  "rate": "1/13",
+  "source": "Alchemical Hydra",
+  "type": "Drop"
+ },
+ "obtain_mystic_dust_staff": {
+  "part": "Dust battlestaff",
+  "rate": "1/4,000",
+  "source": "Dust devil",
+  "type": "Drop"
+ },
+ "obtain_mystic_lava_staff": {
+  "rate": "1/35",
+  "source": "Abyssal Sire",
+  "type": "Drop"
+ },
+ "obtain_mystic_mist_staff": {
+  "part": "Mist battlestaff",
+  "rate": "1/3,000",
+  "source": "Waterfiend",
+  "type": "Drop"
+ },
+ "obtain_mystic_mud_staff": {
+  "part": "Mud battlestaff",
+  "rate": "1/128",
+  "source": "Dagannoth Prime",
+  "type": "Drop"
+ },
+ "obtain_mystic_smoke_staff": {
+  "part": "Smoke battlestaff",
+  "rate": "1/512",
+  "source": "Thermonuclear smoke devil",
+  "type": "Drop"
+ },
+ "obtain_mystic_steam_staff": {
+  "part": "Steam battlestaff",
+  "rate": "1/127",
+  "source": "K'ril Tsutsaroth",
+  "type": "Drop"
+ },
+ "obtain_nasty_surprise": {
+  "how": "Trade all four nasty tokens to Nasty Nick at Mistrock.",
+  "source": "Nasty Nick",
+  "type": "Reward"
+ },
+ "obtain_needle": {
+  "cost": "1 coin (value)",
+  "npcIds": [
+   3842
+  ],
+  "outline": [
+   "Rimae Sirsalis"
+  ],
+  "source": "Moon Clan Fine Clothes",
+  "type": "Shop"
+ },
+ "obtain_numulite": {
+  "rate": "1/4.4",
+  "source": "Ammonite Crab",
+  "type": "Drop"
+ },
+ "obtain_oak_plank": {
+  "rate": "1/6.4",
+  "source": "Gangster",
+  "type": "Drop"
+ },
+ "obtain_odium_shard_1": {
+  "rate": "1/256",
+  "source": "Chaos Fanatic",
+  "type": "Drop"
+ },
+ "obtain_odium_shard_2": {
+  "rate": "1/256",
+  "source": "Crazy archaeologist",
+  "type": "Drop"
+ },
+ "obtain_odium_shard_3": {
+  "rate": "1/256",
+  "source": "Scorpia",
+  "type": "Drop"
+ },
+ "obtain_ogre_bowman_hat": {
+  "how": "Kill 30 chompy birds, then talk to Rantz (Feldip Hills).",
+  "level": "5 Fletching, 30 Cooking, 30 Ranged",
+  "source": "Rantz",
+  "type": "Reward"
+ },
+ "obtain_ogre_bowmaster_hat": {
+  "how": "Kill 550 chompy birds, then talk to Rantz (Feldip Hills).",
+  "level": "5 Fletching, 30 Cooking, 30 Ranged",
+  "source": "Rantz",
+  "type": "Reward"
+ },
+ "obtain_ogre_coffin_key": {
+  "rate": "Always",
+  "source": "Zogre",
+  "type": "Drop"
+ },
+ "obtain_ogre_dragon_archer_hat": {
+  "how": "Kill 1,700 chompy birds, then talk to Rantz (Feldip Hills).",
+  "level": "5 Fletching, 30 Cooking, 30 Ranged",
+  "source": "Rantz",
+  "type": "Reward"
+ },
+ "obtain_ogre_expert_hat": {
+  "how": "Kill 1,000 chompy birds, then talk to Rantz (Feldip Hills).",
+  "level": "5 Fletching, 30 Cooking, 30 Ranged",
+  "source": "Rantz",
+  "type": "Reward"
+ },
+ "obtain_ogre_forester_hat": {
+  "how": "Kill 300 chompy birds, then talk to Rantz (Feldip Hills).",
+  "level": "5 Fletching, 30 Cooking, 30 Ranged",
+  "source": "Rantz",
+  "type": "Reward"
+ },
+ "obtain_ogre_marksman_hat": {
+  "how": "Kill 95 chompy birds, then talk to Rantz (Feldip Hills).",
+  "level": "5 Fletching, 30 Cooking, 30 Ranged",
+  "source": "Rantz",
+  "type": "Reward"
+ },
+ "obtain_ogre_woodsman_hat": {
+  "how": "Kill 170 chompy birds, then talk to Rantz (Feldip Hills).",
+  "level": "5 Fletching, 30 Cooking, 30 Ranged",
+  "source": "Rantz",
+  "type": "Reward"
+ },
+ "obtain_ogre_yeoman_hat": {
+  "how": "Kill 50 chompy birds, then talk to Rantz (Feldip Hills).",
+  "level": "5 Fletching, 30 Cooking, 30 Ranged",
+  "source": "Rantz",
+  "type": "Reward"
+ },
+ "obtain_old_boot": {
+  "rate": "1/50",
+  "source": "Cave kraken",
+  "type": "Drop"
+ },
+ "obtain_old_tooth": {
+  "how": "Dig with a trowel at the Digsite, or pan in the panning area.",
+  "source": "Digsite",
+  "type": "Other"
+ },
+ "obtain_onion": {
+  "how": "Pick from an onion field (e.g. north of Rimmington) or buy from a general store for 3 coins.",
+  "source": "Onion",
+  "type": "Other"
+ },
+ "obtain_ore_pack": {
+  "cost": "40 coins (value)",
+  "level": "50 Mining",
+  "npcIds": [
+   11468,
+   11469,
+   11470,
+   11472
+  ],
+  "outline": [
+   "Kovac"
+  ],
+  "source": "Giants' Foundry Reward Shop",
+  "type": "Shop"
+ },
+ "obtain_ornament_kit_from_master_clue": {
+  "how": "Master Treasure Trails reward casket (ornament kits).",
+  "source": "Reward casket (master)",
+  "type": "Reward"
+ },
+ "obtain_ourg_bone": {
+  "rate": "Always",
+  "source": "Slash Bash",
+  "type": "Drop"
+ },
+ "obtain_pearl_barbarian_rod": {
+  "cost": "150 Molch pearls",
+  "how": "Bought from Alry the Angler on Molch Island; needs Barbarian Training fishing.",
+  "level": "43 Fishing, 35 Hunter",
+  "source": "Alry the Angler",
+  "type": "Shop"
+ },
+ "obtain_pearl_fishing_rod": {
+  "cost": "100 Molch pearls",
+  "how": "Bought from Alry the Angler on Molch Island.",
+  "level": "43 Fishing, 35 Hunter",
+  "source": "Alry the Angler",
+  "type": "Shop"
+ },
+ "obtain_pearl_fly_fishing_rod": {
+  "cost": "120 Molch pearls",
+  "how": "Bought from Alry the Angler on Molch Island.",
+  "level": "43 Fishing, 35 Hunter",
+  "source": "Alry the Angler",
+  "type": "Shop"
+ },
+ "obtain_pegasian_crystal": {
+  "level": "91 Slayer",
+  "rate": "1/512",
+  "source": "Cerberus",
+  "type": "Drop"
+ },
+ "obtain_perfected_quetzal_whistle": {
+  "how": "Craft from a perfected quetzal whistle blueprint (hunters' loot sacks), an enhanced quetzal whistle, redwood logs and a knife.",
+  "level": "46 Hunter",
+  "source": "Hunter Guild",
+  "type": "Made"
+ },
+ "obtain_phasmatys_flag": {
+  "cost": "6,000 pieces of eight",
+  "source": "Honest Jimmy",
+  "type": "Shop"
+ },
+ "obtain_piece_shayzien_graceful": {
+  "cost": "15 marks of grace each",
+  "how": "Recolour graceful pieces with Osten in Shayzien.",
+  "source": "Osten",
+  "type": "Shop"
+ },
+ "obtain_pirate's_hook": {
+  "cost": "800 Brimhaven vouchers",
+  "how": "Bought from Pirate Jackie the Fruit at the Brimhaven Agility Arena.",
+  "source": "Pirate Jackie the Fruit",
+  "type": "Shop"
+ },
+ "obtain_piscatoris_teleport_scroll": {
+  "how": "Treasure Trails reward (all tiers except beginner); open a reward casket.",
+  "source": "Treasure Trails",
+  "type": "Reward"
+ },
+ "obtain_plank": {
+  "rate": "Always",
+  "source": "Undead Lumberjack",
+  "type": "Drop"
+ },
+ "obtain_poison_chalice": {
+  "cost": "Free",
+  "how": "From Stankers near the Coal Trucks.",
+  "source": "Stankers",
+  "type": "Shop"
+ },
+ "obtain_poisoned_dynamite": {
+  "how": "Use 3 nightshade/cave nightshade on dynamite (50 Firemaking) at the Blast Mine.",
+  "source": "Firemaking",
+  "type": "Made"
+ },
+ "obtain_pot_of_flour": {
+  "rate": "1/64",
+  "source": "Imp",
+  "type": "Drop"
+ },
+ "obtain_potato": {
+  "rate": "1/22",
+  "source": "Sourhog",
+  "type": "Drop"
+ },
+ "obtain_prescription_goggles": {
+  "cost": "320 coins (value)",
+  "level": "60 Herblore",
+  "npcIds": [
+   13920,
+   13921
+  ],
+  "outline": [
+   "Supervisor Lalo"
+  ],
+  "source": "Mixology Rewards",
+  "type": "Shop"
+ },
+ "obtain_primordial_crystal": {
+  "level": "91 Slayer",
+  "rate": "1/512",
+  "source": "Cerberus",
+  "type": "Drop"
+ },
+ "obtain_proboscis": {
+  "rate": "Always",
+  "source": "Large mosquito",
+  "type": "Drop"
+ },
+ "obtain_prospector_set": {
+  "how": "Bought from Prospector Percy (Motherlode Mine) for golden nuggets; or Volcanic Mine points.",
+  "level": "30 Mining",
+  "npcIds": [
+   6562
+  ],
+  "outline": [
+   "Prospector Percy"
+  ],
+  "source": "Prospector Percy",
+  "type": "Shop"
+ },
+ "obtain_pufferfish": {
+  "rate": "1/15",
+  "source": "Lobstrosity",
+  "type": "Drop"
+ },
+ "obtain_pyramid_top": {
+  "how": "Reach the top of the Agility Pyramid course (pyramid top on the summit).",
+  "level": "30 Agility",
+  "source": "Agility Pyramid",
+  "type": "Other"
+ },
+ "obtain_pyrophosphite": {
+  "rate": "1/6.6",
+  "source": "Ancient Zygomite",
+  "type": "Drop"
+ },
+ "obtain_rada's_census": {
+  "how": "Found on a bookshelf in the Arceuus Library (Grand Library); fetched for Professor Gracklebone, Villia or Sam.",
+  "source": "Arceuus Library",
+  "type": "Other"
+ },
+ "obtain_rada's_journey": {
+  "how": "Found on a bookshelf in the Arceuus Library (Grand Library); fetched for Professor Gracklebone, Villia or Sam.",
+  "source": "Arceuus Library",
+  "type": "Other"
+ },
+ "obtain_ranging_potion_3": {
+  "rate": "1/9",
+  "source": "Kalphite Queen",
+  "type": "Drop"
+ },
+ "obtain_rare_enriched_bone": {
+  "how": "Deposit cleaned rare fossils in the mycelium pool on Fossil Island.",
+  "source": "Mycelium pool",
+  "type": "Made"
+ },
+ "obtain_raurg_bones": {
+  "how": "Loot ogre coffins in the Jiggig burial tombs.",
+  "level": "20 Thieving",
+  "source": "Ogre coffin",
+  "type": "Other"
+ },
+ "obtain_raw_beef": {
+  "cost": "1 coin (value)",
+  "npcIds": [
+   6478
+  ],
+  "outline": [
+   "Rufus"
+  ],
+  "source": "Rufus' Meat Emporium",
+  "type": "Shop"
+ },
+ "obtain_reagent_pouch": {
+  "cost": "100 coins (value)",
+  "level": "60 Herblore",
+  "npcIds": [
+   13920,
+   13921
+  ],
+  "outline": [
+   "Supervisor Lalo"
+  ],
+  "source": "Mixology Rewards",
+  "type": "Shop"
+ },
+ "obtain_red_bead": {
+  "rate": "1/26",
+  "source": "Imp",
+  "type": "Drop"
+ },
+ "obtain_red_burgh_token": {
+  "how": "Reward token from the Burgh de Rott Ramble minigame (red route).",
+  "source": "Burgh de Rott Ramble",
+  "type": "Reward"
+ },
+ "obtain_red_cape": {
+  "rate": "1/128",
+  "source": "Goblin",
+  "type": "Drop"
+ },
+ "obtain_red_chinchompa_tuft": {
+  "how": "Carnivorous chinchompa rare creature part from Hunters' Rumours (Hunter Guild); catch while on a rumour for this creature.",
+  "level": "63 Hunter",
+  "source": "Carnivorous chinchompa",
+  "type": "Other"
+ },
+ "obtain_red_dragon_leather": {
+  "how": "Tan a red dragonhide with a tanner (e.g. Crafting Guild tanner) for 20 coins.",
+  "source": "Tanner",
+  "type": "Made"
+ },
+ "obtain_red_dye": {
+  "cost": "6 coins",
+  "npcIds": [
+   1478
+  ],
+  "outline": [
+   "Oronwen"
+  ],
+  "source": "Lletya",
+  "type": "Shop"
+ },
+ "obtain_red_salamander_claw": {
+  "how": "Red salamander rare creature part from Hunters' Rumours (Hunter Guild); catch while on a rumour for this creature.",
+  "level": "59 Hunter",
+  "source": "Red salamander",
+  "type": "Other"
+ },
+ "obtain_red_temple_trekking_token": {
+  "how": "Reward token from the Temple Trekking minigame (red route).",
+  "source": "Temple Trekking",
+  "type": "Reward"
+ },
+ "obtain_red_topaz": {
+  "how": "Cut an uncut red topaz (16 Crafting); uncut from gem rocks or pickpocketing in Civitas illa Fortis.",
+  "level": "16 Crafting",
+  "source": "Crafting",
+  "type": "Made"
+ },
+ "obtain_red_topaz_machete": {
+  "cost": "2,400 trading sticks",
+  "source": "Gabooty",
+  "type": "Shop"
+ },
+ "obtain_red_vine_worm": {
+  "how": "Picked from the red worm vine in McGrubor's Wood (Fairy Tale I).",
+  "source": "Red vine worm",
+  "type": "Other"
+ },
+ "obtain_ricktor's_diary(7)": {
+  "how": "Found on a bookshelf in the Arceuus Library (Grand Library); fetched for Professor Gracklebone, Villia or Sam.",
+  "source": "Arceuus Library",
+  "type": "Other"
+ },
+ "obtain_ring_of_charos": {
+  "how": "Quest reward from Creature of Fenkenstrain.",
+  "source": "Creature of Fenkenstrain",
+  "type": "Reward"
+ },
+ "obtain_ring_of_endurance": {
+  "how": "Reward from the Grand Hallowed Coffin on floor 5 of the Hallowed Sepulchre.",
+  "level": "92 Agility",
+  "source": "Grand Hallowed Coffin",
+  "type": "Reward"
+ },
+ "obtain_ring_of_the_gods": {
+  "rate": "1/512",
+  "source": "Vet'ion",
+  "type": "Drop"
+ },
+ "obtain_rogue_kit": {
+  "how": "Crack the safe at the end of the Rogues' Den maze.",
+  "level": "50 Thieving, 50 Agility",
+  "npcIds": [
+   3189
+  ],
+  "outline": [
+   "Brian O'Richard"
+  ],
+  "rate": "3/8",
+  "source": "Rogues' Den",
+  "type": "Reward"
+ },
+ "obtain_rogue_set": {
+  "how": "Rogue's equipment crate from cracking the safe at the end of the Rogues' Den maze.",
+  "level": "50 Thieving, 50 Agility",
+  "npcIds": [
+   3189
+  ],
+  "outline": [
+   "Brian O'Richard"
+  ],
+  "rate": "5/8",
+  "source": "Rogues' Den",
+  "type": "Reward"
+ },
+ "obtain_rotten_food": {
+  "how": "Search the backpack deep in the Jiggig crypts during Zogre Flesh Eaters; or rotted by ghasts in Mort Myre.",
+  "source": "Jiggig",
+  "type": "Other"
+ },
+ "obtain_royal_seed_pod": {
+  "cost": "2 coins",
+  "how": "Monkey Madness II reward; more from King Narnode Shareen.",
+  "source": "King Narnode Shareen",
+  "type": "Shop"
+ },
+ "obtain_runite_ore": {
+  "rate": "1/23",
+  "source": "Zulrah",
+  "type": "Drop"
+ },
+ "obtain_sack_onions_10": {
+  "how": "Fill an empty sack with 10 onions (picked from onion fields).",
+  "source": "Onion",
+  "type": "Made"
+ },
+ "obtain_sacred_oil_4": {
+  "how": "Make in Mort'ton: refine olive oil at the burning altar (Shades of Mort'ton) into sacred oil.",
+  "source": "Sacred oil",
+  "type": "Made"
+ },
+ "obtain_saltpetre": {
+  "how": "Dig the saltpetre deposits north-east of the Woodcutting Guild (Hosidius) with a spade.",
+  "source": "Saltpetre deposits",
+  "type": "Other"
+ },
+ "obtain_salve_amulet": {
+  "how": "After Haunted Mine: chisel the crystal outcrop at the bottom of the Abandoned Mine for a salve shard, then string it (ball of wool).",
+  "level": "35 Crafting",
+  "source": "Crystal outcrop",
+  "type": "Made"
+ },
+ "obtain_salve_amulet_e": {
+  "how": "Use a salve amulet on Tarn's diary (Lair of Tarn Razorlor miniquest) to enchant it.",
+  "level": "35 Crafting, 40 Slayer",
+  "source": "Tarn",
+  "type": "Made"
+ },
+ "obtain_salve_graveyard_teleport_tablet": {
+  "how": "Make on the Arceuus lectern (40 Magic, Arceuus spellbook): dark essence block, 1 law, 2 soul.",
+  "level": "40 Magic",
+  "outline": [
+   "Lectern"
+  ],
+  "source": "Arceuus lectern",
+  "type": "Made"
+ },
+ "obtain_sandworms": {
+  "cost": "90 coins (value)",
+  "npcIds": [
+   6964
+  ],
+  "outline": [
+   "Tynan"
+  ],
+  "source": "Tynan's Fishing Supplies",
+  "type": "Shop"
+ },
+ "obtain_sanfew_serum_4": {
+  "rate": "1/32",
+  "source": "Kraken",
+  "type": "Drop"
+ },
+ "obtain_saradomins_tear": {
+  "cost": "150 Last Man Standing points",
+  "npcIds": [
+   8721
+  ],
+  "outline": [
+   "Justine"
+  ],
+  "source": "Justine's stuff for the Last Shopper Standing",
+  "type": "Shop"
+ },
+ "obtain_scroll_of_redirection": {
+  "cost": "775 Nightmare Zone points",
+  "how": "Bought from Dominic Onion's Nightmare Zone rewards.",
+  "npcIds": [
+   1120
+  ],
+  "outline": [
+   "Dominic Onion"
+  ],
+  "source": "Nightmare Zone",
+  "type": "Shop"
+ },
+ "obtain_scroll_sack": {
+  "how": "Earned after 100 master Treasure Trails; replacements from Watson.",
+  "source": "Watson",
+  "type": "Reward"
+ },
+ "obtain_scurrius_pet": {
+  "how": "Scurrius's pet, Scurry; only the top damage dealer rolls for it.",
+  "rate": "1/3,000",
+  "source": "Scurrius",
+  "type": "Drop"
+ },
+ "obtain_scurrius_spine": {
+  "rate": "1/33",
+  "source": "Scurrius",
+  "type": "Drop"
+ },
+ "obtain_secateurs_blade": {
+  "cost": "20 anima-infused bark",
+  "npcIds": [
+   11427
+  ],
+  "outline": [
+   "Friendly Forester"
+  ],
+  "source": "Forestry Shop",
+  "type": "Shop"
+ },
+ "obtain_seed_box": {
+  "cost": "250 points",
+  "how": "Bought from Farmer Gricoller at the Tithe Farm.",
+  "level": "34 Farming",
+  "source": "Farmer Gricoller",
+  "type": "Shop"
+ },
+ "obtain_seed_pack": {
+  "how": "Reward for completing a farming contract from Guildmaster Jane (Farming Guild).",
+  "level": "45 Farming",
+  "source": "Guildmaster Jane",
+  "type": "Reward"
+ },
+ "obtain_seren_halo": {
+  "cost": "450 Last Man Standing points",
+  "npcIds": [
+   8721
+  ],
+  "outline": [
+   "Justine"
+  ],
+  "source": "Justine's stuff for the Last Shopper Standing",
+  "type": "Shop"
+ },
+ "obtain_shayzia_military_orders": {
+  "how": "Search the broken altar in the Shayzia Ruin, north-east of Shayzien.",
+  "source": "Broken altar",
+  "type": "Other"
+ },
+ "obtain_shield_right_half": {
+  "cost": "750,000 coins",
+  "npcIds": [
+   3961
+  ],
+  "outline": [
+   "Siegfried Erkle"
+  ],
+  "source": "Legends' Guild",
+  "type": "Shop"
+ },
+ "obtain_silk": {
+  "rate": "1/13",
+  "source": "Mummy",
+  "type": "Drop"
+ },
+ "obtain_sinister_key": {
+  "rate": "1/13",
+  "source": "Salarin the twisted",
+  "type": "Drop"
+ },
+ "obtain_skills_necklace_(4)": {
+  "how": "Enchant a dragonstone necklace with Lvl-5 Enchant, then charge it at the Legends' Guild totem pole or the Fountain of Rune.",
+  "level": "68 Magic",
+  "npcIds": [
+   3961
+  ],
+  "outline": [
+   "Siegfried Erkle"
+  ],
+  "source": "Legends' Guild",
+  "type": "Made"
+ },
+ "obtain_skull": {
+  "how": "Dig with a spade on the grave behind Draynor Manor.",
+  "source": "Draynor Manor grave",
+  "type": "Other"
+ },
+ "obtain_skull_of_vetion": {
+  "rate": "1/196",
+  "source": "Vet'ion",
+  "type": "Drop"
+ },
+ "obtain_slayer's_enchantment": {
+  "rate": "1/30",
+  "source": "Chaos Elemental",
+  "type": "Drop"
+ },
+ "obtain_slayer's_respite(m)": {
+  "how": "Brew in a vat (59 Cooking): water, barley malt, wildblood hops, ale yeast; mature it (m), collect with a beer glass.",
+  "level": "59 Cooking",
+  "source": "Brewing vat",
+  "type": "Made"
+ },
+ "obtain_small_enriched_bone": {
+  "how": "Deposit cleaned small fossils in the mycelium pool on Fossil Island.",
+  "source": "Mycelium pool",
+  "type": "Made"
+ },
+ "obtain_small_pouch": {
+  "rate": "1/42",
+  "source": "Abyssal leech",
+  "type": "Drop"
+ },
+ "obtain_smouldering_stone": {
+  "how": "Dropped by Cerberus in Taverley Dungeon (91 Slayer); hellhounds drop it far more rarely.",
+  "rate": "1/512",
+  "source": "Cerberus",
+  "type": "Drop"
+ },
+ "obtain_snapdragon": {
+  "level": "59 Herblore",
+  "rate": "1/124",
+  "source": "Zulrah",
+  "type": "Drop"
+ },
+ "obtain_soaked_page": {
+  "how": "Fish at the Tempoross reward pool with reward permits; or trade items to the Retired sailor.",
+  "level": "35 Fishing",
+  "source": "Reward pool",
+  "type": "Reward"
+ },
+ "obtain_soft_clay": {
+  "rate": "1/11",
+  "source": "Frost Nagua",
+  "type": "Drop"
+ },
+ "obtain_soft_clay_pack_stardust": {
+  "cost": "150 stardust",
+  "level": "10 Mining",
+  "npcIds": [
+   10630,
+   10631
+  ],
+  "outline": [
+   "Dusuri"
+  ],
+  "source": "Dusuri",
+  "type": "Shop"
+ },
+ "obtain_soul_bearer": {
+  "how": "Bear Your Soul miniquest: the Key Master repairs the damaged soul bearer (Arceuus Library).",
+  "source": "Key Master",
+  "type": "Reward"
+ },
+ "obtain_soul_journey": {
+  "how": "Found on a bookshelf in the Arceuus Library (Grand Library); fetched for Professor Gracklebone, Villia or Sam.",
+  "source": "Arceuus Library",
+  "type": "Other"
+ },
+ "obtain_spectral_sigil": {
+  "rate": "1/1,365",
+  "source": "Corporeal Beast",
+  "type": "Drop"
+ },
+ "obtain_spirit_Seed": {
+  "rate": "1/248",
+  "source": "Zulrah",
+  "type": "Drop"
+ },
+ "obtain_spirit_angler_set": {
+  "cost": "120 coins (value)",
+  "level": "35 Fishing",
+  "source": "Gita Prymes",
+  "type": "Shop"
+ },
+ "obtain_spirit_flakes": {
+  "how": "Loot from the Tempoross reward pool (Ruins of Unkah).",
+  "level": "35 Fishing",
+  "source": "Reward pool",
+  "type": "Reward"
+ },
+ "obtain_splitbark_set": {
+  "rate": "1/26",
+  "source": "Chaos Fanatic",
+  "type": "Drop"
+ },
+ "obtain_star_fragment": {
+  "cost": "3,000 stardust",
+  "level": "10 Mining",
+  "npcIds": [
+   10630,
+   10631
+  ],
+  "outline": [
+   "Dusuri"
+  ],
+  "source": "Dusuri's Star Shop",
+  "type": "Shop"
+ },
+ "obtain_stardust": {
+  "how": "Mine a shooting star (crashed star) for stardust.",
+  "level": "10 Mining",
+  "source": "Shooting star",
+  "type": "Other"
+ },
+ "obtain_steel_ring": {
+  "how": "Dropped by the Deranged archaeologist on Fossil Island.",
+  "rate": "3/131",
+  "source": "Deranged archaeologist",
+  "type": "Drop"
+ },
+ "obtain_stolen_circlet": {
+  "how": "Steal artefacts from Port Piscarilius houses (49 Thieving) for Captain Khaled.",
+  "level": "49 Thieving",
+  "source": "Stealing artefacts",
+  "type": "Other"
+ },
+ "obtain_stolen_family_heirloom": {
+  "how": "Steal artefacts from Port Piscarilius houses (49 Thieving) for Captain Khaled.",
+  "level": "49 Thieving",
+  "source": "Stealing artefacts",
+  "type": "Other"
+ },
+ "obtain_stolen_garnet_ring": {
+  "how": "Steal artefacts from Port Piscarilius houses (49 Thieving) for Captain Khaled.",
+  "level": "49 Thieving",
+  "source": "Stealing artefacts",
+  "type": "Other"
+ },
+ "obtain_stolen_jewelry_box": {
+  "how": "Steal artefacts from Port Piscarilius houses (49 Thieving) for Captain Khaled.",
+  "level": "49 Thieving",
+  "source": "Stealing artefacts",
+  "type": "Other"
+ },
+ "obtain_stolen_pendant": {
+  "how": "Steal artefacts from Port Piscarilius houses (49 Thieving) for Captain Khaled.",
+  "level": "49 Thieving",
+  "source": "Stealing artefacts",
+  "type": "Other"
+ },
+ "obtain_strange_old_lockpick": {
+  "how": "Bought from the Mysterious Hallowed Goods shop for hallowed marks.",
+  "level": "52 Agility",
+  "npcIds": [
+   9639,
+   9640
+  ],
+  "outline": [
+   "Mysterious Stranger"
+  ],
+  "source": "Hallowed Sepulchre",
+  "type": "Shop"
+ },
+ "obtain_strength_potion_4": {
+  "rate": "1/24",
+  "source": "Bryophyta",
+  "type": "Drop"
+ },
+ "obtain_stronghold_security_boots": {
+  "how": "Claim from the Cradle of Life, level 4 of the Stronghold of Security (needs Jagex account + 2FA).",
+  "source": "Cradle of Life",
+  "type": "Reward"
+ },
+ "obtain_stuffed_big_harpoonfish": {
+  "how": "Pay the taxidermist (Canifis) to stuff a big harpoonfish (Tempoross reward).",
+  "level": "35 Fishing",
+  "source": "Taxidermist",
+  "type": "Made"
+ },
+ "obtain_stymphike_carcass": {
+  "how": "Dropped by Stymphikes in Morytania (82 Hunter).",
+  "level": "82 Hunter",
+  "rate": "Always",
+  "source": "Stymphike",
+  "type": "Drop"
+ },
+ "obtain_sunfire_splinters": {
+  "rate": "1/23",
+  "source": "The Hueycoatl",
+  "type": "Drop"
+ },
+ "obtain_sunlight_antelope_hoof": {
+  "how": "Sunlight antelope rare creature part from Hunters' Rumours (Hunter Guild); catch while on a rumour for this creature.",
+  "level": "72 Hunter",
+  "source": "Sunlight antelope",
+  "type": "Other"
+ },
+ "obtain_superior_mining_gloves": {
+  "cost": "100 unidentified minerals",
+  "level": "60 Mining",
+  "source": "Belona",
+  "type": "Shop"
+ },
+ "obtain_swamp_lizard_claw": {
+  "how": "Swamp lizard rare creature part from Hunters' Rumours (Hunter Guild); catch while on a rumour for this creature.",
+  "level": "46 Hunter",
+  "source": "Swamp lizard",
+  "type": "Other"
+ },
+ "obtain_swampbark_set": {
+  "part": "Splitbark body",
+  "rate": "1/26",
+  "source": "Chaos Fanatic",
+  "type": "Drop"
+ },
+ "obtain_swift_blade": {
+  "cost": "350 Last Man Standing points",
+  "npcIds": [
+   8721
+  ],
+  "outline": [
+   "Justine"
+  ],
+  "source": "Justine's stuff for the Last Shopper Standing",
+  "type": "Shop"
+ },
+ "obtain_tackle_box": {
+  "how": "Fish at the Tempoross reward pool (Ruins of Unkah) with reward permits.",
+  "level": "35 Fishing",
+  "source": "Reward pool",
+  "type": "Reward"
+ },
+ "obtain_tattered_request_note": {
+  "how": "Talk to Guildmaster Apatura after 50 Hunters' Rumours.",
+  "level": "46 Hunter",
+  "source": "Guildmaster Apatura",
+  "type": "Reward"
+ },
+ "obtain_teleport_anchoring_scroll": {
+  "rate": "1/20,000",
+  "source": "Zombie pirate",
+  "type": "Drop"
+ },
+ "obtain_the_stuff": {
+  "cost": "5 coins (value)",
+  "npcIds": [
+   1816
+  ],
+  "outline": [
+   "Honest Jimmy"
+  ],
+  "source": "Honest Jimmy's House of Stuff",
+  "type": "Shop"
+ },
+ "obtain_toadflax": {
+  "level": "30 Herblore",
+  "rate": "1/124",
+  "source": "Zulrah",
+  "type": "Drop"
+ },
+ "obtain_tome_of_water": {
+  "how": "Fish at the Tempoross reward pool (Ruins of Unkah) with reward permits.",
+  "level": "35 Fishing",
+  "source": "Reward pool",
+  "type": "Reward"
+ },
+ "obtain_tooth_half_of_moon_key": {
+  "rate": "1/128",
+  "source": "Gorak",
+  "type": "Drop"
+ },
+ "obtain_trading_sticks": {
+  "rate": "1/4.8",
+  "source": "Jogre",
+  "type": "Drop"
+ },
+ "obtain_transportation_incantations": {
+  "how": "Found on a bookshelf in the Arceuus Library (Grand Library); fetched for Professor Gracklebone, Villia or Sam.",
+  "source": "Arceuus Library",
+  "type": "Other"
+ },
+ "obtain_transvergence_theory": {
+  "how": "Found on a bookshelf in the Arceuus Library (Grand Library); fetched for Professor Gracklebone, Villia or Sam.",
+  "source": "Arceuus Library",
+  "type": "Other"
+ },
+ "obtain_treachery_of_royalty": {
+  "how": "Found on a bookshelf in the Arceuus Library (Grand Library); fetched for Professor Gracklebone, Villia or Sam.",
+  "source": "Arceuus Library",
+  "type": "Other"
+ },
+ "obtain_treasonous_ring": {
+  "rate": "1/512",
+  "source": "Venenatis",
+  "type": "Drop"
+ },
+ "obtain_treasure_flag": {
+  "cost": "5,000 pieces of eight",
+  "source": "Honest Jimmy",
+  "type": "Shop"
+ },
+ "obtain_tristessa's_tragedy": {
+  "how": "Found on a bookshelf in the Arceuus Library (Grand Library); fetched for Professor Gracklebone, Villia or Sam.",
+  "source": "Arceuus Library",
+  "type": "Other"
+ },
+ "obtain_twill_accord": {
+  "how": "Found on a bookshelf in the Arceuus Library (Grand Library); fetched for Professor Gracklebone, Villia or Sam.",
+  "source": "Arceuus Library",
+  "type": "Other"
+ },
+ "obtain_tyrannical_ring": {
+  "rate": "1/512",
+  "source": "Callisto",
+  "type": "Drop"
+ },
+ "obtain_ultracompost": {
+  "how": "Use 25 volcanic ash on supercompost (in a compost bin or bucket); volcanic ash from mining ash piles on Fossil Island.",
+  "source": "Farming",
+  "type": "Made"
+ },
+ "obtain_uncut_dragonstone": {
+  "rate": "1/18",
+  "source": "Zalcano",
+  "type": "Drop"
+ },
+ "obtain_uncut_jade": {
+  "rate": "1/55",
+  "source": "H.A.M. Guard",
+  "type": "Drop"
+ },
+ "obtain_uncut_onyx": {
+  "cost": "300,000 Tokkul",
+  "npcIds": [
+   2184
+  ],
+  "outline": [
+   "TzHaar-Hur-Lek"
+  ],
+  "source": "TzHaar-Hur-Lek's Ore and Gem Store",
+  "type": "Shop"
+ },
+ "obtain_uncut_opal": {
+  "rate": "1/55",
+  "source": "H.A.M. Guard",
+  "type": "Drop"
+ },
+ "obtain_unholy_book": {
+  "how": "Quest gives the empty cover; complete with 4 Zamorak pages from Treasure Trails. Replacement cover from Jossik.",
+  "source": "Horror from the Deep",
+  "type": "Made"
+ },
+ "obtain_unicorn_horn": {
+  "rate": "Always",
+  "source": "Unicorn",
+  "type": "Drop"
+ },
+ "obtain_unidentified_large_fossil": {
+  "cost": "300 mermaid's tears",
+  "source": "Mairin",
+  "type": "Shop"
+ },
+ "obtain_unidentified_medium_fossil": {
+  "cost": "200 mermaid's tears",
+  "source": "Mairin",
+  "type": "Shop"
+ },
+ "obtain_unidentified_rare_fossil": {
+  "cost": "500 numulite",
+  "source": "Fossil Collector",
+  "type": "Shop"
+ },
+ "obtain_unidentified_small_fossil": {
+  "cost": "100 mermaid's tears",
+  "source": "Mairin",
+  "type": "Shop"
+ },
+ "obtain_vanilla_pod": {
+  "how": "Picked from the vanilla plant in the Kharazi Jungle (Recipe for Disaster).",
+  "source": "Vanilla pod",
+  "type": "Other"
+ },
+ "obtain_varlamore_envoy": {
+  "how": "Found on a bookshelf in the Arceuus Library (Grand Library); fetched for Professor Gracklebone, Villia or Sam.",
+  "source": "Arceuus Library",
+  "type": "Other"
+ },
+ "obtain_void_seal(8)": {
+  "cost": "10 Pest Control commendation points",
+  "how": "Bought from a Void Knight at the Void Knight Outpost.",
+  "source": "Void Knight",
+  "type": "Shop"
+ },
+ "obtain_voidwaker_blade": {
+  "rate": "1/360",
+  "source": "Vet'ion",
+  "type": "Drop"
+ },
+ "obtain_voidwaker_gem": {
+  "rate": "1/360",
+  "source": "Venenatis",
+  "type": "Drop"
+ },
+ "obtain_voidwaker_hilt": {
+  "rate": "1/360",
+  "source": "Callisto",
+  "type": "Drop"
+ },
+ "obtain_warrior_guild_token": {
+  "rate": "Always",
+  "source": "Animated Bronze Armour",
+  "type": "Drop"
+ },
+ "obtain_water_orb": {
+  "rate": "1/16",
+  "source": "Waterfiend",
+  "type": "Drop"
+ },
+ "obtain_weapon_poison++": {
+  "rate": "1/13",
+  "source": "Chaos Elemental",
+  "type": "Drop"
+ },
+ "obtain_west_ardougne_teleport_tablet": {
+  "how": "Make on the Arceuus lectern (61 Magic, Arceuus spellbook): dark essence block, 2 law, 2 soul.",
+  "level": "61 Magic",
+  "outline": [
+   "Lectern"
+  ],
+  "source": "Arceuus lectern",
+  "type": "Made"
+ },
+ "obtain_white_bead": {
+  "rate": "1/26",
+  "source": "Imp",
+  "type": "Drop"
+ },
+ "obtain_white_butterfly_wing": {
+  "how": "Snowy knight rare creature part from Hunters' Rumours (Hunter Guild); catch while on a rumour for this creature.",
+  "level": "46 Hunter",
+  "source": "Snowy knight",
+  "type": "Other"
+ },
+ "obtain_wilderness_crab_teleport": {
+  "cost": "63 coins (value)",
+  "npcIds": [
+   8721
+  ],
+  "outline": [
+   "Justine"
+  ],
+  "source": "Justine's stuff for the Last Shopper Standing",
+  "type": "Shop"
+ },
+ "obtain_winter_sq'irk_fruit": {
+  "how": "Pick in the winter garden of the Sorceress's Garden (Al Kharid).",
+  "source": "Sorceress's Garden",
+  "type": "Other"
+ },
+ "obtain_wintertodt_parable": {
+  "how": "Found on a bookshelf in the Arceuus Library (Grand Library); fetched for Professor Gracklebone, Villia or Sam.",
+  "source": "Arceuus Library",
+  "type": "Other"
+ },
+ "obtain_woodsman_hat": {
+  "how": "Kill 225 chompy birds, then talk to Rantz (Feldip Hills).",
+  "level": "5 Fletching, 30 Cooking, 30 Ranged",
+  "source": "Rantz",
+  "type": "Reward"
+ },
+ "obtain_wrath_talisman": {
+  "rate": "1/50",
+  "source": "Vorkath",
+  "type": "Drop"
+ },
+ "obtain_xeric's_talisman": {
+  "rate": "1/250",
+  "source": "Lizardman",
+  "type": "Drop"
+ },
+ "obtain_xerics_talisman": {
+  "rate": "1/250",
+  "source": "Lizardman",
+  "type": "Drop"
+ },
+ "obtain_yellow_bead": {
+  "rate": "1/26",
+  "source": "Imp",
+  "type": "Drop"
+ },
+ "obtain_yellow_burgh_token": {
+  "how": "Reward token from the Burgh de Rott Ramble minigame (yellow route).",
+  "source": "Burgh de Rott Ramble",
+  "type": "Reward"
+ },
+ "obtain_yellow_cape": {
+  "part": "Black cape",
+  "rate": "Always",
+  "source": "Highwayman",
+  "type": "Drop"
+ },
+ "obtain_yellow_dye": {
+  "how": "Give Aggie (Draynor Village) 2 onions and 5 coins; also sold by Oronwen in Lletya.",
+  "source": "Aggie",
+  "type": "Made"
+ },
+ "obtain_yellow_temple_trekking_token": {
+  "how": "Reward token from the Temple Trekking minigame (yellow route).",
+  "source": "Temple Trekking",
+  "type": "Reward"
+ },
+ "obtain_yeoman_hat": {
+  "how": "Kill 70 chompy birds, then talk to Rantz (Feldip Hills) with the ogre bow in your inventory.",
+  "level": "5 Fletching, 30 Cooking, 30 Ranged",
+  "source": "Rantz",
+  "type": "Reward"
+ },
+ "obtain_zalcano_shard": {
+  "rate": "1/750",
+  "source": "Zalcano",
+  "type": "Drop"
+ },
+ "obtain_zamorak's_grapes": {
+  "how": "Harvest grapes in the Hosidius vinery with Bologa's blessing in your inventory.",
+  "source": "Hosidius vinery",
+  "type": "Other"
+ },
+ "obtain_zealot's_set": {
+  "how": "Loot the gold chests in the Shade Catacombs under Mort'ton.",
+  "source": "Gold chest",
+  "type": "Other"
+ },
+ "obtain_zenyte_shard": {
+  "how": "Dropped by demonic gorillas in the Crash Site Cavern (after Monkey Madness II); tortured gorillas drop it far more rarely.",
+  "rate": "1/300",
+  "source": "Demonic gorilla",
+  "type": "Drop"
+ },
+ "obtain_zombie_pirate_key": {
+  "rate": "1/24",
+  "source": "Zombie pirate",
+  "type": "Drop"
+ },
+ "phantom_muspah_equip_venator_bow": {
+  "level": "80 Ranged",
+  "part": "Venator shard",
+  "rate": "1/100",
+  "source": "Phantom Muspah",
+  "type": "Drop"
+ },
+ "phantom_muspah_obtain_pet": {
+  "rate": "1/2,500",
+  "source": "Phantom Muspah",
+  "type": "Drop"
+ },
+ "phantom_muspah_obtain_venator_shard": {
+  "rate": "1/100",
+  "source": "Phantom Muspah",
+  "type": "Drop"
+ },
+ "phosani_equip_eldritch_staff": {
+  "level": "82 Magic, 50 Hitpoints",
+  "part": "Eldritch orb",
+  "rate": "1/960",
+  "source": "The Nightmare",
+  "type": "Drop"
+ },
+ "phosani_equip_harmonised_staff": {
+  "level": "82 Magic, 50 Hitpoints",
+  "part": "Harmonised orb",
+  "rate": "1/960",
+  "source": "The Nightmare",
+  "type": "Drop"
+ },
+ "phosani_equip_inq_hauberk": {
+  "level": "70 Strength, 30 Defence",
+  "rate": "1/420",
+  "source": "The Nightmare",
+  "type": "Drop"
+ },
+ "phosani_equip_inq_helm": {
+  "level": "70 Strength, 30 Defence",
+  "rate": "1/420",
+  "source": "The Nightmare",
+  "type": "Drop"
+ },
+ "phosani_equip_inq_mace": {
+  "level": "75 Attack",
+  "rate": "1/750",
+  "source": "The Nightmare",
+  "type": "Drop"
+ },
+ "phosani_equip_inq_plateskirt": {
+  "level": "70 Strength, 30 Defence",
+  "rate": "1/420",
+  "source": "The Nightmare",
+  "type": "Drop"
+ },
+ "phosani_equip_nightmare_staff": {
+  "level": "72 Magic, 50 Hitpoints",
+  "rate": "1/300",
+  "source": "The Nightmare",
+  "type": "Drop"
+ },
+ "phosani_equip_volatile_staff": {
+  "level": "82 Magic, 50 Hitpoints",
+  "part": "Volatile orb",
+  "rate": "1/960",
+  "source": "The Nightmare",
+  "type": "Drop"
+ },
+ "phosani_obtain_pet": {
+  "rate": "1/800",
+  "source": "The Nightmare",
+  "type": "Drop"
+ },
+ "royal_titans_equip_twinflame": {
+  "how": "Combine the fire and ice element staff crowns dropped by the Royal Titans (Branda and Eldric).",
+  "level": "60 Magic",
+  "outline": [
+   "Branda the Fire Queen",
+   "Eldric the Ice King"
+  ],
+  "source": "Royal Titans",
+  "type": "Made"
+ },
+ "royal_titans_obtain_deadeye": {
+  "how": "Dropped by Eldric the Ice King (Royal Titans); only until you read one.",
+  "rate": "1/75",
+  "source": "Eldric the Ice King",
+  "type": "Drop"
+ },
+ "royal_titans_obtain_mystic_vigour": {
+  "how": "Dropped by Branda the Fire Queen (Royal Titans); only until you read one.",
+  "rate": "1/75",
+  "source": "Branda the Fire Queen",
+  "type": "Drop"
+ },
+ "royal_titans_obtain_pet": {
+  "how": "Royal Titans pet (Bran); twice as likely (1/1,500) if you Sacrifice the loot.",
+  "outline": [
+   "Branda the Fire Queen",
+   "Eldric the Ice King"
+  ],
+  "rate": "1/3,000",
+  "source": "Royal Titans",
+  "type": "Drop"
+ },
+ "sarachnis_equip_cudgel": {
+  "level": "65 Attack",
+  "rate": "1/384",
+  "source": "Sarachnis",
+  "type": "Drop"
+ },
+ "sarachnis_obtain_pet": {
+  "rate": "1/3,000",
+  "source": "Sarachnis",
+  "type": "Drop"
+ },
+ "steal_rusty_sword": {
+  "rate": "1/28",
+  "source": "H.A.M. Guard",
+  "type": "Drop"
+ },
+ "toa_equip_elidinis_ward": {
+  "level": "80 Magic, 80 Prayer, 80 Defence",
+  "part": "Arcane sigil",
+  "rate": "1/1,365",
+  "source": "Corporeal Beast",
+  "type": "Drop"
+ },
+ "toa_equip_lightbearer": {
+  "how": "Tombs of Amascut unique, from the reward chest at the end of the raid.",
+  "source": "Tombs of Amascut",
+  "type": "Reward"
+ },
+ "toa_equip_mask_of_rebirth": {
+  "how": "Strange chest in the hidden room of Osmumten's burial chamber (Tombs of Amascut), opened with the ancient key.",
+  "source": "Strange chest",
+  "type": "Reward"
+ },
+ "toa_equip_masori_assembler": {
+  "level": "70 Ranged",
+  "source": "Ava's Assembler + Masori crafting kit"
+ },
+ "toa_equip_masori_body": {
+  "level": "80 Ranged, 30 Defence",
+  "rate": "1/12",
+  "source": "Tombs of Amascut",
+  "type": "Other"
+ },
+ "toa_equip_masori_chaps": {
+  "how": "Tombs of Amascut unique, from the reward chest at the end of the raid.",
+  "level": "80 Ranged, 30 Defence",
+  "source": "Tombs of Amascut",
+  "type": "Reward"
+ },
+ "toa_equip_masori_mask": {
+  "level": "80 Ranged, 30 Defence",
+  "rate": "1/12",
+  "source": "Tombs of Amascut",
+  "type": "Other"
+ },
+ "toa_equip_osmumtens_fang": {
+  "how": "Tombs of Amascut unique, from the reward chest at the end of the raid.",
+  "level": "82 Attack",
+  "source": "Tombs of Amascut",
+  "type": "Reward"
+ },
+ "toa_equip_tumekens_shadow": {
+  "how": "Tombs of Amascut unique, from the reward chest (Chest room) at the end of the raid.",
+  "level": "85 Magic",
+  "source": "Tombs of Amascut",
+  "type": "Reward"
+ },
+ "toa_mix_menaphite_remedy": {
+  "how": "Mix at 88 Herblore: add a lily of the sands to an unfinished dwarf weed potion.",
+  "level": "88 Herblore",
+  "source": "Herblore",
+  "type": "Made"
+ },
+ "toa_obtain_divine_rune_pouch": {
+  "how": "Stitch a thread of Elidinis (Tombs of Amascut reward) to a rune pouch (75 Crafting).",
+  "level": "75 Crafting",
+  "source": "Tombs of Amascut",
+  "type": "Made"
+ },
+ "toa_obtain_keris_amascut": {
+  "how": "Combine a keris partisan (Beneath Cursed Sands; more from Selim, 60,000 coins) with a jewel of Amascut (Tombs of Amascut chest, 1/50 to 3/50).",
+  "source": "Tombs of Amascut",
+  "type": "Made"
+ },
+ "toa_obtain_keris_breaching": {
+  "how": "Attach the breach of the scarab (Tombs of Amascut reward) to a keris partisan.",
+  "source": "Tombs of Amascut",
+  "type": "Made"
+ },
+ "toa_obtain_keris_corruption": {
+  "how": "Attach the eye of the corruptor (Tombs of Amascut reward) to a keris partisan.",
+  "source": "Tombs of Amascut",
+  "type": "Made"
+ },
+ "toa_obtain_keris_sun": {
+  "how": "Attach the jewel of the sun (Tombs of Amascut reward) to a keris partisan.",
+  "source": "Tombs of Amascut",
+  "type": "Made"
+ },
+ "toa_obtain_warden_pet": {
+  "how": "Pet from the Tombs of Amascut reward chest.",
+  "source": "Tombs of Amascut",
+  "type": "Reward"
+ },
+ "tob_equip_avernic_defender": {
+  "level": "70 Attack, 70 Defence",
+  "part": "Dragon defender",
+  "rate": "1/100",
+  "source": "Cyclops",
+  "type": "Drop"
+ },
+ "tob_equip_ghrazi_rapier": {
+  "level": "75 Attack",
+  "source": "Theatre of Blood",
+  "type": "Drop"
+ },
+ "tob_equip_justiciar_chestguard": {
+  "level": "75 Defence",
+  "source": "Theatre of Blood",
+  "type": "Drop"
+ },
+ "tob_equip_justiciar_faceguard": {
+  "how": "Theatre of Blood unique, from the monumental chest in Verzik's vault.",
+  "level": "75 Defence",
+  "source": "Monumental chest",
+  "type": "Reward"
+ },
+ "tob_equip_justiciar_legguards": {
+  "how": "Theatre of Blood unique, from the monumental chest in Verzik's vault.",
+  "level": "75 Defence",
+  "source": "Monumental chest",
+  "type": "Reward"
+ },
+ "tob_equip_sanguinesti_staff": {
+  "level": "82 Magic",
+  "source": "Theatre of Blood",
+  "type": "Drop"
+ },
+ "tob_equip_scythe_of_vitur": {
+  "level": "75 Attack, 75 Strength",
+  "source": "Theatre of Blood",
+  "type": "Drop"
+ },
+ "tob_mix_bastion_potion": {
+  "how": "Mix at 80 Herblore: cadantine + vial of blood, then add a wine of Zamorak (Theatre of Blood supply potion).",
+  "level": "80 Herblore",
+  "source": "Herblore",
+  "type": "Made"
+ },
+ "tob_obtain_holy_kit": {
+  "how": "Tertiary reward from finishing Hard Mode Theatre of Blood.",
+  "source": "Monumental chest",
+  "type": "Reward"
+ },
+ "tob_obtain_pet": {
+  "how": "Pet from the Theatre of Blood monumental chest; the rate depends on your performance in the raid.",
+  "rate": "1/650 to 1/6,500",
+  "source": "Monumental chest",
+  "type": "Reward"
+ },
+ "tob_obtain_sanguine_dust": {
+  "how": "Tertiary reward from finishing Hard Mode Theatre of Blood.",
+  "source": "Monumental chest",
+  "type": "Reward"
+ },
+ "tob_obtain_sanguine_kit": {
+  "how": "Tertiary reward from finishing Hard Mode Theatre of Blood.",
+  "source": "Monumental chest",
+  "type": "Reward"
+ },
+ "vardorvis_equip_blood_sceptre": {
+  "level": "75 Magic, 60 Strength, 50 Attack",
+  "part": "Ancient icon",
+  "rate": "1/50",
+  "source": "Phantom Muspah",
+  "type": "Drop"
+ },
+ "vardorvis_equip_ultor_ring": {
+  "part": "Ultor vestige",
+  "rate": "1/1,088",
+  "source": "Vardorvis",
+  "type": "Drop"
+ },
+ "vardorvis_obtain_axe_head": {
+  "rate": "1/1,088",
+  "source": "Vardorvis",
+  "type": "Drop"
+ },
+ "vardorvis_obtain_pet": {
+  "rate": "1/3,000",
+  "source": "Vardorvis",
+  "type": "Drop"
+ },
+ "vardorvis_obtain_strangled_tablet": {
+  "rate": "1/25.5",
+  "source": "Vardorvis",
+  "type": "Drop"
+ },
+ "vorkath_equip_avas_assembler": {
+  "how": "Take Vorkath's head (Vorkath, guaranteed on your 50th kill), 75 mithril arrows and Ava's accumulator to Ava in Draynor Manor.",
+  "level": "70 Ranged",
+  "source": "Ava",
+  "type": "Made"
+ },
+ "vorkath_equip_dragonbone_necklace": {
+  "level": "70 Prayer",
+  "rate": "1/1,000",
+  "source": "Vorkath",
+  "type": "Drop"
+ },
+ "vorkath_equip_dragonfire_ward": {
+  "level": "75 Defence, 70 Ranged",
+  "part": "Skeletal visage",
+  "rate": "1/5,000",
+  "source": "Vorkath",
+  "type": "Drop"
+ },
+ "vorkath_obtain_pet": {
+  "rate": "1/3,000",
+  "source": "Vorkath",
+  "type": "Drop"
+ },
+ "whisperer_equip_bellator_ring": {
+  "part": "Bellator vestige",
+  "rate": "1/512",
+  "source": "The Whisperer",
+  "type": "Drop"
+ },
+ "whisperer_equip_shadow_sceptre": {
+  "level": "75 Magic, 60 Strength, 50 Attack",
+  "part": "Ancient icon",
+  "rate": "1/50",
+  "source": "Phantom Muspah",
+  "type": "Drop"
+ },
+ "whisperer_obtain_pet": {
+  "rate": "1/2,000",
+  "source": "The Whisperer",
+  "type": "Drop"
+ },
+ "whisperer_obtain_sirenic_tablet": {
+  "rate": "1/26.2",
+  "source": "The Whisperer",
+  "type": "Drop"
+ },
+ "whisperer_obtain_sirens_staff": {
+  "rate": "1/512",
+  "source": "The Whisperer",
+  "type": "Drop"
+ },
+ "yama_equip_oathplate_chest": {
+  "how": "Dropped by Yama.",
+  "level": "78 Defence",
+  "rate": "1/600 (solo)",
+  "source": "Yama",
+  "type": "Drop"
+ },
+ "yama_equip_oathplate_helm": {
+  "how": "Dropped by Yama.",
+  "level": "78 Defence",
+  "rate": "1/600 (solo)",
+  "source": "Yama",
+  "type": "Drop"
+ },
+ "yama_equip_oathplate_legs": {
+  "how": "Dropped by Yama.",
+  "level": "78 Defence",
+  "rate": "1/600 (solo)",
+  "source": "Yama",
+  "type": "Drop"
+ },
+ "yama_equip_soulflame_horn": {
+  "how": "Dropped by Yama.",
+  "level": "80 Magic",
+  "rate": "1/300 (solo)",
+  "source": "Yama",
+  "type": "Drop"
+ },
+ "yama_obtain_oathplate": {
+  "how": "Dropped by Yama, any Oathplate piece.",
+  "rate": "1/600 (solo)",
+  "source": "Yama",
+  "type": "Drop"
+ },
+ "yama_obtain_pet": {
+  "how": "Yama's pet, on its own roll after the loot.",
+  "rate": "1/2,500",
+  "source": "Yama",
+  "type": "Drop"
+ },
+ "yama_obtain_sigil_bottom": {
+  "how": "Defeat Yama after signing the Contract of Glyphic Attenuation.",
+  "source": "Yama",
+  "type": "Drop"
+ },
+ "yama_obtain_sigil_left": {
+  "how": "Defeat Yama after signing the Contract of Sensory Clouding.",
+  "source": "Yama",
+  "type": "Drop"
+ },
+ "yama_obtain_sigil_middle": {
+  "how": "Defeat Yama after signing the Contract of Bloodied Blows.",
+  "source": "Yama",
+  "type": "Drop"
+ },
+ "yama_obtain_sigil_right": {
+  "how": "Defeat Yama after signing the Contract of Divine Severance.",
+  "source": "Yama",
+  "type": "Drop"
+ },
+ "yama_obtain_sigil_top": {
+  "how": "Defeat Yama after signing the Contract of Forfeit Breath.",
+  "source": "Yama",
+  "type": "Drop"
+ },
+ "zulrah_equip_blowpipe": {
+  "level": "75 Ranged",
+  "part": "Tanzanite fang",
+  "rate": "1/1,024",
+  "source": "Zulrah",
+  "type": "Drop"
+ },
+ "zulrah_equip_serpent_helm": {
+  "level": "75 Defence",
+  "part": "Serpentine visage",
+  "rate": "1/1,024",
+  "source": "Zulrah",
+  "type": "Drop"
+ },
+ "zulrah_equip_trident": {
+  "level": "75 Magic",
+  "part": "Magic fang",
+  "rate": "1/1,024",
+  "source": "Zulrah",
+  "type": "Drop"
+ },
+ "zulrah_obtain_mutagen": {
+  "rate": "1/13,106",
+  "source": "Zulrah",
+  "type": "Drop"
+ },
+ "zulrah_obtain_pet": {
+  "rate": "1/4,000",
+  "source": "Zulrah",
+  "type": "Drop"
+ }
+}

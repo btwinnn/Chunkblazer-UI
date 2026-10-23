@@ -1,0 +1,102 @@
+// ChunkBlazer UI — RuneLite Plugin Hub build file.
+//
+// Standalone Gradle build for a Plugin Hub submission. The Hub only ever reads this
+// build.gradle. ChunkBlazer UI only talks to ChunkBlazer over RuneLite's plugin messages,
+// so it needs nothing of ChunkBlazer's to build. Package is com.chunkblazerui.
+
+plugins {
+	id 'java'
+	id 'checkstyle'
+}
+
+repositories {
+	mavenLocal()
+	maven {
+		url = 'https://repo.runelite.net'
+		content {
+			includeGroupByRegex("net\\.runelite.*")
+		}
+	}
+	mavenCentral()
+}
+
+def runeLiteVersion = 'latest.release'
+
+dependencies {
+	// RuneLite client is provided at runtime by the host; it also brings Gson, so
+	// ChunkBlazer UI ships ZERO new dependencies.
+	compileOnly group: 'net.runelite', name: 'client', version: runeLiteVersion
+
+	compileOnly 'org.projectlombok:lombok:1.18.30'
+	annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+	testImplementation group: 'net.runelite', name: 'client', version: runeLiteVersion
+	testImplementation group: 'net.runelite', name: 'jshell', version: runeLiteVersion
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+	testImplementation 'org.mockito:mockito-core:5.11.0'
+	testImplementation 'org.mockito:mockito-junit-jupiter:5.11.0'
+	testCompileOnly 'org.projectlombok:lombok:1.18.30'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
+}
+
+group = 'com.chunkblazerui'
+version = '1.0.0'
+
+tasks.withType(JavaCompile).configureEach {
+	options.encoding = 'UTF-8'
+	options.release.set(11)
+}
+
+test {
+	useJUnitPlatform()
+}
+
+// Dev only: if ChunkBlazer (and ChunkBlazer GPU) are checked out next to this project
+// (IdeaProjects/Chunkblazer, IdeaProjects/Chunkblazer-GPU), compile their source into the
+// test classpath so the dev launcher can run them all together, with your local changes
+// to each. Never part of the Plugin Hub build (that only reads src/main).
+['../Chunkblazer/src/main', '../Chunkblazer-GPU/src/main'].each { path ->
+	def dir = file(path)
+	if (dir.exists())
+	{
+		sourceSets.test.java.srcDir(new File(dir, 'java'))
+		sourceSets.test.resources.srcDir(new File(dir, 'resources'))
+		// That code is linted in its own project; don't hold this one to it.
+		tasks.matching { it.name == 'checkstyleTest' }.configureEach { enabled = false }
+	}
+}
+
+// Vendored copy of RuneLite's own ruleset (config/checkstyle/, pulled from
+// runelite/runelite @ master). The Plugin Hub CI holds submissions to these
+// rules, so run them locally FIRST:  ./gradlew checkstyleMain
+// config_loc resolves to configDirectory (config/checkstyle) so the
+// ${config_loc}/suppressions.xml reference in checkstyle.xml is satisfied.
+checkstyle {
+	toolVersion = '10.12.7'
+	configFile = file('config/checkstyle/checkstyle.xml')
+	configDirectory = file('config/checkstyle')
+	// Surface every violation rather than stopping at the first handful.
+	maxErrors = 0
+	maxWarnings = 0
+}
+
+// checkstyle 10.12.7 transitively pulls BOTH guava and the ancient
+// google-collections (via doxia -> plexus), which declare the same capability
+// and make Gradle's resolution fail before checkstyle can even run. Prefer
+// guava. This only affects our local pre-submission lint runner.
+configurations.checkstyle {
+	resolutionStrategy.capabilitiesResolution.withCapability('com.google.collections:google-collections') {
+		select('com.google.guava:guava:0')
+	}
+}
+
+// The dev workflow deliberately skips linting for fast iteration; this build's
+// checkstyle is the pre-submission gate, so let it report the full list instead
+// of failing the run on the first file. Flip to false once the list is clean.
+tasks.withType(Checkstyle).configureEach {
+	ignoreFailures = true
+	reports {
+		xml.required = true
+		html.required = true
+	}
+}
