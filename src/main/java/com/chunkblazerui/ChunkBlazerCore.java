@@ -491,6 +491,16 @@ public class ChunkBlazerCore
 		return task == null ? -1 : integer(kept("getActiveFightStartTick", id(task)), -1);
 	}
 
+	/**
+	 * A boss challenge task's attempt: "1|" while one is going, "0|" when not, with what
+	 * broke it after the bar; null before any.
+	 */
+	public String challengeStatus(NuzlockeTask task)
+	{
+		Object status = task == null ? null : kept("challengeStatus", id(task));
+		return status == null ? null : status.toString();
+	}
+
 	/** The plugin the UI's overlays belong to (RuneLite's Overlay(Plugin)). */
 	public Plugin owner()
 	{

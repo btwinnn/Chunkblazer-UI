@@ -66,6 +66,7 @@ import net.runelite.api.events.WidgetLoaded;
 import net.runelite.api.gameval.InterfaceID;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.config.Keybind;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.SkillIconManager;
@@ -603,7 +604,8 @@ public class TaskWindow implements TaskWindowHook
 	/** Which plugin a Settings row's key belongs to: the completion popup is ChunkBlazer's. */
 	private static String groupOf(String key)
 	{
-		return "showTaskCompletionPopup".equals(key) ? "chunkblazer" : ChunkBlazerUiConfig.GROUP;
+		return "showTaskCompletionPopup".equals(key) || "worldMapTasksKey".equals(key) || "worldMapUnlockKey".equals(key)
+			? "chunkblazer" : ChunkBlazerUiConfig.GROUP;
 	}
 	private static final int SKILL_CELL_H = 24;
 	private static final int CHIP_COLUMNS = 3;
@@ -1341,6 +1343,8 @@ public class TaskWindow implements TaskWindowHook
 		final int min;
 		final int max;
 		final int step;
+		// A key to press, set by clicking it and pressing the new key.
+		boolean keybind;
 		// A small button beside the control (e.g. "Test" by Card design), or null.
 		String actionLabel;
 		Runnable action;
@@ -1382,6 +1386,30 @@ public class TaskWindow implements TaskWindowHook
 		return new Setting(label, description, key, current, choices, 0, 0, 0);
 	}
 
+	private static Setting keybind(String label, String key, Supplier<Object> current, String description)
+	{
+		Setting setting = new Setting(label, description, key, current, null, 0, 0, 0);
+		setting.keybind = true;
+		return setting;
+	}
+
+	/** One of ChunkBlazer's own keybinds (the world map's), or its default. */
+	private Keybind coreKey(String key, Keybind fallback)
+	{
+		Keybind value = configManager.getConfiguration("chunkblazer", key, Keybind.class);
+		return value != null ? value : fallback;
+	}
+
+	// The keybind waiting for its new key (its config key), and the key pressed so far.
+	private volatile String listeningKey;
+	private volatile Keybind pressedKey;
+
+	@Override
+	public boolean capturingKey()
+	{
+		return listeningKey != null && open && settingsOpen;
+	}
+
 	/**
 	 * ChunkBlazer UI's own settings, in sections. Everything the core plugin uses too (chunk
 	 * borders, popups, sounds, chat messages), colours, keybinds and server sync are in
@@ -1416,12 +1444,19 @@ public class TaskWindow implements TaskWindowHook
 					"Outline items your tasks need (gear, tools) in your inventory, bank and shops."),
 				toggle("Right-click Tasks menu", "taskRightClickMenu", config::taskRightClickMenu,
 					"Adds a Tasks submenu when right-clicking NPCs and objects your tasks need, to track one."),
-				choice("Task tooltip key", "taskTooltipKey", config::taskTooltipKey, TaskTooltipKey.values(),
-					"Hold this key over an NPC or object to list its tasks in a tooltip. Click to change."),
 				toggle("Auto-track tasks", "autoTrackTasks", config::autoTrackTasks,
 					"Using an NPC or object a task needs tracks that task. A task you picked yourself is kept."),
 				toggle("Shortest path", "shortestPath", config::shortestPath,
 					"Paths through your unlocked chunks (Path here, the map's path key, Quest Helper) and the quest Calc button."),
+				heading("Keybinds"),
+				keybind("View chunk tasks", "worldMapTasksKey", () -> coreKey("worldMapTasksKey", Keybind.CTRL),
+					"Hold this and click an unlocked chunk on the world map to see its tasks. Click, then press the new key."),
+				keybind("Unlock chunk", "worldMapUnlockKey", () -> coreKey("worldMapUnlockKey", Keybind.SHIFT),
+					"Hold this and click a chunk next to yours on the world map to unlock it. Click, then press the new key."),
+				keybind("Set path", "pathKey", config::pathKey,
+					"Hold this and click the world map to set a path there, or clear the one showing. Click, then press the new key."),
+				choice("Task tooltip key", "taskTooltipKey", config::taskTooltipKey, TaskTooltipKey.values(),
+					"Hold this key over an NPC or object to list its tasks in a tooltip (an assist). Click to change."),
 				heading("World map"),
 				toggle("Colour legend", "showChunkLegend", config::showChunkLegend,
 					"Show a key explaining the chunk colours in the corner of the world map."),
@@ -1545,6 +1580,30 @@ public class TaskWindow implements TaskWindowHook
 			// Just a button (Restart), no setting behind it.
 			drawAction(graphics, fm, setting, right + 4, row, mx, my, clip, textY);
 			controlWidth = fm.stringWidth(setting.actionLabel) + 14;
+		}
+		else if (setting.keybind)
+		{
+			boolean listening = setting.key.equals(listeningKey);
+			Keybind pressed = pressedKey;
+			String text = listening ? (pressed != null ? pressed.toString() : "Press a key...") : String.valueOf(value);
+			controlWidth = Math.min(Math.max(fm.stringWidth("Press a key...") + 16, fm.stringWidth(text) + 16), row.width / 2);
+			Rectangle button = new Rectangle(right - controlWidth, row.y + 3, controlWidth, row.height - 6);
+			if (mx >= 0)
+			{
+				pane.hits.add(new Hit(row.intersection(clip), () ->
+				{
+					listeningKey = listening ? null : setting.key;
+					pressedKey = null;
+				}));
+			}
+			Skin.button(graphics, button, hover, listening);
+			graphics.setColor(listening ? POINTS : hover ? Color.WHITE : TITLE);
+			text = Skin.fit(fm, text, controlWidth - 8);
+			Skin.text(graphics, text, button.x + (button.width - fm.stringWidth(text)) / 2, textY);
+			if (listening && hover)
+			{
+				pane.tip = "Press the new key (with Ctrl, Shift or Alt if you like). Backspace clears it, Esc cancels.";
+			}
 		}
 		else if (setting.choices != null)
 		{
@@ -2527,6 +2586,41 @@ public class TaskWindow implements TaskWindowHook
 	@Override
 	public void tasksKey(KeyEvent event, boolean down)
 	{
+		String listening = listeningKey;
+		if (listening != null && capturingKey())
+		{
+			// Like RuneLite's own keybind boxes: the keys held make it (Ctrl + X), set on letting go.
+			event.consume();
+			int code = event.getKeyCode();
+			if (down)
+			{
+				if (code == KeyEvent.VK_ESCAPE)
+				{
+					listeningKey = null;
+					pressedKey = null;
+				}
+				else if (code == KeyEvent.VK_BACK_SPACE || code == KeyEvent.VK_DELETE)
+				{
+					listeningKey = null;
+					pressedKey = null;
+					configManager.setConfiguration(groupOf(listening), listening, Keybind.NOT_SET);
+				}
+				else
+				{
+					pressedKey = new Keybind(event);
+				}
+				return;
+			}
+			Keybind pressed = pressedKey;
+			if (pressed != null)
+			{
+				listeningKey = null;
+				pressedKey = null;
+				configManager.setConfiguration(groupOf(listening), listening, pressed);
+			}
+			return;
+		}
+		listeningKey = null;
 		if (plugin.worldMapTasksKey().matches(event))
 		{
 			tasksKeyHeld = down;

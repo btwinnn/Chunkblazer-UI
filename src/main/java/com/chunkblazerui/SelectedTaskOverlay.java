@@ -36,6 +36,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.runelite.api.Client;
@@ -118,12 +119,14 @@ public class SelectedTaskOverlay extends OverlayPanel
 	private final ChunkBlazerCore plugin;
 	private final ChunkBlazerUiConfig config;
 	private final TaskArchive archive;
+	private final FightConditions conditions;
 
 	@Inject
 	public SelectedTaskOverlay(Client client, ChunkBlazerCore plugin, ChunkBlazerUiConfig config, TaskArchive archive,
-		ConfigManager configManager)
+		ConfigManager configManager, FightConditions conditions)
 	{
 		super(plugin.owner());
+		this.conditions = conditions;
 		this.configManager = configManager;
 		this.client = client;
 		this.plugin = plugin;
@@ -174,7 +177,7 @@ public class SelectedTaskOverlay extends OverlayPanel
 	{
 		Color tier = TaskCardTier.fromTask(task).getAccent();
 		// Compact: one small line, out of the way. Hovering it opens the full box (what to do,
-		// requirements, missing levels); timed tasks keep the full box for their countdown.
+		// requirements, missing levels), and so does a timed kill once its countdown starts.
 		net.runelite.api.Point at = client.getMouseCanvasPosition();
 		Rectangle shown = getBounds();
 		// While it opens, the box changes size (a long name is wider as a strip than as the box,
@@ -191,8 +194,12 @@ public class SelectedTaskOverlay extends OverlayPanel
 		long now = System.currentTimeMillis();
 		long step = Math.min(100, now - expandAt);
 		expandAt = now;
-		expand = hovered ? Math.min(1, expand + step / 120f) : Math.max(0, expand - step / 400f);
-		boolean compact = style == TaskTrackerStyle.COMPACT && timeLimitTicks(task) == 0;
+		// The compact strip opens by itself while a timed kill's countdown is running, and when a
+		// fight rule has just been broken, so neither is missed.
+		boolean opened = hovered || timeLimitTicks(task) > 0 && plugin.getActiveFightStartTick(task) >= 0
+			|| conditions.failed(task) != null;
+		expand = opened ? Math.min(1, expand + step / 120f) : Math.max(0, expand - step / 400f);
+		boolean compact = style == TaskTrackerStyle.COMPACT;
 		if (compact && expand == 0)
 		{
 			hideButtons();
@@ -221,9 +228,14 @@ public class SelectedTaskOverlay extends OverlayPanel
 
 		// What the task actually asks for, when the name alone doesn't say. A timed task's
 		// limit isn't repeated as text when the countdown bar below shows it.
+		// (Not when the name already says it: "Defeat a Moss Guardian with nothing Equipped".)
+		String lowerName = task.getName() == null ? "" : task.getName().toLowerCase();
 		for (String requirement : TaskLists.requirementLines(task, timeLimitTicks(task) == 0))
 		{
-			centred(graphics, requirement, REQUIREMENT_TEXT);
+			if (!lowerName.contains(requirement.toLowerCase()))
+			{
+				centred(graphics, requirement, REQUIREMENT_TEXT);
+			}
 		}
 		// Every level you're missing, e.g. "20 Defence, 20 Ranged".
 		String missing = TaskTargetExtras.missingRequirement(client, task);
@@ -235,6 +247,8 @@ public class SelectedTaskOverlay extends OverlayPanel
 		{
 			centred(graphics, task.getLevelRequirement() + " " + NuzlockeTask.displayCategory(task.getCategory()), MISSING_LEVEL);
 		}
+
+		addConditionLine(graphics, task);
 
 		int progress = task.getCurrentProgress();
 		int target = Math.max(1, task.getTargetQuantity());
@@ -336,7 +350,9 @@ public class SelectedTaskOverlay extends OverlayPanel
 		String count = target > 1 ? done + "/" + target : "";
 		// The whole name, however long: the strip grows to fit it.
 		String name = task.getName() == null ? "" : task.getName();
-		int width = 15 + fm.stringWidth(name) + (count.isEmpty() ? 0 : 8 + fm.stringWidth(count));
+		// A task with fight rules gets a dot: green when you meet them, orange when not.
+		boolean rules = FightConditions.applies(task);
+		int width = 15 + fm.stringWidth(name) + (count.isEmpty() ? 0 : 8 + fm.stringWidth(count)) + (rules ? 10 : 0);
 		// Tall enough that the name sits clear of the frame top and bottom.
 		int height = 24;
 		Skin.panel(graphics, new Rectangle(0, 0, width + 4, height), 0, null);
@@ -352,6 +368,11 @@ public class SelectedTaskOverlay extends OverlayPanel
 		Skin.text(graphics, name, 9, 16);
 		graphics.setColor(new Color(255, 255, 0));
 		Skin.text(graphics, count, width - 6 - fm.stringWidth(count), 16);
+		if (rules)
+		{
+			graphics.setColor(conditions.problems(task).isEmpty() ? TIMER_OK : TIMER_LATE);
+			graphics.fillOval(9 + fm.stringWidth(name) + 4, 9, 6, 6);
+		}
 		return new Dimension(width, height);
 	}
 
@@ -398,6 +419,7 @@ public class SelectedTaskOverlay extends OverlayPanel
 		{
 			panelComponent.getChildren().add(LineComponent.builder().left("Area: " + area).leftColor(new Color(180, 180, 220)).build());
 		}
+		addConditionLine(null, task);
 		if (task.getTargetQuantity() > 1)
 		{
 			ProgressBarComponent bar = new ProgressBarComponent();
@@ -410,6 +432,68 @@ public class SelectedTaskOverlay extends OverlayPanel
 			panelComponent.getChildren().add(bar);
 		}
 		return super.render(graphics);
+	}
+
+	/**
+	 * A task with fight rules (nothing equipped, no prayer...): green while you meet them,
+	 * orange with what to change when you don't, red once one's broken mid-fight.
+	 */
+	private void addConditionLine(Graphics2D graphics, NuzlockeTask task)
+	{
+		if (!FightConditions.applies(task))
+		{
+			return;
+		}
+		String failed = conditions.failed(task);
+		List<String> problems = conditions.problems(task);
+		if (failed != null || problems.isEmpty())
+		{
+			conditionLine(graphics, failed != null ? "Failed: " + failed : "Ready: rules met", failed != null ? TIMER_FAIL : TIMER_OK);
+			return;
+		}
+		// Grouped under what to do, so the list reads apart from the task's name:
+		// "Take off:" in red, then each item in grey.
+		String heading = null;
+		for (String problem : problems)
+		{
+			String verb = null;
+			for (String v : VERBS)
+			{
+				if (problem.startsWith(v + " "))
+				{
+					verb = v;
+					break;
+				}
+			}
+			if (verb == null)
+			{
+				heading = null;
+				conditionLine(graphics, problem, MISSING_LEVEL);
+				continue;
+			}
+			if (!verb.equals(heading))
+			{
+				heading = verb;
+				conditionLine(graphics, verb + ":", MISSING_LEVEL);
+			}
+			conditionLine(graphics, problem.substring(verb.length() + 1), REQUIREMENT_TEXT);
+		}
+	}
+
+	// What a change starts with, to group the items under it.
+	private static final String[] VERBS = {"Take off", "Get rid of", "Wear", "Wield", "Bring"};
+
+	private void conditionLine(Graphics2D graphics, String text, Color color)
+	{
+		if (graphics != null)
+		{
+			centred(graphics, text, color);
+		}
+		else
+		{
+			// Net's box keeps its lines to the left.
+			panelComponent.getChildren().add(LineComponent.builder().left(text).leftColor(color).build());
+		}
 	}
 
 	/**

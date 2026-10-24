@@ -78,6 +78,8 @@ public class ChunkBlazerUiModule implements ChunkBlazerUi
 	private SelectedTaskOverlayInput taskBoxInput;
 	@Inject
 	private ChunkPathing pathing;
+	@Inject
+	private FightConditions fightConditions;
 
 	@Override
 	public void startUp()
@@ -131,6 +133,7 @@ public class ChunkBlazerUiModule implements ChunkBlazerUi
 			overlayManager.add(taskBox);
 			overlayManager.add(highlighter);
 			eventBus.register(highlighter);
+			eventBus.register(fightConditions);
 			mouseManager.registerMouseListener(taskBoxInput);
 			// Paths are an extra: if they fail to start, everything else must still come up
 			// (the plugin starts the orbs and side panel list right after this).
@@ -155,6 +158,7 @@ public class ChunkBlazerUiModule implements ChunkBlazerUi
 		mouseManager.unregisterMouseListener(taskBoxInput);
 		overlayManager.remove(taskBox);
 		eventBus.unregister(highlighter);
+		eventBus.unregister(fightConditions);
 		overlayManager.remove(highlighter);
 		highlighter.reset();
 		overlayManager.remove(completion);

@@ -300,6 +300,11 @@ public class TaskPaneOverlay extends Overlay
 		public void keyTyped(KeyEvent event)
 		{
 			inputAt = System.currentTimeMillis();
+			TaskWindowHook window = window();
+			if (window != null && window.capturingKey())
+			{
+				event.consume();
+			}
 		}
 
 		@Override
@@ -307,6 +312,12 @@ public class TaskPaneOverlay extends Overlay
 		{
 			inputAt = System.currentTimeMillis();
 			TaskWindowHook window = window();
+			if (window != null && window.capturingKey())
+			{
+				// Setting a keybind: Esc cancels it rather than closing the window.
+				window.tasksKey(event, true);
+				return;
+			}
 			if (window != null)
 			{
 				window.tasksKey(event, true);

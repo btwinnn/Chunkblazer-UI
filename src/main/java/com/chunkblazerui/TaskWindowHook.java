@@ -77,6 +77,9 @@ public interface TaskWindowHook
 
 	void tasksKey(KeyEvent event, boolean down);
 
+	/** A Settings keybind is waiting for its new key: every key goes to it, and none to the game. */
+	boolean capturingKey();
+
 	/** Each game tick once logged in a moment. */
 	void settledTick();
 

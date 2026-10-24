@@ -49,19 +49,13 @@ public interface ChunkBlazerUiConfig extends Config
 	)
 	String taskSection = "tasks";
 
-	@ConfigSection(
-		name = "Keys",
-		description = "Keys held while clicking the world map",
-		position = 1
-	)
-	String keysSection = "keys";
-
 	@ConfigItem(
 		keyName = "pathKey",
+		hidden = true, // the task window's Settings page (Keybinds)
 		name = "Path Click Key",
 		description = "Hold this key (Alt by default) and click the world map to set a path there, or clear the one showing",
-		section = keysSection,
-		position = 0
+		section = taskSection,
+		position = 26
 	)
 	default Keybind pathKey()
 	{

@@ -142,6 +142,9 @@ public class NuzlockeTask
 
 	private TaskConstraints constraints;
 
+	/** A boss challenge's rules (the ones the task box can check live; see FightConditions). */
+	private Challenge challenge;
+
 	// DEPRECATED top-level mirrors of varbit_boolean and varbit_bit. The
 	// canonical home is now inside `constraints` (alongside varbit_id) so all
 	// varbit-related schema lives in one place. The fields are kept here so
