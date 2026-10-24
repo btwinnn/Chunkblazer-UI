@@ -36,7 +36,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
@@ -56,6 +55,7 @@ import com.chunkblazerui.pathing.ChunkCalculator;
 import com.chunkblazerui.pathing.ChunkPathing;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.KeyCode;
@@ -96,6 +96,9 @@ public class TaskPaneOverlay extends Overlay
 
 	@Inject
 	private ClientThread clientThread;
+
+	@Inject
+	private net.runelite.client.plugins.PluginManager pluginManager;
 
 	@Inject
 	private ChunkBlazerUiConfig config;
@@ -783,7 +786,23 @@ public class TaskPaneOverlay extends Overlay
 		// The quest's OSRS Wiki page, beside the close button.
 		graphics.setFont(Skin.small());
 		Rectangle wiki = new Rectangle(close.x - 30, close.y + 1, 27, 14);
-		if (!savedList)
+		if (!savedList && isQuest && questHelperOn())
+		{
+			// Quest Helper is on: open this quest in it.
+			String quest = questName(task);
+			hits.add(new Hit(wiki, () -> clientThread.invoke(() ->
+			{
+				openInQuestHelper(quest);
+				pathToStart(task);
+			})));
+			boolean hover = wiki.contains(mx, my);
+			if (hover)
+			{
+				tip = "Open " + quest + " in Quest Helper, with a path to where it starts";
+			}
+			pill(graphics, wiki, "QH", hover);
+		}
+		else if (!savedList)
 		{
 			// The wiki's search jumps straight to the page when the name matches, and
 			// lists the closest pages when it doesn't (the Recipe for Disaster parts).
@@ -1159,6 +1178,7 @@ public class TaskPaneOverlay extends Overlay
 			}
 		}
 		List<Integer> walk = Collections.emptyList();
+		String calcNote = null;
 		if (task != null && calculated.contains(task.getTaskId()))
 		{
 			ChunkCalculator.Result result = pathing.calculate(task);
@@ -1167,8 +1187,21 @@ public class TaskPaneOverlay extends Overlay
 			{
 				walk = revealed(result.connecting);
 			}
+			// Always say what Calc found, so it never looks like it did nothing.
+			calcNote = pathing.isLoadFailed() ? "Calc: couldn't load the map data."
+				: result == null ? "Calc: working out the chunks to walk there..."
+				: !result.unreachable.isEmpty() ? "Calc: " + result.unreachable.size() + (result.unreachable.size() == 1 ? " chunk" : " chunks")
+					+ " can't be reached from yours yet."
+				: !result.connecting.isEmpty() ? "Calc: added " + result.connecting.size() + (result.connecting.size() == 1 ? " chunk" : " chunks")
+					+ " to walk there, under Chunks."
+				: result.quest.isEmpty() ? "Calc: no locked chunks needed."
+				: "Calc: no extra chunks needed to walk there.";
 		}
 		lines.addAll(quests.lines(task, lists::chunkNameFor, walk));
+		if (calcNote != null)
+		{
+			lines.add(QuestRequirements.Line.spaced(calcNote, SOURCE_HOW));
+		}
 		return lines;
 	}
 
@@ -1217,6 +1250,71 @@ public class TaskPaneOverlay extends Overlay
 	public boolean isCalculated(NuzlockeTask task)
 	{
 		return task != null && calculated.contains(task.getTaskId());
+	}
+
+	// Whether Quest Helper is on, looked up at most once a second.
+	private boolean questHelperOn;
+	private long questHelperAt;
+
+	private boolean questHelperOn()
+	{
+		long now = System.currentTimeMillis();
+		if (now - questHelperAt > 1000)
+		{
+			questHelperAt = now;
+			questHelperOn = false;
+			for (net.runelite.client.plugins.Plugin p : pluginManager.getPlugins())
+			{
+				net.runelite.client.plugins.PluginDescriptor d = p.getClass().getAnnotation(net.runelite.client.plugins.PluginDescriptor.class);
+				if (d != null && "Quest Helper".equals(d.name()) && pluginManager.isPluginActive(p))
+				{
+					questHelperOn = true;
+					break;
+				}
+			}
+		}
+		return questHelperOn;
+	}
+
+	/** A quest task's quest as the game names it ("Cook's Assistant"). */
+	private static String questName(NuzlockeTask task)
+	{
+		String id = task.getConstraints() == null ? null : task.getConstraints().getQuest();
+		if (id != null)
+		{
+			try
+			{
+				return net.runelite.api.Quest.valueOf(id).getName();
+			}
+			catch (IllegalArgumentException ignored)
+			{
+				// Not one RuneLite knows: the task's own name below.
+			}
+		}
+		return task.getName().replaceFirst("^Complete ", "");
+	}
+
+	/**
+	 * Quest Helper opens a quest by itself when the game says you've started it (its "Auto
+	 * start helper" setting, on by default, while no other quest is open in it). So say that.
+	 * Client thread.
+	 */
+	private void openInQuestHelper(String quest)
+	{
+		client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "You've started a new quest: " + quest, null);
+	}
+
+	/**
+	 * A path to where the quest starts: through your chunks, or if they don't reach, through
+	 * the quest's own chunks too. Client thread.
+	 */
+	private void pathToStart(NuzlockeTask task)
+	{
+		int[] start = quests.startOf(task);
+		if (start != null && start.length == 3)
+		{
+			pathing.pathTo(com.chunkblazerui.pathing.PathTile.pack(start[0], start[1], start[2]), quests.lockedChunksFor(task));
+		}
 	}
 
 	/** Whether this is an Obtain or Equip task with items to link to the wiki. */

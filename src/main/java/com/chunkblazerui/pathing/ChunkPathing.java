@@ -221,7 +221,7 @@ public class ChunkPathing
 					log.debug("Path data loaded in {} ms: {} regions, {} transports", System.currentTimeMillis() - started,
 						loadedMap.regionIds().size(), loadedTransports.all().size());
 				}
-				catch (Exception | OutOfMemoryError e)
+				catch (Throwable e)
 				{
 					loadFailed = true;
 					log.warn("Could not load the path data", e);
@@ -270,9 +270,23 @@ public class ChunkPathing
 	 */
 	public ChunkCalculator.Result calculate(NuzlockeTask task)
 	{
-		if (!ensureLoaded() || usable == null || task == null)
+		if (!ensureLoaded() || task == null)
 		{
 			return null;
+		}
+		if (usable == null)
+		{
+			// Not checked on a tick yet: check now, rather than wait (or wait for ever if the
+			// ticks aren't reaching here).
+			try
+			{
+				usableNow(true);
+			}
+			catch (RuntimeException e)
+			{
+				log.warn("Could not check which transports you can use", e);
+				usable = Collections.emptyMap();
+			}
 		}
 		// Worked out again only when a chunk's unlocked (or the transports were checked again).
 		String key = task.getTaskId() + ":" + core.getLastUnlockChangeMs() + ":" + usableVersion;
@@ -311,7 +325,7 @@ public class ChunkPathing
 			{
 				results.put(key, calc.calculate(needed, open::contains, r -> weights.getOrDefault(r, 1), links, here));
 			}
-			catch (RuntimeException e)
+			catch (Throwable e)
 			{
 				log.warn("Chunk calculator failed", e);
 			}
@@ -344,6 +358,19 @@ public class ChunkPathing
 	/** Client thread: head for {@code tile}. */
 	public void pathTo(int tile)
 	{
+		pathTo(tile, Collections.emptySet());
+	}
+
+	// Locked chunks a path may go through when your own chunks don't reach (a quest's chunks).
+	private volatile Set<Integer> fallback = Collections.emptySet();
+
+	/**
+	 * Client thread: head for {@code tile} through your chunks; if they don't reach it, through
+	 * {@code fallback} as well (the chunks a quest needs), saying so.
+	 */
+	public void pathTo(int tile, Set<Integer> fallback)
+	{
+		this.fallback = new HashSet<>(fallback);
 		// Two paths at once would just be confusing: clear Shortest Path's, if it's installed,
 		// through the message it offers other plugins for that.
 		eventBus.post(new PluginMessage(SHORTEST_PATH, "clear"));
@@ -396,18 +423,42 @@ public class ChunkPathing
 		unlockStamp = core.getLastUnlockChangeMs();
 		cooldown = 5;
 		CollisionMap tiles = map;
+		Set<Integer> extra = fallback;
 		executor.submit(() ->
 		{
-			ChunkPathfinder.Result result = ChunkPathfinder.find(tiles, links, open::contains, start, goal,
-				() -> generation.get() != run);
-			if (generation.get() != run)
+			try
 			{
-				return;
+				ChunkPathfinder.Result result = ChunkPathfinder.find(tiles, links, open::contains, start, goal,
+					() -> generation.get() != run);
+				if (!result.reached && !extra.isEmpty() && generation.get() == run)
+				{
+					// Your chunks don't get there: try again through the quest's chunks too.
+					Set<Integer> wider = new HashSet<>(open);
+					wider.addAll(extra);
+					ChunkPathfinder.Result through = ChunkPathfinder.find(tiles, links, wider::contains, start, goal,
+						() -> generation.get() != run);
+					if (through.reached)
+					{
+						result = through;
+						message("Your chunks don't reach it yet, so this path goes through the quest's chunks.");
+					}
+				}
+				if (generation.get() != run)
+				{
+					return;
+				}
+				path = result.path;
+				reached = result.reached;
+				progress = 0;
 			}
-			path = result.path;
-			reached = result.reached;
-			progress = 0;
-			searching = false;
+			catch (Throwable e)
+			{
+				log.warn("Path search failed", e);
+			}
+			finally
+			{
+				searching = false;
+			}
 		});
 	}
 

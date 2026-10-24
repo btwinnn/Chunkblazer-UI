@@ -188,9 +188,38 @@ public class QuestRequirements
 		this.gson = gson;
 	}
 
+	// Where each quest starts (the first step's tile), from Quest Helper's quest steps, by quest.
+	private static final String STARTS = "quest_starts.json";
+	private Map<String, int[]> starts = Collections.emptyMap();
+
+	/** Where a quest task's quest starts, as x, y, plane, or null if unknown. */
+	public int[] startOf(NuzlockeTask task)
+	{
+		TaskConstraints c = task == null ? null : task.getConstraints();
+		return c == null || c.getQuest() == null ? null : starts.get(c.getQuest());
+	}
+
 	/** Reads quest_requirements.json. Missing or broken data just means no quest info. */
 	public void load()
 	{
+		try (InputStream in = QuestRequirements.class.getResourceAsStream(STARTS))
+		{
+			if (in != null)
+			{
+				Type type = new TypeToken<Map<String, int[]>>()
+				{
+				}.getType();
+				try (Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8))
+				{
+					Map<String, int[]> loaded = gson.fromJson(reader, type);
+					starts = loaded == null ? Collections.emptyMap() : loaded;
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			log.warn("Could not read {}", STARTS, e);
+		}
 		try (InputStream in = QuestRequirements.class.getResourceAsStream(RESOURCE))
 		{
 			if (in == null)

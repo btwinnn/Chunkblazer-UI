@@ -297,6 +297,11 @@ public final class ChunkCalculator
 		Set<Integer> targets = new LinkedHashSet<>();
 		for (int region : needed)
 		{
+			// One you can already walk into (free or charter) needs no unlocking or route.
+			if (open.test(region))
+			{
+				continue;
+			}
 			(regionNodes.containsKey(region) ? targets : result.unreachable).add(region);
 		}
 
@@ -359,6 +364,9 @@ public final class ChunkCalculator
 				}
 				(needed.contains(region) ? result.quest : result.connecting).add(region);
 			}
+			// The one reached is done either way: without this, a target that never became
+			// owned would be found again for ever, and the search thread with it.
+			targets.remove(nodeRegion[found]);
 			targets.removeIf(owned::contains);
 		}
 		return result;

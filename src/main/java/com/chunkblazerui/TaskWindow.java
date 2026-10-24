@@ -219,6 +219,8 @@ public class TaskWindow implements TaskWindowHook
 	private volatile boolean searchFocused;
 	// The chatbox search this window opened, while it's up (client thread).
 	private ChatboxTextInput searchInput;
+	/** The search last opened in the chatbox, kept until the chatbox itself closes it. */
+	private volatile ChatboxTextInput openedSearch;
 	private volatile int scroll;
 	// The Patch notes tab (in the header): shown in place of the task list while on.
 	private volatile boolean patchNotes;
@@ -487,8 +489,13 @@ public class TaskWindow implements TaskWindowHook
 		{
 			return;
 		}
+		if (searchInput != null && chatboxPanelManager.getCurrentInput() == searchInput)
+		{
+			return;
+		}
 		searchFocused = true;
-		searchInput = chatboxPanelManager.openTextInput("Search tasks")
+		ChatboxTextInput[] made = new ChatboxTextInput[1];
+		made[0] = chatboxPanelManager.openTextInput("Search tasks")
 			.value(lists.search)
 			.onChanged(text -> plugin.setSidePanelSearch(text == null ? "" : text))
 			.onDone((String text) ->
@@ -498,10 +505,17 @@ public class TaskWindow implements TaskWindowHook
 			})
 			.onClose(() ->
 			{
-				searchFocused = false;
-				searchInput = null;
+				// Only this search's own close: an older one closing mustn't undo a newer one.
+				if (openedSearch == made[0])
+				{
+					openedSearch = null;
+					searchFocused = false;
+					searchInput = null;
+				}
 			})
 			.build();
+		searchInput = made[0];
+		openedSearch = made[0];
 	}
 
 	/**
@@ -511,25 +525,24 @@ public class TaskWindow implements TaskWindowHook
 	 */
 	private void closeSearchInput()
 	{
-		ChatboxTextInput input = searchInput;
+		ChatboxTextInput input = openedSearch != null ? openedSearch : searchInput;
 		searchInput = null;
 		searchFocused = false;
 		if (input == null)
 		{
 			return;
 		}
-		if (chatboxPanelManager.getCurrentInput() == input)
-		{
-			chatboxPanelManager.close();
-			return;
-		}
-		// The chatbox opens a moment after it's asked to: if it hasn't yet, close it once it has.
+		// The chatbox opens a moment after it's asked to, so keep checking for a few ticks
+		// until it has, then close it (never another plugin's or the game's input).
+		int[] tries = {0};
 		clientThread.invokeLater(() ->
 		{
 			if (chatboxPanelManager.getCurrentInput() == input)
 			{
 				chatboxPanelManager.close();
+				return true;
 			}
+			return openedSearch != input || ++tries[0] > 50;
 		});
 	}
 
