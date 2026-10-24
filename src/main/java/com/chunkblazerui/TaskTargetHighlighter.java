@@ -1022,11 +1022,21 @@ public class TaskTargetHighlighter extends Overlay
 			}
 			tasks = tasksForNpc(npc);
 			String option = Text.removeTags(event.getMenuOption()).toLowerCase();
-			if (option.equals("attack") || option.equals("talk-to"))
+			// Only the tasks this option does: attacking tracks a kill, never the same NPC's
+			// pickpocket task, and talking tracks a dialogue task.
+			if (option.equals("attack"))
 			{
-				autoTrack(tasks);
+				autoTrack(filter(tasks, TaskTargetHighlighter::isKill));
 				return;
 			}
+			if (option.equals("talk-to"))
+			{
+				autoTrack(filter(tasks, t -> "NPC_DIALOGUE".equalsIgnoreCase(t.getCompletionType())));
+				return;
+			}
+			// Anything else (pickpocket, a fishing spot's Net...) waits for the XP like objects do,
+			// with the kill tasks left out.
+			tasks = filter(tasks, t -> !isKill(t));
 		}
 		else if (isObjectAction(action))
 		{
@@ -1076,19 +1086,61 @@ public class TaskTargetHighlighter extends Overlay
 			}
 		}
 		pendingItems = now;
-		List<NuzlockeTask> made = new ArrayList<>();
+		// Best first: a task of the skill that gained XP whose item just changed; then a task of
+		// no skill whose item changed (a stall's loot for an Obtain task); then a task of that
+		// skill naming no item (pickpocketing, agility). A cooking task is never swapped for
+		// another fish's, and a kill task never tracks off XP.
+		List<NuzlockeTask> sameItem = new ArrayList<>();
+		List<NuzlockeTask> lootOnly = new ArrayList<>();
+		List<NuzlockeTask> anyItem = new ArrayList<>();
 		for (NuzlockeTask task : pending)
 		{
-			Skill taskSkill = TaskTargetExtras.categorySkill(task.getCategory());
+			Skill taskSkill = xpSkill(task);
 			String item = itemName(task).replaceFirst("^raw ", "");
 			String name = task.getName() == null ? "" : task.getName().toLowerCase();
-			if ((taskSkill == null || taskSkill == skill)
-				&& (item.isEmpty() || changed.stream().anyMatch(c -> c.equals(item) || name.contains(c))))
+			boolean itemChanged = !item.isEmpty() && changed.stream().anyMatch(c -> c.equals(item) || name.contains(c));
+			if (taskSkill == skill && itemChanged)
 			{
-				made.add(task);
+				sameItem.add(task);
+			}
+			else if (taskSkill == null && itemChanged && !isKill(task))
+			{
+				lootOnly.add(task);
+			}
+			else if (taskSkill == skill && item.isEmpty())
+			{
+				anyItem.add(task);
 			}
 		}
-		autoTrack(made);
+		autoTrack(!sameItem.isEmpty() ? sameItem : !lootOnly.isEmpty() ? lootOnly : anyItem);
+	}
+
+	/** The skill a task's XP comes in: by how it's completed (an Equip task under Defence has none). */
+	private static Skill xpSkill(NuzlockeTask task)
+	{
+		String type = task.getCompletionType();
+		return type != null ? TaskTargetExtras.categorySkill(type) : TaskTargetExtras.categorySkill(task.getCategory());
+	}
+
+	/** A task done by killing its NPC (on a Slayer task or not). */
+	private static boolean isKill(NuzlockeTask task)
+	{
+		String type = task.getCompletionType();
+		return "NPC_Kill".equalsIgnoreCase(type) || "SLAYER".equalsIgnoreCase(type)
+			|| type == null && "Combat".equalsIgnoreCase(task.getCategory());
+	}
+
+	private static List<NuzlockeTask> filter(List<NuzlockeTask> tasks, java.util.function.Predicate<NuzlockeTask> keep)
+	{
+		List<NuzlockeTask> kept = new ArrayList<>();
+		for (NuzlockeTask task : tasks)
+		{
+			if (keep.test(task))
+			{
+				kept.add(task);
+			}
+		}
+		return kept;
 	}
 
 	/** Item id to count in the inventory. */
