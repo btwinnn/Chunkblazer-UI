@@ -1739,7 +1739,7 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 	{
 		String[] content = text.getOrDefault(id, new String[]{"How much help?", "", "Confirm"});
 		AssistLevel[] levels = AssistLevel.values();
-		int cardH = 128;
+		int cardH = 136;
 		int width = levels.length * THEME_CARD_W + (levels.length + 1) * PAD;
 		graphics.setFont(Skin.regular());
 		FontMetrics fm = graphics.getFontMetrics();

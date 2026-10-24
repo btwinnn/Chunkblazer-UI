@@ -34,11 +34,11 @@ import net.runelite.client.config.ConfigManager;
  */
 public enum AssistLevel
 {
-	/** Everything on: details, outlines on every task, item highlights, the Tasks menu, tooltips, auto-track. */
+	/** Everything on: details, outlines on every task, item highlights, the Tasks menu, tooltips, auto-track, paths. */
 	CRITIC("Video Game Critic", "Level 1", new String[]{"Task details", "Outlines: all tasks", "Item highlights",
-		"Right-click Tasks menu", "Task tooltips", "Auto-track"}),
-	/** Task details, and outlines only for the tasks you've saved. */
-	DADSCAPE("Dadscape", "Level 2", new String[]{"Task details", "Outlines: saved tasks"}),
+		"Right-click Tasks menu", "Task tooltips", "Auto-track", "Shortest path"}),
+	/** Task details, outlines only for the tasks you've saved, and shortest path. */
+	DADSCAPE("Dadscape", "Level 2", new String[]{"Task details", "Outlines: saved tasks", "Shortest path"}),
 	/** No help at all. */
 	GAMER("Certified GAMER", "Level 3", new String[0]);
 
@@ -65,6 +65,7 @@ public enum AssistLevel
 		configManager.setConfiguration(group, "taskRightClickMenu", this == CRITIC);
 		configManager.setConfiguration(group, "taskTooltipKey", this == CRITIC ? TaskTooltipKey.SHIFT : TaskTooltipKey.OFF);
 		configManager.setConfiguration(group, "autoTrackTasks", this == CRITIC);
+		configManager.setConfiguration(group, "shortestPath", this != GAMER);
 	}
 
 	@Override

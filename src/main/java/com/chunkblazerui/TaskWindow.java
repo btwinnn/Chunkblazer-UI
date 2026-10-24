@@ -1206,7 +1206,7 @@ public class TaskWindow implements TaskWindowHook
 		graphics.setColor(TITLE);
 		graphics.fillRect(side.x + 6, Math.round(tabMarkerY) + 4, 3, 16);
 
-		if ((tab == Tab.ACTIVE || tab == Tab.SAVED || tab == Tab.ARCHIVED) && !settingsOpen && !patchNotes)
+		if (!settingsOpen && !patchNotes)
 		{
 			// How the list shows: every task opened up, and the red line of what you're missing.
 			sy += 10;
@@ -1420,9 +1420,13 @@ public class TaskWindow implements TaskWindowHook
 					"Hold this key over an NPC or object to list its tasks in a tooltip. Click to change."),
 				toggle("Auto-track tasks", "autoTrackTasks", config::autoTrackTasks,
 					"Using an NPC or object a task needs tracks that task. A task you picked yourself is kept."),
+				toggle("Shortest path", "shortestPath", config::shortestPath,
+					"Paths through your unlocked chunks (Path here, the map's path key, Quest Helper) and the quest Calc button."),
 				heading("World map"),
 				toggle("Colour legend", "showChunkLegend", config::showChunkLegend,
 					"Show a key explaining the chunk colours in the corner of the world map."),
+				toggle("Keys legend", "showMapKeys", config::showMapKeys,
+					"Show the world map's click keys (tasks, path) in its bottom-right corner."),
 				heading("In game"),
 				toggle("Chunk name banner", "showChunkNamePopups", config::showChunkNamePopups,
 					"Show a chunk's name at the top of the screen when you enter it."),

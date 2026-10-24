@@ -26,8 +26,10 @@
 package com.chunkblazerui.pathing;
 
 import com.chunkblazerui.ChunkBlazerCore;
+import com.chunkblazerui.ChunkBlazerUiConfig;
 import com.chunkblazerui.NuzlockeTask;
 import com.chunkblazerui.QuestRequirements;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,6 +54,7 @@ import net.runelite.api.Player;
 import net.runelite.api.Point;
 import net.runelite.api.Tile;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.FocusChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.MenuOpened;
 import net.runelite.api.gameval.InterfaceID;
@@ -62,7 +65,10 @@ import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.events.PluginMessage;
+import net.runelite.client.input.KeyListener;
+import net.runelite.client.input.KeyManager;
 import net.runelite.client.input.MouseAdapter;
 import net.runelite.client.input.MouseManager;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -70,7 +76,7 @@ import net.runelite.client.util.ColorUtil;
 
 /**
  * Chunk-aware paths and the quest chunk calculator. Right-click the world map (or
- * Shift + right-click a tile) and pick "Path here", or Alt + click the world map: the path only goes where your
+ * Shift + right-click a tile) and pick "Path here", or hold the path key (Alt unless changed) and click the world map: the path only goes where your
  * unlocked chunks let you walk, using stairs, shortcuts, boats and the like when both
  * ends are in chunks you own. If the spot is behind locked chunks it stops as close as
  * it can (the end shows red). The path follows you, and is worked out again if you stray, or
@@ -107,14 +113,53 @@ public class ChunkPathing
 	private ChunkBlazerCore core;
 	@Inject
 	private MouseManager mouseManager;
+	@Inject
+	private KeyManager keyManager;
+	@Inject
+	private ChunkBlazerUiConfig config;
 
-	/** Alt + click on the world map sets a path, or clears the one showing; the click is kept from the map. */
+	// Whether the path key (Alt unless changed) is held right now.
+	private volatile boolean pathKeyHeld;
+
+	private final KeyListener pathKey = new KeyListener()
+	{
+		@Override
+		public void keyTyped(KeyEvent e)
+		{
+		}
+
+		@Override
+		public void keyPressed(KeyEvent e)
+		{
+			if (config.pathKey().matches(e))
+			{
+				pathKeyHeld = true;
+			}
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e)
+		{
+			if (config.pathKey().matches(e))
+			{
+				pathKeyHeld = false;
+			}
+		}
+	};
+
+	/** Whether paths are on (Settings > Assists > Shortest path). */
+	public boolean enabled()
+	{
+		return config.shortestPath();
+	}
+
+	/** The path key + click on the world map sets a path, or clears the one showing; the click is kept from the map. */
 	private final MouseAdapter altClick = new MouseAdapter()
 	{
 		@Override
 		public MouseEvent mousePressed(MouseEvent event)
 		{
-			if (!event.isAltDown() || event.getButton() != MouseEvent.BUTTON1)
+			if (!pathKeyHeld || !enabled() || event.getButton() != MouseEvent.BUTTON1)
 			{
 				return event;
 			}
@@ -182,12 +227,15 @@ public class ChunkPathing
 		overlays.add(overlayManager);
 		eventBus.register(this);
 		mouseManager.registerMouseListener(altClick);
+		keyManager.registerKeyListener(pathKey);
 	}
 
 	public void shutDown()
 	{
 		eventBus.unregister(this);
 		mouseManager.unregisterMouseListener(altClick);
+		keyManager.unregisterKeyListener(pathKey);
+		pathKeyHeld = false;
 		if (overlays != null)
 		{
 			overlays.remove(overlayManager);
@@ -370,6 +418,10 @@ public class ChunkPathing
 	 */
 	public void pathTo(int tile, Set<Integer> fallback)
 	{
+		if (!enabled())
+		{
+			return;
+		}
 		this.fallback = new HashSet<>(fallback);
 		// Two paths at once would just be confusing: clear Shortest Path's, if it's installed,
 		// through the message it offers other plugins for that.
@@ -537,8 +589,31 @@ public class ChunkPathing
 	 * hovering, so a left-click (dragging the world map) can't pick it.
 	 */
 	@Subscribe
+	public void onFocusChanged(FocusChanged event)
+	{
+		if (!event.isFocused())
+		{
+			pathKeyHeld = false;
+		}
+	}
+
+	/** Shortest path switched off: the path showing goes too. */
+	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		if (ChunkBlazerUiConfig.GROUP.equals(event.getGroup()) && "shortestPath".equals(event.getKey()) && !enabled())
+		{
+			clientThread.invoke(this::clear);
+		}
+	}
+
+	@Subscribe
 	public void onMenuOpened(MenuOpened event)
 	{
+		if (!enabled())
+		{
+			return;
+		}
 		Widget worldMap = client.getWidget(InterfaceID.Worldmap.MAP_CONTAINER);
 		Point mouse = client.getMouseCanvasPosition();
 		if (worldMap != null && mouse != null && worldMap.getBounds().contains(mouse.getX(), mouse.getY()))

@@ -815,7 +815,9 @@
   "type": "Drop"
  },
  "equip_black_med_helm": {
+  "how": "Level 3 digs: the north-east and central west soil patches, once you've passed the third exam in The Dig Site. Needs a trowel, specimen brush and specimen jar.",
   "level": "10 Defence",
+  "rate": "1/20",
   "source": "Digsite",
   "type": "Other"
  },

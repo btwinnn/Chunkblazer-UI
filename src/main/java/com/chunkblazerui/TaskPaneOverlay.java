@@ -798,7 +798,7 @@ public class TaskPaneOverlay extends Overlay
 			boolean hover = wiki.contains(mx, my);
 			if (hover)
 			{
-				tip = "Open " + quest + " in Quest Helper, with a path to where it starts";
+				tip = "Open " + quest + " in Quest Helper" + (config.shortestPath() ? ", with a path to where it starts" : "");
 			}
 			pill(graphics, wiki, "QH", hover);
 		}
@@ -812,7 +812,9 @@ public class TaskPaneOverlay extends Overlay
 		}
 		// The chunk calculator: which chunks this quest still needs, and the ones to walk there.
 		Rectangle calc = new Rectangle(wiki.x - 33, close.y + 1, 30, 14);
-		if (isQuest)
+		// Hidden with Shortest path off (Settings > Assists).
+		boolean showCalc = isQuest && config.shortestPath();
+		if (showCalc)
 		{
 			String id = task.getTaskId();
 			boolean on = calculated.contains(id);
@@ -839,7 +841,7 @@ public class TaskPaneOverlay extends Overlay
 			pill(graphics, calc, on && calcWorking ? "..." : "Calc", hover || on);
 		}
 		// Back to the quest this one was opened from.
-		Rectangle back = new Rectangle((isQuest ? calc.x : wiki.x) - 33, close.y + 1, 30, 14);
+		Rectangle back = new Rectangle((showCalc ? calc.x : wiki.x) - 33, close.y + 1, 30, 14);
 		if (!questBack.isEmpty())
 		{
 			hits.add(new Hit(back, () ->
@@ -1179,7 +1181,7 @@ public class TaskPaneOverlay extends Overlay
 		}
 		List<Integer> walk = Collections.emptyList();
 		String calcNote = null;
-		if (task != null && calculated.contains(task.getTaskId()))
+		if (task != null && config.shortestPath() && calculated.contains(task.getTaskId()))
 		{
 			ChunkCalculator.Result result = pathing.calculate(task);
 			calcWorking = result == null && !pathing.isLoadFailed();
@@ -1249,7 +1251,7 @@ public class TaskPaneOverlay extends Overlay
 	/** Whether the task's walk-there chunks are worked out and shown (they change as they deal in). */
 	public boolean isCalculated(NuzlockeTask task)
 	{
-		return task != null && calculated.contains(task.getTaskId());
+		return task != null && config.shortestPath() && calculated.contains(task.getTaskId());
 	}
 
 	// Whether Quest Helper is on, looked up at most once a second.

@@ -30,6 +30,7 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigSection;
+import net.runelite.client.config.Keybind;
 
 /**
  * ChunkBlazer UI's own settings. Most are shown on the task window's Settings page, so they
@@ -47,6 +48,51 @@ public interface ChunkBlazerUiConfig extends Config
 		position = 0
 	)
 	String taskSection = "tasks";
+
+	@ConfigSection(
+		name = "Keys",
+		description = "Keys held while clicking the world map",
+		position = 1
+	)
+	String keysSection = "keys";
+
+	@ConfigItem(
+		keyName = "pathKey",
+		name = "Path Click Key",
+		description = "Hold this key (Alt by default) and click the world map to set a path there, or clear the one showing",
+		section = keysSection,
+		position = 0
+	)
+	default Keybind pathKey()
+	{
+		return Keybind.ALT;
+	}
+
+	@ConfigItem(
+		keyName = "showMapKeys",
+		hidden = true, // shown on the task window's Settings page
+		name = "Keys Legend",
+		description = "Show the world map's click keys in its bottom-right corner",
+		section = taskSection,
+		position = 4
+	)
+	default boolean showMapKeys()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "shortestPath",
+		hidden = true, // the task window's Settings page (Assists)
+		name = "Shortest Path",
+		description = "Paths through your unlocked chunks (Path here, the map's path key, Quest Helper's start) and the quest chunk calculator",
+		section = taskSection,
+		position = 25
+	)
+	default boolean shortestPath()
+	{
+		return true;
+	}
 
 	@ConfigItem(
 		keyName = "cardEntrance",
