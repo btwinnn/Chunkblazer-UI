@@ -29,6 +29,7 @@ import com.chunkblazerui.ChunkBlazerCore;
 import com.chunkblazerui.ChunkBlazerUiConfig;
 import com.chunkblazerui.NuzlockeTask;
 import com.chunkblazerui.QuestRequirements;
+import com.chunkblazerui.TaskSources;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Collections;
@@ -50,6 +51,7 @@ import net.runelite.api.GameState;
 import net.runelite.api.KeyCode;
 import net.runelite.api.MenuAction;
 import net.runelite.api.MenuEntry;
+import net.runelite.api.NPC;
 import net.runelite.api.Player;
 import net.runelite.api.Point;
 import net.runelite.api.Tile;
@@ -397,6 +399,36 @@ public class ChunkPathing
 		return reached;
 	}
 
+	/** Client thread: the path just asked for goes to a quest's start (Quest Helper's button). */
+	public void markQuestStart()
+	{
+		questStart = true;
+	}
+
+	/** Whether the path is still the one to a quest's start, not since moved on by Quest Helper. */
+	public boolean isQuestStart()
+	{
+		return questStart && !fromQuestHelper;
+	}
+
+	/** The transport the path takes from one tile to the next, or null if it walks. */
+	public Transports.Link link(int from, int to)
+	{
+		Map<Integer, List<Transports.Link>> links = usable;
+		List<Transports.Link> here = links == null ? null : links.get(from);
+		if (here != null)
+		{
+			for (Transports.Link link : here)
+			{
+				if (link.to == to)
+				{
+					return link;
+				}
+			}
+		}
+		return null;
+	}
+
 	/** Index of the path tile nearest the player; the overlays draw from here on. */
 	public int progress()
 	{
@@ -422,10 +454,22 @@ public class ChunkPathing
 		{
 			return;
 		}
+		// Whoever asked for this path (a task, Quest Helper) says so after; a fresh one is nobody's.
+		taskPath = null;
+		fromQuestHelper = false;
+		questStart = false;
 		this.fallback = new HashSet<>(fallback);
 		// Two paths at once would just be confusing: clear Shortest Path's, if it's installed,
 		// through the message it offers other plugins for that.
-		eventBus.post(new PluginMessage(SHORTEST_PATH, "clear"));
+		postingClear = true;
+		try
+		{
+			eventBus.post(new PluginMessage(SHORTEST_PATH, "clear"));
+		}
+		finally
+		{
+			postingClear = false;
+		}
 		target = tile;
 		path = null;
 		reached = false;
@@ -434,6 +478,9 @@ public class ChunkPathing
 
 	public void clear()
 	{
+		taskPath = null;
+		fromQuestHelper = false;
+		questStart = false;
 		generation.incrementAndGet();
 		target = -1;
 		path = null;
@@ -522,10 +569,192 @@ public class ChunkPathing
 			.build());
 	}
 
+	// --- Paths other things ask for --------------------------------------------------
+
+	// Our own "clear" to Shortest Path is heard by us too: ignored.
+	private boolean postingClear;
+	// The path is Quest Helper's current step (it asked Shortest Path for it).
+	private boolean fromQuestHelper;
+	// The path is to a quest's start, from the quest pane's Quest Helper button.
+	private boolean questStart;
+	// The tracked task this path heads for, and whether it's still only to its chunk (no NPC seen yet).
+	private String taskPath;
+	private boolean toChunkOnly;
+	private String lastTracked;
+
+	/**
+	 * Quest Helper, with its "Use Shortest Path" option on, asks the Shortest Path plugin for a
+	 * path to each step of the quest. That same message is heard here, so each step gets a
+	 * path through your chunks (through the quest's own chunks when yours don't reach).
+	 */
+	@Subscribe
+	public void onPluginMessage(PluginMessage event)
+	{
+		if (!SHORTEST_PATH.equals(event.getNamespace()) || postingClear || !enabled())
+		{
+			return;
+		}
+		if ("clear".equals(event.getName()))
+		{
+			if (fromQuestHelper || questStart)
+			{
+				clientThread.invoke(this::clear);
+			}
+			return;
+		}
+		if (!"path".equals(event.getName()))
+		{
+			return;
+		}
+		Object to = event.getData().get("target");
+		if (!(to instanceof WorldPoint))
+		{
+			return;
+		}
+		int tile = PathTile.pack((WorldPoint) to);
+		clientThread.invoke(() ->
+		{
+			NuzlockeTask tracked = core.getSelectedTask();
+			Set<Integer> through = tracked != null && QuestRequirements.isQuestTask(tracked)
+				? quests.lockedChunksFor(tracked) : Collections.emptySet();
+			pathTo(tile, through);
+			fromQuestHelper = true;
+		});
+	}
+
+	/**
+	 * Client thread: a path to where the tracked task is done: its NPC if one's in sight, or
+	 * else its chunk (then its NPC once you're close enough to see it). Quests are left to
+	 * Quest Helper's steps.
+	 */
+	public void pathToTask(NuzlockeTask task)
+	{
+		if (!enabled() || task == null || task.getTaskId() == null || QuestRequirements.isQuestTask(task))
+		{
+			return;
+		}
+		int npc = taskNpcTile(task);
+		if (npc >= 0)
+		{
+			pathTo(npc);
+			taskPath = task.getTaskId();
+			toChunkOnly = false;
+			return;
+		}
+		int region = core.findRegionForTask(task.getTaskId());
+		if (region <= 0)
+		{
+			return;
+		}
+		pathTo(walkableNear(region));
+		taskPath = task.getTaskId();
+		toChunkOnly = true;
+	}
+
+	/** The nearest of the task's NPCs in the scene (by id, or by the names it's outlined by), or -1. */
+	private int taskNpcTile(NuzlockeTask task)
+	{
+		Set<Integer> ids = new HashSet<>(TaskSources.npcIds(task));
+		if (task.getTargetNpc() != null && task.getTargetNpc().getNpcIds() != null)
+		{
+			ids.addAll(task.getTargetNpc().getNpcIds());
+		}
+		Set<String> names = new HashSet<>();
+		for (String name : TaskSources.outlineNames(task))
+		{
+			names.add(name.toLowerCase());
+		}
+		Player player = client.getLocalPlayer();
+		if (player == null || ids.isEmpty() && names.isEmpty())
+		{
+			return -1;
+		}
+		int here = PathTile.pack(WorldPoint.fromLocalInstance(client, player.getLocalLocation()));
+		int best = -1;
+		int bestDistance = Integer.MAX_VALUE;
+		for (NPC npc : client.getTopLevelWorldView().npcs())
+		{
+			if (npc == null || !ids.contains(npc.getId()) && (npc.getName() == null || !names.contains(npc.getName().toLowerCase())))
+			{
+				continue;
+			}
+			int tile = PathTile.pack(WorldPoint.fromLocalInstance(client, npc.getLocalLocation()));
+			int distance = PathTile.distance(here, tile);
+			if (distance < bestDistance)
+			{
+				best = tile;
+				bestDistance = distance;
+			}
+		}
+		return best;
+	}
+
+	/** A walkable tile as near the middle of {@code region} as there is (its middle when the map isn't loaded). */
+	private int walkableNear(int region)
+	{
+		int baseX = (region >> 8) << 6;
+		int baseY = (region & 0xFF) << 6;
+		CollisionMap tiles = map;
+		if (tiles != null)
+		{
+			for (int r = 0; r < 32; r++)
+			{
+				for (int dx = -r; dx <= r; dx++)
+				{
+					for (int dy = -r; dy <= r; dy++)
+					{
+						if (Math.max(Math.abs(dx), Math.abs(dy)) == r && tiles.walkable(baseX + 32 + dx, baseY + 32 + dy, 0))
+						{
+							return PathTile.pack(baseX + 32 + dx, baseY + 32 + dy, 0);
+						}
+					}
+				}
+			}
+		}
+		return PathTile.pack(baseX + 32, baseY + 32, 0);
+	}
+
+	/**
+	 * Each tick: a newly tracked task gets a path to it (unless you're already in its chunk),
+	 * and a path that only went to the task's chunk heads for its NPC once one's in sight.
+	 */
+	private void followTrackedTask()
+	{
+		NuzlockeTask tracked = core.getSelectedTask();
+		String id = tracked == null ? null : tracked.getTaskId();
+		if (id == null ? lastTracked != null : !id.equals(lastTracked))
+		{
+			lastTracked = id;
+			if (taskPath != null)
+			{
+				clear();
+			}
+			if (tracked != null && core.findRegionForTask(id) != core.getCurrentRegionId())
+			{
+				pathToTask(tracked);
+			}
+			return;
+		}
+		if (taskPath != null && toChunkOnly && tracked != null && taskPath.equals(id))
+		{
+			int npc = taskNpcTile(tracked);
+			if (npc >= 0)
+			{
+				pathTo(npc);
+				taskPath = id;
+				toChunkOnly = false;
+			}
+		}
+	}
+
 	@Subscribe
 	public void onGameTick(GameTick event)
 	{
 		usableAge++;
+		if (enabled() && client.getGameState() == GameState.LOGGED_IN)
+		{
+			followTrackedTask();
+		}
 		// Checked once when the data's loaded; after that only when a path is worked out
 		// (usableNow), not over and over while the calculator's answer sits on screen.
 		if (calculator != null && usable == null && client.getGameState() == GameState.LOGGED_IN)

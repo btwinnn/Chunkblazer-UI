@@ -458,6 +458,11 @@ public final class Skin
 	 */
 	private static void themedFrame(Graphics2D g, Rectangle r, int header)
 	{
+		if (palette.hearth)
+		{
+			hearthFrame(g, r, header);
+			return;
+		}
 		ThemePalette p = palette;
 		Paint old = g.getPaint();
 		Object aa = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
@@ -521,6 +526,67 @@ public final class Skin
 		g.setPaint(old);
 	}
 
+	// --- ChunkBlazer's hearth look ---------------------------------------------------------
+
+	private static final Color HEARTH_TOP = new Color(62, 46, 34);
+	private static final Color HEARTH_BOTTOM = new Color(30, 25, 21);
+	private static final Color HEARTH_EDGE = new Color(14, 11, 9);
+	private static final Color HEARTH_BRONZE = new Color(120, 82, 48, 160);
+	public static final Color HEARTH_GLOW = new Color(255, 120, 30);
+
+	/** A soft shadow (or a glow, in {@code color}) round a rounded box, {@code spread} pixels out. */
+	public static void haze(Graphics2D g, Rectangle r, int radius, Color color, int alpha, int spread, int dy)
+	{
+		for (int i = spread; i >= 1; i--)
+		{
+			g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha / (i + 1)));
+			g.fillRoundRect(r.x - i, r.y - i + dy, r.width + 2 * i, r.height + 2 * i, (radius + i) * 2, (radius + i) * 2);
+		}
+	}
+
+	/** A rounded box filled top to bottom from {@code top} to {@code bottom}, edged dark, with light catching its top edge. */
+	public static void lit(Graphics2D g, Rectangle r, int radius, Color top, Color bottom, Color edge)
+	{
+		Object aa = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Paint old = g.getPaint();
+		g.setPaint(new java.awt.GradientPaint(0, r.y, top, 0, r.y + r.height, bottom));
+		g.fillRoundRect(r.x, r.y, r.width, r.height, radius * 2, radius * 2);
+		g.setPaint(old);
+		g.setColor(edge);
+		g.drawRoundRect(r.x, r.y, r.width - 1, r.height - 1, radius * 2, radius * 2);
+		g.setColor(new Color(255, 255, 255, 40));
+		g.drawLine(r.x + radius, r.y + 1, r.x + r.width - 1 - radius, r.y + 1);
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa == null ? RenderingHints.VALUE_ANTIALIAS_DEFAULT : aa);
+	}
+
+	/** A window or box by firelight: warmer toward the top, a soft shadow, a bronze line inside a dark edge. */
+	private static void hearthFrame(Graphics2D g, Rectangle r, int header)
+	{
+		Object aa = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		haze(g, r, 8, Color.BLACK, 150, 5, 3);
+		lit(g, r, 8, HEARTH_TOP, HEARTH_BOTTOM, HEARTH_EDGE);
+		// The fire's glow on the top of the window.
+		Paint old = g.getPaint();
+		float glowRadius = Math.max(60, r.width / 3f);
+		g.setPaint(new java.awt.RadialGradientPaint(r.x + r.width / 2f, r.y - 20, glowRadius, new float[]{0, 1},
+			new Color[]{new Color(255, 140, 40, 46), new Color(255, 140, 40, 0)}));
+		java.awt.Shape clip = g.getClip();
+		g.clip(new java.awt.geom.RoundRectangle2D.Double(r.x, r.y, r.width, r.height, 16, 16));
+		g.fillRect(r.x, r.y, r.width, (int) Math.min(r.height, glowRadius + 20));
+		g.setClip(clip);
+		g.setPaint(old);
+		g.setColor(HEARTH_BRONZE);
+		g.drawRoundRect(r.x + 1, r.y + 1, r.width - 3, r.height - 3, 14, 14);
+		if (header > 0)
+		{
+			g.setColor(new Color(255, 150, 60, 70));
+			g.drawLine(r.x + 10, r.y + header, r.x + r.width - 11, r.y + header);
+		}
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa == null ? RenderingHints.VALUE_ANTIALIAS_DEFAULT : aa);
+	}
+
 	/** A horizontal groove. */
 	public static void divider(Graphics2D g, int x1, int y, int x2)
 	{
@@ -534,6 +600,20 @@ public final class Skin
 	/** A stone button's face (the caller draws its label). {@code active}: pressed or chosen. */
 	public static void button(Graphics2D g, Rectangle r, boolean hover, boolean active)
 	{
+		if (palette.hearth)
+		{
+			if (active)
+			{
+				haze(g, r, 5, HEARTH_GLOW, 90, 3, 0);
+				lit(g, r, 5, new Color(120, 70, 30), new Color(80, 46, 22), new Color(255, 160, 70));
+			}
+			else
+			{
+				haze(g, r, 5, Color.BLACK, 90, 1, 1);
+				lit(g, r, 5, hover ? new Color(100, 78, 56) : new Color(86, 66, 48), new Color(58, 44, 33), HEARTH_EDGE);
+			}
+			return;
+		}
 		if (palette.log)
 		{
 			g.setColor(active ? palette.buttonActive : palette.button);
@@ -583,6 +663,27 @@ public final class Skin
 	public static void bar(Graphics2D g, int x, int y, int width, int height, float fraction, Color color, float glow, boolean tinted)
 	{
 		int fill = Math.round(width * Math.max(0, Math.min(1, fraction)));
+		if (palette.hearth && !tinted)
+		{
+			// The hearth: an ember-orange fill in a dark groove.
+			g.setColor(Color.BLACK);
+			g.fillRect(x - 1, y - 1, width + 2, height + 2);
+			g.setColor(new Color(24, 20, 16));
+			g.fillRect(x, y, width, height);
+			if (fill > 0)
+			{
+				Paint old = g.getPaint();
+				g.setPaint(new java.awt.GradientPaint(0, y, new Color(255, 190, 80), 0, y + height, new Color(220, 90, 20)));
+				g.fillRect(x, y, fill, height);
+				g.setPaint(old);
+			}
+			if (glow > 0)
+			{
+				g.setColor(new Color(255, 255, 0, Math.round(200 * glow)));
+				g.drawRect(x - 1, y - 1, width + 1, height + 1);
+			}
+			return;
+		}
 		g.setColor(Color.BLACK);
 		g.fillRect(x - 1, y - 1, width + 2, height + 2);
 		g.setColor(oldSchool() ? new Color(40, 34, 27) : palette.field);

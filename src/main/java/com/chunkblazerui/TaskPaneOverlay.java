@@ -55,12 +55,15 @@ import com.chunkblazerui.pathing.ChunkCalculator;
 import com.chunkblazerui.pathing.ChunkPathing;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.KeyCode;
+import net.runelite.api.Menu;
+import net.runelite.api.MenuAction;
+import net.runelite.api.MenuEntry;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.VarClientIntChanged;
 import net.runelite.api.events.WidgetLoaded;
 import net.runelite.api.gameval.InterfaceID;
@@ -82,6 +85,7 @@ import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.OverlayPriority;
 import net.runelite.client.util.LinkBrowser;
+import net.runelite.client.util.Text;
 
 /**
  * The quest/saved box over the inventory (or free-standing, with Movable Quest/Saved Box), and
@@ -472,6 +476,7 @@ public class TaskPaneOverlay extends Overlay
 		{
 			return;
 		}
+		followQuestHelper();
 		if (isWindowOpen() || questPane != null)
 		{
 			quests.refreshStates(QUEST_CHECKS_PER_TICK);
@@ -561,6 +566,12 @@ public class TaskPaneOverlay extends Overlay
 	private volatile long inputAt;
 	// Drawn live until then too: something's moving on its own (the calculator's chunks sliding in).
 	private volatile long liveUntil;
+
+	/** Something in the window is moving on its own: draw it fresh each frame for a moment. */
+	void keepLive(long ms)
+	{
+		liveUntil = Math.max(liveUntil, System.currentTimeMillis() + ms);
+	}
 
 	/** A new list (search, filters, sort) shows straight away, not on the next redraw. */
 	@Inject
@@ -803,8 +814,11 @@ public class TaskPaneOverlay extends Overlay
 			String quest = questName(task);
 			hits.add(new Hit(wiki, () -> clientThread.invoke(() ->
 			{
-				openInQuestHelper(quest);
+				// The start first: Quest Helper's own path to its first step then takes over.
 				pathToStart(task);
+				pathing.markQuestStart();
+				openInQuestHelper(quest);
+				questHelperQuest = quest;
 			})));
 			boolean hover = wiki.contains(mx, my);
 			if (hover)
@@ -1307,14 +1321,97 @@ public class TaskPaneOverlay extends Overlay
 		return task.getName().replaceFirst("^Complete ", "");
 	}
 
+	/** The game's quest list, where Quest Helper adds its "Start Quest Helper" right-click option. */
+	private static final int QUEST_LIST = 399 << 16 | 7;
+
 	/**
-	 * Quest Helper opens a quest by itself when the game says you've started it (its "Auto
-	 * start helper" setting, on by default, while no other quest is open in it). So say that.
-	 * Client thread.
+	 * Open a quest in Quest Helper, swapping out any quest already open in it. Quests it splits
+	 * up get one part: Shield of Arrav its first gang, Recipe for Disaster its start. Client thread.
 	 */
 	private void openInQuestHelper(String quest)
 	{
-		client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "You've started a new quest: " + quest, null);
+		boolean[] open = new boolean[1];
+		MenuEntry start = questHelperOption(quest, open);
+		if (start != null && !open[0])
+		{
+			start.onClick().accept(start);
+		}
+	}
+
+	/** The quest Quest Helper was last asked to open from here, while the path goes to its start. */
+	private String questHelperQuest;
+
+	/**
+	 * With Quest Helper's own path off, nothing says when you close the quest in it, so every
+	 * few ticks this asks it, and takes the path to the quest's start away once it's closed.
+	 */
+	private void followQuestHelper()
+	{
+		// Not while a right-click menu's open: the ask goes through the menu.
+		if (questHelperQuest == null || client.getTickCount() % 3 != 0 || client.isMenuOpen())
+		{
+			return;
+		}
+		if (!pathing.isQuestStart() || !questHelperOn())
+		{
+			questHelperQuest = null;
+			return;
+		}
+		boolean[] open = new boolean[1];
+		MenuEntry start = questHelperOption(questHelperQuest, open);
+		if (start != null && !open[0])
+		{
+			pathing.clear();
+			questHelperQuest = null;
+		}
+	}
+
+	/**
+	 * Quest Helper adds "Start Quest Helper" (or "Stop", for the quest open in it) when you
+	 * right-click a quest in the quest list. This asks it for those options and takes them
+	 * straight back out of the menu: the "Start" one to pick is returned, and
+	 * {@code open[0]} says whether this quest's already open in it. Client thread.
+	 */
+	private MenuEntry questHelperOption(String quest, boolean[] open)
+	{
+		Menu menu = client.getMenu();
+		MenuEntry journal = menu.createMenuEntry(-1)
+			.setOption("Read journal:")
+			.setTarget("<col=ff9900>" + quest + "</col>")
+			.setType(MenuAction.CC_OP)
+			.setIdentifier(1)
+			.setParam0(-1)
+			.setParam1(QUEST_LIST);
+		java.util.Set<MenuEntry> before = new java.util.HashSet<>(java.util.Arrays.asList(menu.getMenuEntries()));
+		eventBus.post(new MenuEntryAdded(journal));
+		MenuEntry start = null;
+		int best = 0;
+		for (MenuEntry entry : menu.getMenuEntries())
+		{
+			if (entry == journal || before.contains(entry))
+			{
+				continue;
+			}
+			String option = entry.getOption() == null ? "" : entry.getOption();
+			String target = Text.removeTags(entry.getTarget() == null ? "" : entry.getTarget());
+			if (option.startsWith("Stop "))
+			{
+				open[0] = true;
+			}
+			else if (option.startsWith("Start ") && entry.onClick() != null)
+			{
+				// This quest by name, else a split quest's start, else its first part.
+				int rank = target.equalsIgnoreCase(quest) ? 3 : target.endsWith("- Start") ? 2 : 1;
+				if (rank > best)
+				{
+					best = rank;
+					start = entry;
+				}
+			}
+			menu.removeMenuEntry(entry);
+		}
+		menu.removeMenuEntry(journal);
+		return start;
 	}
 
 	/**

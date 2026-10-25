@@ -1422,6 +1422,8 @@ public class TaskWindow implements TaskWindowHook
 		final int step;
 		// A key to press, set by clicking it and pressing the new key.
 		boolean keybind;
+		// A choice of key: drawn as wide as the keybinds, so they line up.
+		boolean keyLike;
 		// A small button beside the control (e.g. "Test" by Card design), or null.
 		String actionLabel;
 		Runnable action;
@@ -1461,6 +1463,19 @@ public class TaskWindow implements TaskWindowHook
 	private static Setting choice(String label, String key, Supplier<Object> current, Object[] choices, String description)
 	{
 		return new Setting(label, description, key, current, choices, 0, 0, 0);
+	}
+
+	private static Setting keyChoice(String label, String key, Supplier<Object> current, Object[] choices, String description)
+	{
+		Setting setting = choice(label, key, current, choices, description);
+		setting.keyLike = true;
+		return setting;
+	}
+
+	/** Every key box the same width: room for "Press a key..." and the longest key names. */
+	private static int keyWidth(FontMetrics fm, Rectangle row)
+	{
+		return Math.min(Math.max(fm.stringWidth("Press a key...") + 16, fm.stringWidth("Ctrl+Shift+F12") + 16), row.width / 2);
 	}
 
 	private static Setting keybind(String label, String key, Supplier<Object> current, String description)
@@ -1532,7 +1547,7 @@ public class TaskWindow implements TaskWindowHook
 					"Hold this and click a chunk next to yours on the world map to unlock it. Click, then press the new key."),
 				keybind("Set path", "pathKey", config::pathKey,
 					"Hold this and click the world map to set a path there, or clear the one showing. Click, then press the new key."),
-				choice("Task tooltip key", "taskTooltipKey", config::taskTooltipKey, TaskTooltipKey.values(),
+				keyChoice("Task tooltip key", "taskTooltipKey", config::taskTooltipKey, TaskTooltipKey.values(),
 					"Hold this key over an NPC or object to list its tasks in a tooltip (an assist). Click to change."),
 				heading("World map"),
 				toggle("Colour legend", "showChunkLegend", config::showChunkLegend,
@@ -1678,7 +1693,7 @@ public class TaskWindow implements TaskWindowHook
 			boolean listening = setting.key.equals(listeningKey);
 			Keybind pressed = pressedKey;
 			String text = listening ? (pressed != null ? pressed.toString() : "Press a key...") : String.valueOf(value);
-			controlWidth = Math.min(Math.max(fm.stringWidth("Press a key...") + 16, fm.stringWidth(text) + 16), row.width / 2);
+			controlWidth = keyWidth(fm, row);
 			Rectangle button = new Rectangle(right - controlWidth, row.y + 3, controlWidth, row.height - 6);
 			if (mx >= 0)
 			{
@@ -1704,7 +1719,8 @@ public class TaskWindow implements TaskWindowHook
 			{
 				widest = Math.max(widest, fm.stringWidth(String.valueOf(choice)));
 			}
-			controlWidth = Math.min(widest + 16, row.width / 2);
+			// A key choice (the tooltip key) lines up with the keybinds above it.
+			controlWidth = setting.keyLike ? keyWidth(fm, row) : Math.min(widest + 16, row.width / 2);
 			Rectangle button = new Rectangle(right - controlWidth, row.y + 3, controlWidth, row.height - 6);
 			int index = Arrays.asList(setting.choices).indexOf(value);
 			Object next = setting.choices[(index + 1) % setting.choices.length];
@@ -2107,13 +2123,42 @@ public class TaskWindow implements TaskWindowHook
 	}
 
 	/**
-	 * A switch's track and knob, {@code w} wide and 12 high: the knob slides right when on.
-	 * Varlamore: a dark groove with a gold rim, a gold sun-disc knob when on and a dull bronze
-	 * one when off. Elsewhere the theme's colour fills the track and the knob goes white.
+	 * A setting's on/off control, {@code w} wide and 12 high, at its right end: a box, like
+	 * Old School's checkboxes, in each theme's own look (a plain switch in any other).
 	 */
 	private static void toggle(Graphics2D graphics, int sx, int sy, int w, boolean on)
 	{
 		int knobX = on ? sx + w - 11 : sx + 1;
+		if (Skin.palette().hearth || Skin.palette().brackets)
+		{
+			// On/off boxes, like Old School's: Varlamore's gold-rimmed with a gold square;
+			// the hearth's a rounded dark well that glows orange when on.
+			int bx = sx + w - 13;
+			Rectangle box = new Rectangle(bx, sy - 1, 13, 13);
+			if (Skin.palette().brackets)
+			{
+				Color gold = Skin.palette().frameInner;
+				graphics.setColor(new Color(30, 22, 16));
+				graphics.fillRect(box.x, box.y, box.width, box.height);
+				graphics.setColor(on ? gold : Tints.alpha(gold, 130));
+				graphics.drawRect(box.x, box.y, box.width - 1, box.height - 1);
+				if (on)
+				{
+					graphics.fillRect(box.x + 3, box.y + 3, 7, 7);
+					graphics.setColor(new Color(255, 240, 190));
+					graphics.fillRect(box.x + 3, box.y + 3, 3, 1);
+				}
+				return;
+			}
+			Skin.lit(graphics, box, 3, new Color(16, 13, 10), new Color(34, 28, 22), new Color(0, 0, 0));
+			if (on)
+			{
+				Rectangle in = new Rectangle(box.x + 3, box.y + 3, 7, 7);
+				Skin.haze(graphics, in, 2, Skin.HEARTH_GLOW, 120, 2, 0);
+				Skin.lit(graphics, in, 2, new Color(255, 180, 70), new Color(220, 100, 20), new Color(120, 50, 10));
+			}
+			return;
+		}
 		if (Skin.log())
 		{
 			// The collection log's checkbox: a dark box in a bronze rim, a green square when on.
@@ -2129,34 +2174,11 @@ public class TaskWindow implements TaskWindowHook
 			}
 			return;
 		}
-		if (!Skin.palette().brackets)
-		{
-			graphics.setColor(on ? Tints.alpha(TITLE, 150) : FIELD);
-			graphics.fillRect(sx, sy, w, 12);
-			graphics.setColor(on ? Color.WHITE : SUBTEXT);
-			graphics.fillOval(knobX, sy + 1, 10, 10);
-			return;
-		}
-		Color gold = Skin.palette().frameInner;
-		Object aa = graphics.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		graphics.setColor(new Color(30, 22, 16));
-		graphics.fillRoundRect(sx, sy, w, 12, 12, 12);
-		if (on)
-		{
-			graphics.setColor(Tints.alpha(gold, 90));
-			graphics.fillRoundRect(sx, sy, w, 12, 12, 12);
-		}
-		graphics.setColor(on ? gold : Tints.alpha(gold, 120));
-		graphics.drawRoundRect(sx, sy, w - 1, 11, 12, 12);
-		graphics.setColor(new Color(40, 26, 12));
-		graphics.fillOval(knobX - 1, sy, 12, 12);
-		graphics.setColor(on ? gold : new Color(120, 96, 70));
+		// Any other look: a plain switch, the theme's colour filling the track when on.
+		graphics.setColor(on ? Tints.alpha(TITLE, 150) : FIELD);
+		graphics.fillRect(sx, sy, w, 12);
+		graphics.setColor(on ? Color.WHITE : SUBTEXT);
 		graphics.fillOval(knobX, sy + 1, 10, 10);
-		// A glint, brighter when on.
-		graphics.setColor(on ? new Color(255, 240, 190) : new Color(160, 136, 104));
-		graphics.fillOval(knobX + 2, sy + 3, 4, 3);
-		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa == null ? RenderingHints.VALUE_ANTIALIAS_DEFAULT : aa);
 	}
 
 	/** A little switch: the knob slides right and goes the theme's colour when on. */
@@ -2272,7 +2294,25 @@ public class TaskWindow implements TaskWindowHook
 		int chipW = sm.stringWidth(points) + 12;
 		int chipX = rightEdge - chipW;
 		String number = points.replaceAll("\\D", "");
-		if (Skin.log() && !number.isEmpty())
+		if (Skin.palette().hearth && !number.isEmpty())
+		{
+			// The hearth: the points on a shiny coin in the tier's colour.
+			Rectangle coin = new Rectangle(rightEdge - 17, row.y + 3, 17, 17);
+			Object aa = graphics.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			graphics.setColor(new Color(0, 0, 0, 120));
+			graphics.fillOval(coin.x, coin.y + 1, coin.width, coin.height);
+			java.awt.Paint old = graphics.getPaint();
+			graphics.setPaint(new java.awt.GradientPaint(0, coin.y, Tints.mix(chipColor, Color.WHITE, 0.35f), 0, coin.y + coin.height,
+				Tints.mix(chipColor, Color.BLACK, 0.3f)));
+			graphics.fillOval(coin.x, coin.y, coin.width, coin.height);
+			graphics.setPaint(old);
+			graphics.setColor(new Color(0, 0, 0, 180));
+			graphics.drawOval(coin.x, coin.y, coin.width - 1, coin.height - 1);
+			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa == null ? RenderingHints.VALUE_ANTIALIAS_DEFAULT : aa);
+			Skin.boxed(graphics, number, coin, Color.WHITE);
+		}
+		else if (Skin.log() && !number.isEmpty())
 		{
 			// The collection log: the points in a small dark box rimmed in the tier's colour.
 			Rectangle box = new Rectangle(rightEdge - 18, row.y + 3, 18, 16);
@@ -2444,16 +2484,32 @@ public class TaskWindow implements TaskWindowHook
 		}
 		boolean isTracked = lists.isTracked(task);
 		Color tier = TaskCardTier.fromTask(task).getAccent();
-		if (isTracked)
+		if (isTracked && !Skin.palette().hearth)
 		{
-			// The task in the task box: a warm glow and an orange outline.
+			// The task in the task box: a warm glow and an orange outline (the hearth glows its own way).
 			graphics.setColor(TRACKED_FILL);
 			graphics.fillRect(row.x, row.y, row.width, row.height);
 			graphics.setColor(TITLE);
 			graphics.drawRect(row.x, row.y, row.width - 1, row.height - 1);
 		}
 		boolean temple = Skin.palette().brackets;
-		if (Skin.log())
+		if (Skin.palette().hearth)
+		{
+			// The hearth: each row a soft rounded tile on a shadow; the tracked one glows like a coal.
+			Rectangle tile = new Rectangle(row.x, row.y, row.width, row.height - 3);
+			if (isTracked)
+			{
+				Skin.haze(graphics, tile, 6, Skin.HEARTH_GLOW, 150, 4, 0);
+				Skin.lit(graphics, tile, 6, new Color(78, 56, 36), new Color(52, 36, 24), new Color(255, 150, 50));
+			}
+			else
+			{
+				Skin.haze(graphics, tile, 6, Color.BLACK, 110, 2, 2);
+				Skin.lit(graphics, tile, 6, hoverRow ? new Color(68, 54, 42) : new Color(58, 46, 36), new Color(44, 36, 29),
+					new Color(16, 13, 10));
+			}
+		}
+		else if (Skin.log())
 		{
 			// The collection log: each row its own box in a bronze rim; the tracked one lighter, rimmed orange.
 			graphics.setColor(isTracked ? Skin.LOG_ROW_ON : Skin.LOG_ROW);
@@ -3123,7 +3179,7 @@ public class TaskWindow implements TaskWindowHook
 			}
 			graphics.setFont(small);
 			graphics.setColor(settingsOpen && !footer.startsWith("Hover") ? Color.WHITE : LABEL);
-			Skin.text(graphics, Skin.fit(graphics.getFontMetrics(), footer, x + width - PAD - cx), cx, y + height - 7);
+			marquee(graphics, footer, cx, y + height - 7, x + width - PAD - cx);
 			finishFrame(graphics, window, mx, my);
 			return;
 		}
@@ -3157,6 +3213,49 @@ public class TaskWindow implements TaskWindowHook
 
 		finishFrame(graphics, window, mx, my);
 		return;
+	}
+
+	// The footer line scrolling past (see marquee): what it says, and since when.
+	private String marqueeText = "";
+	private long marqueeSince;
+	private static final long MARQUEE_HOLD = 1400;
+	private static final double MARQUEE_SPEED = 0.035;
+
+	/**
+	 * A line that may be too long for {@code width}: if it fits, drawn as it is. If not, it rests
+	 * at its start for a moment, glides left until its end shows, rests there, then fades back to
+	 * the start and goes again, like a news ticker that lets you read each end.
+	 */
+	private void marquee(Graphics2D graphics, String text, int x, int baseline, int width)
+	{
+		FontMetrics fm = graphics.getFontMetrics();
+		int over = fm.stringWidth(text) - width;
+		if (over <= 0)
+		{
+			Skin.text(graphics, text, x, baseline);
+			return;
+		}
+		long now = System.currentTimeMillis();
+		if (!text.equals(marqueeText))
+		{
+			marqueeText = text;
+			marqueeSince = now;
+		}
+		long glide = (long) (over / MARQUEE_SPEED);
+		long cycle = MARQUEE_HOLD + glide + MARQUEE_HOLD;
+		long t = (now - marqueeSince) % cycle;
+		int shift = t < MARQUEE_HOLD ? 0 : t < MARQUEE_HOLD + glide ? (int) ((t - MARQUEE_HOLD) * MARQUEE_SPEED) : over;
+		// A quick fade over the last 200ms before it jumps back to the start.
+		float alpha = t > cycle - 200 ? (cycle - t) / 200f : t < 200 && now - marqueeSince > cycle ? t / 200f : 1f;
+		java.awt.Shape clip = graphics.getClip();
+		graphics.clipRect(x, baseline - fm.getAscent() - 2, width, fm.getHeight() + 4);
+		java.awt.Composite old = graphics.getComposite();
+		graphics.setComposite(java.awt.AlphaComposite.getInstance(java.awt.AlphaComposite.SRC_OVER, Math.max(0f, Math.min(1f, alpha))));
+		Skin.text(graphics, text, x - shift, baseline);
+		graphics.setComposite(old);
+		graphics.setClip(clip);
+		// Keep drawing while it moves.
+		pane.keepLive(100);
 	}
 
 	/** Show every task again, here and in the side panel: no search, filters or chunk limit. */

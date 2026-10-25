@@ -71,14 +71,73 @@ public final class Transports
 		public final int to;
 		public final int cost;
 		final List<Requirement> requirements;
+		/** Where it goes ("Port Sarim"), or "" if the table doesn't say. */
+		public final String place;
+		/** What to click ("Charter Trader Crewmember"), and what it costs ("2,500 coins") if anything. */
+		public final String how;
+		/** {@link #UP}, {@link #DOWN}, {@link #DOOR}, {@link #TRAVEL} or {@link #OTHER}. */
+		public final int kind;
 
-		Link(int from, int to, int cost, List<Requirement> requirements)
+		Link(int from, int to, int cost, List<Requirement> requirements, String place, String how)
 		{
 			this.from = from;
 			this.to = to;
 			this.cost = cost;
 			this.requirements = requirements;
+			this.place = place;
+			this.how = how;
+			this.kind = kind(how, from, to, place);
 		}
+	}
+
+	/** Up stairs or a ladder. */
+	public static final int UP = 1;
+	/** Down stairs, a ladder or a hole. */
+	public static final int DOWN = 2;
+	/** Through a door, gate, gangplank or cave mouth. */
+	public static final int DOOR = 3;
+	/** Somewhere far: a charter, glider, spirit tree. */
+	public static final int TRAVEL = 4;
+	/** Anything else (an agility shortcut). */
+	public static final int OTHER = 0;
+
+	private static final String[] THROUGH = {"open", "enter", "exit", "leave", "go-through", "pass", "walk-through",
+		"squeeze-through", "crawl-through", "exit-through", "quick-pass"};
+	private static final String[] DOORS = {"door", "gate", "gangplank", "doorway", "entrance", "curtain", "archway"};
+
+	/** What kind of step a transport is, from what you click and where it goes. */
+	private static int kind(String how, int from, int to, String place)
+	{
+		String text = how.toLowerCase();
+		String option = text.split(" ", 2)[0];
+		for (String word : DOORS)
+		{
+			if (text.contains(word))
+			{
+				return DOOR;
+			}
+		}
+		for (String word : THROUGH)
+		{
+			if (option.equals(word))
+			{
+				return DOOR;
+			}
+		}
+		if (PathTile.z(to) != PathTile.z(from))
+		{
+			return PathTile.z(to) > PathTile.z(from) ? UP : DOWN;
+		}
+		if (option.startsWith("climb-up") || option.startsWith("walk-up") || option.equals("ascend"))
+		{
+			return UP;
+		}
+		if (option.startsWith("climb-down") || option.startsWith("walk-down") || option.equals("descend")
+			|| option.startsWith("jump-down"))
+		{
+			return DOWN;
+		}
+		return place.isEmpty() ? OTHER : TRAVEL;
 	}
 
 	/** What one row of a table asks for. Rows with the same text share one. */
@@ -150,6 +209,10 @@ public final class Transports
 		// each goes to every other stop in the same table.
 		List<Integer> network = new ArrayList<>();
 		List<Requirement> networkNeeds = new ArrayList<>();
+		List<String> networkPlaces = new ArrayList<>();
+		List<String> networkHows = new ArrayList<>();
+		// Tables head each group of rows with its place ("# Tree Gnome Village").
+		String section = "";
 		Map<String, Requirement> shared = new HashMap<>();
 		try (BufferedReader reader = open("transports/" + file + ".tsv"))
 		{
@@ -167,7 +230,12 @@ public final class Transports
 			String line;
 			while ((line = reader.readLine()) != null)
 			{
-				if (line.startsWith("#") || line.trim().isEmpty())
+				if (line.startsWith("#"))
+				{
+					section = line.replaceFirst("^#\\s*", "").trim();
+					continue;
+				}
+				if (line.trim().isEmpty())
 				{
 					continue;
 				}
@@ -200,13 +268,16 @@ public final class Transports
 				{
 				}
 				int to = point(cell(cells, col, "Destination"));
+				String how = how(cell(cells, col, "menuOption menuTarget objectID"), need.items);
 				if (to < 0)
 				{
 					network.add(from);
 					networkNeeds.add(need);
+					networkPlaces.add(section);
+					networkHows.add(how);
 					continue;
 				}
-				links.add(new Link(from, to, cost, Collections.singletonList(need)));
+				links.add(new Link(from, to, cost, Collections.singletonList(need), cell(cells, col, "Display info"), how));
 			}
 		}
 		for (int i = 0; i < network.size(); i++)
@@ -216,10 +287,24 @@ public final class Transports
 				if (i != j && !network.get(i).equals(network.get(j)))
 				{
 					links.add(new Link(network.get(i), network.get(j), 5,
-						Arrays.asList(networkNeeds.get(i), networkNeeds.get(j))));
+						Arrays.asList(networkNeeds.get(i), networkNeeds.get(j)), networkPlaces.get(j), networkHows.get(i)));
 				}
 			}
 		}
+	}
+
+	private static final java.util.regex.Pattern COINS = java.util.regex.Pattern.compile("(?:^|[&|])\\s*COINS\\s*=\\s*(\\d+)");
+
+	/** "Charter Trader Crewmember 1330" and "COINS=2500" to "Charter Trader Crewmember, 2,500 coins". */
+	private static String how(String menu, String items)
+	{
+		String text = menu.replaceFirst("\\s+-?\\d+$", "").trim().intern();
+		java.util.regex.Matcher coins = COINS.matcher(items);
+		if (coins.find())
+		{
+			text = text + ", " + String.format("%,d", Integer.parseInt(coins.group(1))) + " coins";
+		}
+		return text;
 	}
 
 	private static String cell(String[] cells, Map<String, Integer> col, String name)

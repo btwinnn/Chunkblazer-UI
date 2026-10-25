@@ -59,6 +59,8 @@ public final class ThemePalette
 	public boolean brackets;
 	/** Old School's collection log look: flat dark brown pages, thin bronze rims, orange titles. */
 	public boolean log;
+	/** ChunkBlazer's hearth look: windows warming toward the top, soft shadows, things that are on glow orange. */
+	public boolean hearth;
 
 	// Buttons, bevels, grooves and fields.
 	public Color button;
@@ -98,7 +100,8 @@ public final class ThemePalette
 	public static ThemePalette original()
 	{
 		ThemePalette p = new ThemePalette(Theme.ORIGINAL);
-			// btwinnn's original: flat dark brown, thin bronze lines, soft corners, orange.
+			// btwinnn's original: dark brown, thin bronze lines, soft corners, orange; lit like a hearth.
+			p.hearth = true;
 			p.base = new Color(38, 33, 27, 242);
 			p.baseDark = new Color(28, 24, 20, 250);
 			p.radius = 7;
