@@ -55,6 +55,10 @@ public final class ThemePalette
 	/** Gold corner flourishes (Royal) and a soft glow round the frame. */
 	public boolean flourishes;
 	public boolean glow;
+	/** Varlamore's temple look: a faint gold line inside each box and bold gold brackets at its corners. */
+	public boolean brackets;
+	/** Old School's collection log look: flat dark brown pages, thin bronze rims, orange titles. */
+	public boolean log;
 
 	// Buttons, bevels, grooves and fields.
 	public Color button;
@@ -122,46 +126,5 @@ public final class ThemePalette
 			p.panelAccent = new Color(255, 152, 0);
 			p.panelButton = new Color(55, 55, 55);
 		return p;
-	}
-
-	/** Every field by name, for ChunkBlazer's side panel to take the same look. */
-	public java.util.Map<String, Object> toMap()
-	{
-		java.util.Map<String, Object> m = new java.util.HashMap<>();
-		m.put("theme", theme == null ? null : theme.name());
-		m.put("base", base);
-		m.put("baseDark", baseDark);
-		m.put("tile", tile);
-		m.put("tileDark", tileDark);
-		m.put("radius", radius);
-		m.put("frameOuter", frameOuter);
-		m.put("frameInner", frameInner);
-		m.put("frameWidth", frameWidth);
-		m.put("flourishes", flourishes);
-		m.put("glow", glow);
-		m.put("button", button);
-		m.put("buttonActive", buttonActive);
-		m.put("edge", edge);
-		m.put("bevelLight", bevelLight);
-		m.put("bevelDark", bevelDark);
-		m.put("dividerDark", dividerDark);
-		m.put("dividerLight", dividerLight);
-		m.put("field", field);
-		m.put("barFill", barFill);
-		m.put("title", title);
-		m.put("subtext", subtext);
-		m.put("label", label);
-		m.put("dark", dark);
-		m.put("tracked", tracked);
-		m.put("sidebar", sidebar);
-		m.put("itemSlot", itemSlot);
-		m.put("rowAlt", rowAlt);
-		m.put("panelBg", panelBg);
-		m.put("panelSection", panelSection);
-		m.put("panelBorder", panelBorder);
-		m.put("panelField", panelField);
-		m.put("panelAccent", panelAccent);
-		m.put("panelButton", panelButton);
-		return m;
 	}
 }

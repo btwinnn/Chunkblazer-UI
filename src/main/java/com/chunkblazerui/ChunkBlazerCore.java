@@ -630,10 +630,10 @@ public class ChunkBlazerCore
 		tell("enableServerSync");
 	}
 
-	/** The side panel takes the UI's theme (after a Theme change), or its own look (null). */
-	public void applyPanelTheme(ThemePalette palette)
+	/** ChunkBlazer's side panel is drawn by {@code painter} in the UI's theme, or in its own look (null). */
+	public void setSidePainter(java.util.function.BiPredicate<String, Object[]> painter)
 	{
-		ask("applyPanelTheme", palette == null ? null : palette.toMap());
+		ask("setSidePainter", painter);
 	}
 
 	/** The side panel's "show all": no search, filters or chunk limit. */

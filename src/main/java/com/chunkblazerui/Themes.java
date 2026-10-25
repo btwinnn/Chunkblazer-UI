@@ -64,6 +64,7 @@ public final class Themes
 				p.frameInner = new Color(211, 174, 84);
 				p.frameWidth = 2;
 				p.flourishes = true;
+				p.brackets = true;
 				p.button = new Color(118, 94, 70);
 				p.buttonActive = new Color(157, 114, 40);
 				p.edge = new Color(53, 38, 32);
@@ -90,30 +91,32 @@ public final class Themes
 				break;
 			case OLD_SCHOOL:
 			default:
-				// The game's interfaces (Skin draws the stone and frames from ui/ images).
-				p.base = new Color(62, 53, 41);
-				p.baseDark = new Color(46, 40, 31);
-				p.button = new Color(84, 74, 58);
-				p.buttonActive = new Color(150, 40, 20, 110);
-				p.dividerDark = new Color(36, 30, 24);
-				p.dividerLight = new Color(112, 99, 79);
-				p.field = new Color(30, 26, 21);
+				// The collection log: flat dark brown pages in thin bronze rims, orange titles,
+				// green and yellow counts (Skin draws the rims; no stone images).
+				p.log = true;
+				p.base = new Color(42, 36, 28);
+				p.baseDark = new Color(54, 46, 35);
+				p.button = new Color(58, 49, 37);
+				p.buttonActive = new Color(70, 56, 34);
+				p.edge = Skin.LOG_RIM;
+				p.dividerDark = new Color(30, 26, 20);
+				p.dividerLight = Skin.LOG_RIM;
+				p.field = new Color(30, 26, 20);
 				p.barFill = new Color(66, 160, 70);
 				p.title = new Color(255, 152, 31);
-				p.subtext = new Color(255, 176, 64);
-				p.label = new Color(170, 150, 112);
+				p.subtext = new Color(230, 220, 200);
+				p.label = new Color(175, 160, 135);
 				p.dark = new Color(28, 24, 19);
 				p.tracked = new Color(255, 152, 31, 46);
 				p.sidebar = new Color(0, 0, 0, 44);
-				p.itemSlot = new Color(92, 84, 70);
+				p.itemSlot = new Color(52, 45, 36);
 				p.rowAlt = new Color(0, 0, 0, 30);
-				p.panelBg = new Color(62, 53, 41);
-				// Dark cards and boxes on the stone, like the chatbox.
-				p.panelSection = new Color(26, 22, 17);
-				p.panelBorder = Color.BLACK;
-				p.panelField = new Color(30, 26, 21);
+				p.panelBg = new Color(34, 29, 23);
+				p.panelSection = new Color(42, 36, 28);
+				p.panelBorder = Skin.LOG_RIM;
+				p.panelField = new Color(30, 26, 20);
 				p.panelAccent = new Color(255, 152, 31);
-				p.panelButton = new Color(70, 62, 48);
+				p.panelButton = new Color(58, 49, 37);
 				break;
 		}
 		return p;

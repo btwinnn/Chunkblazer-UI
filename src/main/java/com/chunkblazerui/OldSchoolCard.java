@@ -38,26 +38,25 @@ import java.awt.RadialGradientPaint;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.TexturePaint;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import net.runelite.client.util.ImageUtil;
 
 /**
- * The Old School theme's cards and chunk banner, in the game's own stone interface: its
- * stone texture and frame, an orange title on the darker stone, white text in a sunken box,
- * and the tier's colour as cut gems.
+ * The Old School theme's cards and chunk banner, as collection log pages: flat dark brown
+ * in a thin bronze rim, an orange title on the darker header band, white text in a sunken
+ * box, and the tier's colour as cut gems.
  */
 final class OldSchoolCard
 {
 	private static final Color OSRS_ORANGE = new Color(255, 152, 31);
 	private static final Color OSRS_YELLOW = new Color(255, 255, 0);
-	private static final BufferedImage STONE_TILE = image("stone");
-	private static final BufferedImage STONE_DARK_TILE = image("stone_dark");
-	private static final BufferedImage FRAME = image("frame");
+	private static final Color PAGE = new Color(42, 36, 28);
+	private static final Color BAND = new Color(54, 46, 35);
+	private static final Color DEEP = new Color(30, 26, 20);
+	private static final Color RIM = new Color(88, 74, 54);
+	private static final Color LINE = new Color(60, 50, 38);
 
 	private OldSchoolCard()
 	{
@@ -86,14 +85,16 @@ final class OldSchoolCard
 		Object antialias = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		shadow(g, r, r);
-		tile(g, r, STONE_TILE, new Color(62, 53, 41));
-		if (FRAME != null)
-		{
-			nine(g, FRAME, r, 6, 1);
-		}
+		g.setColor(PAGE);
+		g.fill(r);
+		// Like the log's "New item" pop-up: an orange edge round the bronze rim.
+		rim(g, r, 1);
+		g.setColor(OSRS_ORANGE);
+		g.drawRect(r.x + 1, r.y + 1, r.width - 3, r.height - 3);
 		FontMetrics tm = g.getFontMetrics(titleFont);
 		Rectangle strip = new Rectangle(r.x + 6, r.y + 6, r.width - 12, tm.getAscent() + 8);
-		tile(g, strip, STONE_DARK_TILE, new Color(50, 44, 35));
+		g.setColor(BAND);
+		g.fill(strip);
 		sunken(g, strip);
 		int gem = Math.max(3, strip.height / 4);
 		gem(g, strip.x + gem + 4, (int) strip.getCenterY(), gem, accent);
@@ -105,13 +106,14 @@ final class OldSchoolCard
 		text(g, statusFont, status, below, statusColor, Color.BLACK);
 	}
 
-	/** The game's own stone panels and frame: an orange title on the darker stone, white name in a sunken box. */
+	/** A log page: an orange title on the darker band, white name in a sunken box. */
 	private static void stone(Graphics2D g, Rectangle b, Color accent, String tier, int stars, String name, Font font)
 	{
 		stonePanel(g, b);
 		int pad = px(b, 0.07);
 		Rectangle head = new Rectangle(b.x + pad, b.y + pad, b.width - 2 * pad, px(b, 0.2));
-		tile(g, head, STONE_DARK_TILE, new Color(50, 44, 35));
+		g.setColor(BAND);
+		g.fill(head);
 		sunken(g, head);
 		text(g, PixelText.at(font, b.height * 0.12f), tier + " Task", head, OSRS_ORANGE, Color.BLACK);
 		// The tier's colour as a cut gem at each end of the title.
@@ -120,7 +122,7 @@ final class OldSchoolCard
 		gem(g, head.x + head.width - gem - px(b, 0.02), (int) head.getCenterY(), gem, accent);
 		Rectangle body = new Rectangle(head.x, head.y + head.height + px(b, 0.05), head.width,
 			b.y + b.height - pad - head.y - head.height - px(b, 0.05) - px(b, 0.1));
-		g.setColor(new Color(0, 0, 0, 60));
+		g.setColor(DEEP);
 		g.fill(body);
 		sunken(g, body);
 		name(g, inset(body, px(b, 0.03)), name, font, Color.WHITE, Color.BLACK);
@@ -132,12 +134,13 @@ final class OldSchoolCard
 		stonePanel(g, b);
 		int pad = px(b, 0.07);
 		Rectangle inner = new Rectangle(b.x + pad, b.y + pad, b.width - 2 * pad, b.height - 2 * pad);
-		tile(g, inner, STONE_DARK_TILE, new Color(50, 44, 35));
+		g.setColor(DEEP);
+		g.fill(inner);
 		sunken(g, inner);
-		// The chunk grid, faintly, under the logo.
+		// The chunk grid, faintly in bronze, under the logo.
 		Shape clip = g.getClip();
 		g.clip(inner);
-		g.setColor(new Color(0, 0, 0, 55));
+		g.setColor(new Color(RIM.getRed(), RIM.getGreen(), RIM.getBlue(), 70));
 		g.setStroke(new BasicStroke(1f));
 		double step = inner.height / 4.0;
 		for (double x = inner.x + step; x < inner.x + inner.width; x += step)
@@ -160,17 +163,10 @@ final class OldSchoolCard
 	private static void stonePanel(Graphics2D g, Rectangle b)
 	{
 		shadow(g, b, b);
-		tile(g, b, STONE_TILE, new Color(62, 53, 41));
-		// The game's frame, drawn twice its size so it reads at card scale.
-		if (FRAME != null)
-		{
-			nine(g, FRAME, b, 6, 2);
-		}
-		else
-		{
-			g.setColor(Color.BLACK);
-			g.drawRect(b.x, b.y, b.width - 1, b.height - 1);
-		}
+		g.setColor(PAGE);
+		g.fill(b);
+		// The log's rim, twice as thick so it reads at card scale.
+		rim(g, b, 2);
 	}
 
 	/** A small cut gem: lit facet top-left, shaded bottom-right. */
@@ -213,59 +209,37 @@ final class OldSchoolCard
 		g.setComposite(old);
 	}
 
-	private static void tile(Graphics2D g, Rectangle r, BufferedImage img, Color fallback)
-	{
-		if (img == null)
-		{
-			g.setColor(fallback);
-		}
-		else
-		{
-			g.setPaint(new TexturePaint(img, new Rectangle(r.x, r.y, img.getWidth(), img.getHeight())));
-		}
-		g.fill(r);
-	}
-
+	/** A box set into the page: its bronze rim. */
 	private static void sunken(Graphics2D g, Rectangle r)
 	{
 		g.setStroke(new BasicStroke(1f));
-		g.setColor(Color.BLACK);
+		g.setColor(RIM);
 		g.drawRect(r.x, r.y, r.width - 1, r.height - 1);
-		g.setColor(new Color(0, 0, 0, 90));
-		g.drawLine(r.x + 1, r.y + 1, r.x + r.width - 2, r.y + 1);
-		g.drawLine(r.x + 1, r.y + 1, r.x + 1, r.y + r.height - 2);
-		g.setColor(new Color(255, 255, 255, 30));
-		g.drawLine(r.x + 1, r.y + r.height - 2, r.x + r.width - 2, r.y + r.height - 2);
-		g.drawLine(r.x + r.width - 2, r.y + 1, r.x + r.width - 2, r.y + r.height - 2);
 	}
 
-	/** An image's border round {@code r} at {@code scale}: corners as they are, edges stretched. */
-	private static void nine(Graphics2D g, BufferedImage img, Rectangle r, int e, int scale)
+	/** A page's edge, {@code w} pixels to a line: black outside, the bronze rim, a darker line inside. */
+	private static void rim(Graphics2D g, Rectangle r, int w)
 	{
-		int w = img.getWidth();
-		int h = img.getHeight();
-		int de = e * scale;
-		int[] dx = {r.x, r.x + de, r.x + r.width - de, r.x + r.width};
-		int[] dy = {r.y, r.y + de, r.y + r.height - de, r.y + r.height};
-		int[] sx = {0, e, w - e, w};
-		int[] sy = {0, e, h - e, h};
-		Object interpolation = g.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
-		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-		for (int i = 0; i < 3; i++)
+		Object aa = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		g.setStroke(new BasicStroke(1f));
+		Color[] lines = {Color.BLACK, RIM, LINE};
+		int at = 0;
+		for (int i = 0; i < lines.length; i++)
 		{
-			for (int j = 0; j < 3; j++)
+			g.setColor(lines[i]);
+			for (int k = 0; k < w; k++)
 			{
-				if (i == 1 && j == 1)
-				{
-					continue;
-				}
-				g.drawImage(img, dx[i], dy[j], dx[i + 1], dy[j + 1], sx[i], sy[j], sx[i + 1], sy[j + 1], null);
+				g.drawRect(r.x + at, r.y + at, r.width - 1 - 2 * at, r.height - 1 - 2 * at);
+				at++;
+			}
+			// A line of page between the rim and the inner line.
+			if (i == 1)
+			{
+				at += w;
 			}
 		}
-		if (interpolation != null)
-		{
-			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, interpolation);
-		}
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa);
 	}
 
 	/** The logo centred, {@code height} of the card tall; {@code stamped} prints it faded, like ink on paper. */
@@ -423,18 +397,6 @@ final class OldSchoolCard
 	{
 		return new Color((int) (c.getRed() + (255 - c.getRed()) * k), (int) (c.getGreen() + (255 - c.getGreen()) * k),
 			(int) (c.getBlue() + (255 - c.getBlue()) * k), c.getAlpha());
-	}
-
-	private static BufferedImage image(String name)
-	{
-		try
-		{
-			return ImageUtil.loadImageResource(com.chunkblazerui.Skin.class, "ui/" + name + ".png");
-		}
-		catch (RuntimeException e)
-		{
-			return null;
-		}
 	}
 
 	private static void quality(Graphics2D g)

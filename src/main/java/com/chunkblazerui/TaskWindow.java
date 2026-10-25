@@ -1056,9 +1056,17 @@ public class TaskWindow implements TaskWindowHook
 		int width = window.width;
 		Font bold = Skin.bold();
 		Font small = Skin.small();
-		BufferedImage icon = logo();
-		int titleX = x + PAD + (icon != null ? 22 : 0);
-		if (icon != null)
+		boolean temple = Skin.palette().brackets;
+		BufferedImage icon = temple ? null : logo();
+		int titleX = x + PAD + (icon != null || temple ? 22 : 0);
+		if (temple)
+		{
+			// Varlamore: Ralos's sun before the title, and a faint gold line under the header.
+			Skin.sun(graphics, x + PAD + 7, y + HEADER / 2, Skin.palette().frameInner);
+			graphics.setColor(Tints.alpha(Skin.palette().frameInner, 90));
+			graphics.drawLine(x + 12, y + HEADER + 3, x + width - 13, y + HEADER + 3);
+		}
+		else if (icon != null)
 		{
 			graphics.drawImage(icon, x + PAD, y + (HEADER - 16) / 2, null);
 		}
@@ -1118,11 +1126,81 @@ public class TaskWindow implements TaskWindowHook
 			statChunks = lists.paidChunks();
 		}
 		int chipX = cog.x - 6;
-		for (String[] stat : new String[][]{{statChunks + "", "chunks"}, {statDone + "", "done"},
-			{plugin.getTotalPoints() + "", "pts"}})
+		String[][] stats = {{statChunks + "", "chunks"}, {statDone + "", "done"}, {plugin.getTotalPoints() + "", "pts"}};
+		if (temple)
+		{
+			statStrip(graphics, chipX, y + 10, stats);
+			return;
+		}
+		for (String[] stat : stats)
 		{
 			chipX -= statChip(graphics, chipX, y + 11, stat[0], stat[1]) + 5;
 		}
+	}
+
+	/** Varlamore's numbers: one strip ending at {@code right}, parted by thin gold lines, the points in gold. */
+	private static void statStrip(Graphics2D graphics, int right, int y, String[][] stats)
+	{
+		FontMetrics fm = graphics.getFontMetrics();
+		int cell = 0;
+		for (String[] stat : stats)
+		{
+			cell = Math.max(cell, fm.stringWidth(stat[0] + " " + stat[1]) + 16);
+		}
+		Rectangle strip = new Rectangle(right - cell * stats.length, y, cell * stats.length, 20);
+		graphics.setColor(FIELD);
+		graphics.fillRect(strip.x, strip.y, strip.width, strip.height);
+		Skin.bevel(graphics, strip, false);
+		Skin.trim(graphics, strip);
+		Color gold = Skin.palette().frameInner;
+		for (int i = 0; i < stats.length; i++)
+		{
+			// Right to left as given: chunks, done, then points nearest the title.
+			int cx = strip.x + strip.width - cell * i - cell / 2;
+			String value = stats[i][0];
+			int w = fm.stringWidth(value + " " + stats[i][1]);
+			graphics.setColor(i == stats.length - 1 ? gold : Color.WHITE);
+			Skin.text(graphics, value, cx - w / 2, y + 14);
+			graphics.setColor(LABEL);
+			Skin.text(graphics, stats[i][1], cx - w / 2 + fm.stringWidth(value + " "), y + 14);
+			if (i > 0)
+			{
+				graphics.setColor(Tints.alpha(gold, 150));
+				int lx = strip.x + strip.width - cell * i;
+				graphics.drawLine(lx, y + 4, lx, y + 15);
+			}
+		}
+	}
+
+	/** Varlamore's sidebar heading: gold, a small sun, a gold rule; elsewhere just the label. */
+	private static void sideHeading(Graphics2D graphics, String label, int x, int y, int right)
+	{
+		if (!Skin.palette().brackets)
+		{
+			graphics.setColor(LABEL);
+			Skin.text(graphics, label, x, y);
+			return;
+		}
+		Color gold = Skin.palette().frameInner;
+		graphics.setColor(gold);
+		Skin.text(graphics, label, x, y);
+		int sx = x + graphics.getFontMetrics().stringWidth(label) + 8;
+		Skin.sun(graphics, sx, y - 4, gold);
+		graphics.setColor(Tints.alpha(gold, 150));
+		graphics.drawLine(sx + 8, y - 4, right, y - 4);
+	}
+
+	/** A small gem in the tier's colour, centred on (cx, cy): Varlamore's tier mark on a row's icon. */
+	private static void gem(Graphics2D g, int cx, int cy, Color tier)
+	{
+		int[] xs = {cx, cx + 5, cx, cx - 5};
+		int[] ys = {cy - 5, cy, cy + 5, cy};
+		g.setColor(tier);
+		g.fillPolygon(xs, ys, 4);
+		g.setColor(new Color(30, 20, 10));
+		g.drawPolygon(xs, ys, 4);
+		g.setColor(Color.WHITE);
+		g.fillRect(cx - 2, cy - 2, 1, 1);
 	}
 
 	/** A small cog: a toothed ring with a hole, centred in {@code r}. */
@@ -1178,10 +1256,10 @@ public class TaskWindow implements TaskWindowHook
 		graphics.setColor(SIDEBAR_FILL);
 		graphics.fillRect(column.x, column.y, column.width, column.height);
 		Skin.bevel(graphics, column, false);
+		Skin.trim(graphics, column);
 		int sy = side.y + 10;
 		graphics.setFont(small);
-		graphics.setColor(LABEL);
-		Skin.text(graphics, "LISTS", side.x + PAD + 2, sy + 8);
+		sideHeading(graphics, "LISTS", side.x + PAD + 2, sy + 8, side.x + side.width - 10);
 		sy += 14;
 		List<Object[]> tabs = new ArrayList<>();
 		Set<String> archived = archive.ids();
@@ -1213,8 +1291,7 @@ public class TaskWindow implements TaskWindowHook
 			// How the list shows: every task opened up, and the red line of what you're missing.
 			sy += 10;
 			graphics.setFont(small);
-			graphics.setColor(LABEL);
-			Skin.text(graphics, "VIEW", side.x + PAD + 2, sy + 8);
+			sideHeading(graphics, "VIEW", side.x + PAD + 2, sy + 8, side.x + side.width - 10);
 			sy += 13;
 			boolean narrow = side.width < SIDEBAR;
 			drawSwitch(graphics, new Rectangle(side.x + 6, sy, side.width - 12, 22), narrow ? "Expand all" : "Expand all tasks",
@@ -1536,7 +1613,22 @@ public class TaskWindow implements TaskWindowHook
 				for (Setting setting : section)
 				{
 					Rectangle row = new Rectangle(colX, rowY, columnWidth, SETTINGS_ROW);
-					if (setting.key == null)
+					if (setting.key == null && Skin.palette().brackets)
+					{
+						// Varlamore: gold, a sun and a gold rule, like the sidebar's headings.
+						sideHeading(graphics, setting.label.toUpperCase(), colX + 2, rowY + SETTINGS_ROW - 7, colX + columnWidth);
+					}
+					else if (setting.key == null && Skin.log())
+					{
+						// The collection log: a heading band in a bronze rim.
+						graphics.setColor(Skin.palette().baseDark);
+						graphics.fillRect(colX, rowY + 2, columnWidth, SETTINGS_ROW - 4);
+						graphics.setColor(Skin.LOG_RIM);
+						graphics.drawRect(colX, rowY + 2, columnWidth - 1, SETTINGS_ROW - 5);
+						graphics.setColor(TITLE);
+						Skin.text(graphics, setting.label.toUpperCase(), colX + 6, rowY + SETTINGS_ROW - 7);
+					}
+					else if (setting.key == null)
 					{
 						graphics.setColor(TITLE);
 						Skin.text(graphics, setting.label.toUpperCase(), colX + 2, rowY + SETTINGS_ROW - 7);
@@ -1663,13 +1755,8 @@ public class TaskWindow implements TaskWindowHook
 			{
 				pane.hits.add(new Hit(row.intersection(clip), () -> configManager.setConfiguration(groupOf(setting.key), setting.key, !on)));
 			}
-			// The same little switch as "This chunk only": the knob slides right and goes orange when on.
-			int sx = right - controlWidth;
-			int sy = row.y + (row.height - 12) / 2;
-			graphics.setColor(on ? new Color(255, 152, 31, 150) : FIELD);
-			graphics.fillRect(sx, sy, controlWidth, 12);
-			graphics.setColor(on ? Color.WHITE : SUBTEXT);
-			graphics.fillOval(on ? sx + controlWidth - 11 : sx + 1, sy + 1, 10, 10);
+			// The same little switch as "This chunk only".
+			toggle(graphics, right - controlWidth, row.y + (row.height - 12) / 2, controlWidth, on);
 		}
 		graphics.setColor(hover ? Color.WHITE : SUBTEXT);
 		Skin.text(graphics, Skin.fit(fm, setting.label, row.width - controlWidth - 18), row.x + 6, textY);
@@ -2019,6 +2106,59 @@ public class TaskWindow implements TaskWindowHook
 		switchKnob(graphics, area, label, on, hover);
 	}
 
+	/**
+	 * A switch's track and knob, {@code w} wide and 12 high: the knob slides right when on.
+	 * Varlamore: a dark groove with a gold rim, a gold sun-disc knob when on and a dull bronze
+	 * one when off. Elsewhere the theme's colour fills the track and the knob goes white.
+	 */
+	private static void toggle(Graphics2D graphics, int sx, int sy, int w, boolean on)
+	{
+		int knobX = on ? sx + w - 11 : sx + 1;
+		if (Skin.log())
+		{
+			// The collection log's checkbox: a dark box in a bronze rim, a green square when on.
+			int bx = sx + w - 13;
+			graphics.setColor(new Color(20, 18, 14));
+			graphics.fillRect(bx, sy - 1, 13, 13);
+			graphics.setColor(Skin.LOG_RIM);
+			graphics.drawRect(bx, sy - 1, 12, 12);
+			if (on)
+			{
+				graphics.setColor(new Color(0, 200, 0));
+				graphics.fillRect(bx + 3, sy + 2, 7, 7);
+			}
+			return;
+		}
+		if (!Skin.palette().brackets)
+		{
+			graphics.setColor(on ? Tints.alpha(TITLE, 150) : FIELD);
+			graphics.fillRect(sx, sy, w, 12);
+			graphics.setColor(on ? Color.WHITE : SUBTEXT);
+			graphics.fillOval(knobX, sy + 1, 10, 10);
+			return;
+		}
+		Color gold = Skin.palette().frameInner;
+		Object aa = graphics.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		graphics.setColor(new Color(30, 22, 16));
+		graphics.fillRoundRect(sx, sy, w, 12, 12, 12);
+		if (on)
+		{
+			graphics.setColor(Tints.alpha(gold, 90));
+			graphics.fillRoundRect(sx, sy, w, 12, 12, 12);
+		}
+		graphics.setColor(on ? gold : Tints.alpha(gold, 120));
+		graphics.drawRoundRect(sx, sy, w - 1, 11, 12, 12);
+		graphics.setColor(new Color(40, 26, 12));
+		graphics.fillOval(knobX - 1, sy, 12, 12);
+		graphics.setColor(on ? gold : new Color(120, 96, 70));
+		graphics.fillOval(knobX, sy + 1, 10, 10);
+		// A glint, brighter when on.
+		graphics.setColor(on ? new Color(255, 240, 190) : new Color(160, 136, 104));
+		graphics.fillOval(knobX + 2, sy + 3, 4, 3);
+		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa == null ? RenderingHints.VALUE_ANTIALIAS_DEFAULT : aa);
+	}
+
 	/** A little switch: the knob slides right and goes the theme's colour when on. */
 	private void switchKnob(Graphics2D graphics, Rectangle area, String label, boolean on, boolean hover)
 	{
@@ -2028,10 +2168,7 @@ public class TaskWindow implements TaskWindowHook
 		int sw = 22;
 		int sx = area.x + 6;
 		int sy = area.y + (area.height - 12) / 2;
-		graphics.setColor(on ? Tints.alpha(TITLE, 150) : FIELD);
-		graphics.fillRect(sx, sy, sw, 12);
-		graphics.setColor(on ? Color.WHITE : SUBTEXT);
-		graphics.fillOval(on ? sx + sw - 11 : sx + 1, sy + 1, 10, 10);
+		toggle(graphics, sx, sy, sw, on);
 		graphics.setColor(on || hover ? Color.WHITE : SUBTEXT);
 		Skin.text(graphics, label, sx + sw + 6, textY);
 	}
@@ -2064,6 +2201,7 @@ public class TaskWindow implements TaskWindowHook
 		boolean hover = area.contains(mx, my);
 		// Stone tab buttons; the chosen one glows red like the game's open side tab.
 		Skin.button(graphics, area, hover, chosen);
+		Skin.trim(graphics, area);
 		if (which == Tab.NEW && !chosen && alerts() > 0)
 		{
 			// Something new: the tab pulses until you look.
@@ -2133,9 +2271,28 @@ public class TaskWindow implements TaskWindowHook
 		FontMetrics sm = graphics.getFontMetrics();
 		int chipW = sm.stringWidth(points) + 12;
 		int chipX = rightEdge - chipW;
-		graphics.setColor(POINTS);
-		// A plain number in the Points column, as on the Leagues list.
-		Skin.text(graphics, points, rightEdge - sm.stringWidth(points), row.y + 17);
+		String number = points.replaceAll("\\D", "");
+		if (Skin.log() && !number.isEmpty())
+		{
+			// The collection log: the points in a small dark box rimmed in the tier's colour.
+			Rectangle box = new Rectangle(rightEdge - 18, row.y + 3, 18, 16);
+			graphics.setColor(new Color(24, 20, 15));
+			graphics.fillRect(box.x, box.y, box.width, box.height);
+			graphics.setColor(chipColor);
+			graphics.drawRect(box.x, box.y, box.width - 1, box.height - 1);
+			Skin.boxed(graphics, number, box, chipColor);
+		}
+		else if (Skin.palette().brackets && !number.isEmpty())
+		{
+			// Varlamore: the points on a small shield with a gold chief, as on the side panel.
+			SidePanelSkin.badge(graphics, rightEdge - 16, row.y + 3, chipColor, Integer.parseInt(number), Skin.palette());
+		}
+		else
+		{
+			graphics.setColor(POINTS);
+			// A plain number in the Points column, as on the Leagues list.
+			Skin.text(graphics, points, rightEdge - sm.stringWidth(points), row.y + 17);
+		}
 		graphics.setFont(regular);
 		FontMetrics fm = graphics.getFontMetrics();
 		String[] lines = name.split("\n");
@@ -2168,6 +2325,12 @@ public class TaskWindow implements TaskWindowHook
 		graphics.setColor(ITEM_SLOT);
 		graphics.fillRect(slot.x, slot.y, slot.width, slot.height);
 		Skin.bevel(graphics, slot, false);
+		if (Skin.palette().brackets)
+		{
+			// Varlamore: a gold ring round the slot, so the item stands out.
+			graphics.setColor(Tints.alpha(Skin.palette().frameInner, 190));
+			graphics.drawRect(slot.x - 1, slot.y - 1, slot.width + 1, slot.height + 1);
+		}
 		BufferedImage image = iconFor(task, skill);
 		if (image != null && image.getWidth() > 0 && image.getHeight() > 0)
 		{
@@ -2289,9 +2452,42 @@ public class TaskWindow implements TaskWindowHook
 			graphics.setColor(TITLE);
 			graphics.drawRect(row.x, row.y, row.width - 1, row.height - 1);
 		}
-		// Its tier down the left edge.
-		graphics.setColor(tier);
-		graphics.fillRect(row.x + 2, row.y + 6, 3, row.height - 12);
+		boolean temple = Skin.palette().brackets;
+		if (Skin.log())
+		{
+			// The collection log: each row its own box in a bronze rim; the tracked one lighter, rimmed orange.
+			graphics.setColor(isTracked ? Skin.LOG_ROW_ON : Skin.LOG_ROW);
+			graphics.fillRect(row.x, row.y, row.width, row.height - 2);
+			if (hoverRow && !isTracked)
+			{
+				graphics.setColor(CARD_HOVER);
+				graphics.fillRect(row.x, row.y, row.width, row.height - 2);
+			}
+			graphics.setColor(isTracked ? TITLE : Skin.LOG_RIM);
+			graphics.drawRect(row.x, row.y, row.width - 1, row.height - 3);
+			graphics.setColor(tier);
+			graphics.fillRect(row.x + 3, row.y + 5, 3, row.height - 12);
+		}
+		else if (temple)
+		{
+			// Varlamore: gold corner brackets on the tracked row and the one under the mouse; a thin
+			// gold line under the rest. Its tier is a gem on the icon instead of a stripe.
+			if (isTracked || hoverRow)
+			{
+				Skin.trim(graphics, row);
+			}
+			else
+			{
+				graphics.setColor(Tints.alpha(Skin.palette().frameInner, 110));
+				graphics.drawLine(row.x + 4, row.y + row.height - 1, row.x + row.width - 5, row.y + row.height - 1);
+			}
+		}
+		else
+		{
+			// Its tier down the left edge.
+			graphics.setColor(tier);
+			graphics.fillRect(row.x + 2, row.y + 6, 3, row.height - 12);
+		}
 
 		// Expand arrow (a quest's opens its pane), and, at the right, star and archive book;
 		// added first so they win the click over the row.
@@ -2310,7 +2506,8 @@ public class TaskWindow implements TaskWindowHook
 		boolean inHere = !chunk.isEmpty() && chunk.equals(here);
 		String info = NuzlockeTask.displayCategory(task.getCategory()) + (chunk.isEmpty() ? "" : "  ·  " + chunk);
 		int chipX = drawRowText(graphics, row, textX, name, Color.WHITE,
-			task.getBasePoints() + (task.getBasePoints() == 1 ? " pt" : " pts"), tier, info, inHere ? HERE : SUBTEXT, regular, small);
+			task.getBasePoints() + (task.getBasePoints() == 1 ? " pt" : " pts"), tier, info,
+			inHere ? HERE : temple ? LABEL : SUBTEXT, temple ? Skin.bold() : regular, small);
 
 		// A fixed spot from the right edge, so they line up down the list whatever the points say.
 		Rectangle book = new Rectangle(row.x + row.width - 70, iconY - 3, 14, 18);
@@ -2363,6 +2560,12 @@ public class TaskWindow implements TaskWindowHook
 				pane.tip = "Click to open " + wikiItems.get(0)[0] + " on the OSRS Wiki";
 			}
 		}
+		if (temple && !detail.isEmpty())
+		{
+			// A faint gold line between the row and what's under it.
+			graphics.setColor(Tints.alpha(Skin.palette().frameInner, 80));
+			graphics.drawLine(textX, row.y + ROW - 4 + lift, row.x + row.width - 12, row.y + ROW - 4 + lift);
+		}
 		pane.drawDetail(graphics, detail, textX, row.y + ROW - 1 + lift, list, mx, my, small);
 		if (inList)
 		{
@@ -2377,6 +2580,10 @@ public class TaskWindow implements TaskWindowHook
 			arrow(graphics, arrowArea.x + 7, arrowArea.y + 9, isExpanded(task), inList && arrowArea.contains(mx, my));
 		}
 		drawTaskIcon(graphics, row.x + 22, row.y + (ROW - 22) / 2, TaskTargetExtras.categorySkill(task.getCategory()), task);
+		if (temple)
+		{
+			gem(graphics, iconSlot.x + iconSlot.width - 1, iconSlot.y + iconSlot.height - 1, tier);
+		}
 		if (iconHover)
 		{
 			graphics.setColor(WIKI_LINK);
@@ -2925,6 +3132,15 @@ public class TaskWindow implements TaskWindowHook
 		Rectangle pop = filtersOpen && filtersTab != null ? filterPopBounds(window, filtersTab.x, popTop)
 			: sortOpen && sortTab != null ? sortPopBounds(window, sortTab.x, popTop) : null;
 		boolean overPop = pop != null && pop.contains(mx, my);
+		if (Skin.palette().brackets)
+		{
+			// Varlamore: the rows sit in a slightly darker, sunken well.
+			graphics.setColor(new Color(0, 0, 0, 55));
+			graphics.fillRect(list.x, list.y, list.width, list.height);
+			graphics.setColor(new Color(30, 22, 16, 160));
+			graphics.drawLine(list.x, list.y, list.x + list.width - 1, list.y);
+			graphics.drawLine(list.x, list.y, list.x, list.y + list.height - 1);
+		}
 		int shown = drawList(graphics, list, overPop ? -1 : mx, overPop ? -1 : my, regular, small);
 
 		drawFooter(graphics, window, cx, shown, mx, my);

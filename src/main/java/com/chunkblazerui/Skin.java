@@ -93,7 +93,7 @@ public final class Skin
 		{
 			p = ThemePalette.original();
 		}
-		boolean os = p.theme == Theme.OLD_SCHOOL;
+		boolean os = p.theme == Theme.OLD_SCHOOL && !p.log;
 		STONE = os ? OS_STONE : p.tile != null ? new TexturePaint(p.tile, new Rectangle(0, 0, 64, 64)) : p.base;
 		STONE_DARK = os ? OS_STONE_DARK : p.tileDark != null ? new TexturePaint(p.tileDark, new Rectangle(0, 0, 64, 64)) : p.baseDark;
 		FIELD = p.field;
@@ -124,7 +124,53 @@ public final class Skin
 
 	private static boolean oldSchool()
 	{
-		return palette.theme == Theme.OLD_SCHOOL;
+		return palette.theme == Theme.OLD_SCHOOL && !palette.log;
+	}
+
+	// The collection log's colours (Old School): its bronze rim, header band, a row and the tracked row.
+	public static final Color LOG_RIM = new Color(88, 74, 54);
+	public static final Color LOG_LINE = new Color(60, 50, 38);
+	public static final Color LOG_ROW = new Color(50, 43, 33);
+	public static final Color LOG_ROW_ON = new Color(70, 56, 34);
+	public static final Color LOG_COUNT = new Color(0, 230, 0);
+
+	/**
+	 * A number in the middle of {@code box}, in bold (small if too wide), centred by the digits'
+	 * own drawn outline rather than the font's box, which sits them a little high.
+	 */
+	public static void boxed(Graphics2D g, String text, Rectangle box, Color color)
+	{
+		Font font = bold();
+		java.awt.geom.Rectangle2D ink = font.createGlyphVector(g.getFontRenderContext(), text).getVisualBounds();
+		if (ink.getWidth() > box.width - 4)
+		{
+			font = small();
+			ink = font.createGlyphVector(g.getFontRenderContext(), text).getVisualBounds();
+		}
+		g.setFont(font);
+		int x = (int) Math.round(box.getCenterX() - ink.getWidth() / 2 - ink.getX());
+		int y = (int) Math.round(box.getCenterY() - ink.getHeight() / 2 - ink.getY());
+		text(g, text, x, y, color);
+	}
+
+	/** Whether this is Old School's collection log look. */
+	public static boolean log()
+	{
+		return palette.log;
+	}
+
+	/** A collection log page edge: black outside, the bronze rim, then a darker line inside it. */
+	public static void logRim(Graphics2D g, Rectangle r)
+	{
+		g.setColor(Color.BLACK);
+		g.drawRect(r.x, r.y, r.width - 1, r.height - 1);
+		g.setColor(LOG_RIM);
+		g.drawRect(r.x + 1, r.y + 1, r.width - 3, r.height - 3);
+		if (r.width > 12 && r.height > 12)
+		{
+			g.setColor(LOG_LINE);
+			g.drawRect(r.x + 3, r.y + 3, r.width - 7, r.height - 7);
+		}
 	}
 
 	public static Font bold()
@@ -161,6 +207,12 @@ public final class Skin
 	{
 		g.setColor(color);
 		text(g, s, x, y);
+	}
+
+	/** The theme's material (its darker shade when {@code dark}), as a paint. */
+	public static Paint stone(boolean dark)
+	{
+		return dark ? STONE_DARK : STONE;
 	}
 
 	/**
@@ -206,9 +258,68 @@ public final class Skin
 		}
 	}
 
+	/**
+	 * Varlamore's temple trim on a box: a faint gold line just inside it and bold gold brackets
+	 * at its corners. Nothing in the other themes.
+	 */
+	public static void trim(Graphics2D g, Rectangle r)
+	{
+		ThemePalette p = palette;
+		if (!p.brackets || p.frameInner == null || r.width < 12 || r.height < 10)
+		{
+			return;
+		}
+		Color gold = p.frameInner;
+		g.setColor(new Color(gold.getRed(), gold.getGreen(), gold.getBlue(), 70));
+		g.drawRect(r.x + 2, r.y + 2, r.width - 5, r.height - 5);
+		g.setColor(gold);
+		int k = Math.max(3, Math.min(6, Math.min(r.width, r.height) / 5));
+		int x1 = r.x + 2;
+		int y1 = r.y + 2;
+		int x2 = r.x + r.width - 3;
+		int y2 = r.y + r.height - 3;
+		g.fillRect(x1, y1, k, 2);
+		g.fillRect(x1, y1, 2, k);
+		g.fillRect(x2 - k + 1, y1, k, 2);
+		g.fillRect(x2 - 1, y1, 2, k);
+		g.fillRect(x1, y2 - 1, k, 2);
+		g.fillRect(x1, y2 - k + 1, 2, k);
+		g.fillRect(x2 - k + 1, y2 - 1, k, 2);
+		g.fillRect(x2 - 1, y2 - k + 1, 2, k);
+	}
+
+	/** A small gold sun (Ralos's), centred on (cx, cy). */
+	public static void sun(Graphics2D g, int cx, int cy, Color color)
+	{
+		g.setColor(color);
+		g.fillRect(cx - 2, cy - 2, 5, 5);
+		g.fillRect(cx - 1, cy - 3, 3, 7);
+		g.fillRect(cx - 3, cy - 1, 7, 3);
+		g.fillRect(cx, cy - 5, 1, 1);
+		g.fillRect(cx, cy + 5, 1, 1);
+		g.fillRect(cx - 5, cy, 1, 1);
+		g.fillRect(cx + 5, cy, 1, 1);
+		g.fillRect(cx - 4, cy - 4, 1, 1);
+		g.fillRect(cx + 4, cy - 4, 1, 1);
+		g.fillRect(cx - 4, cy + 4, 1, 1);
+		g.fillRect(cx + 4, cy + 4, 1, 1);
+	}
+
 	/** A stone bevel: raised (light top-left) or sunk, edged in black, like every button and box in the game. */
 	public static void bevel(Graphics2D g, Rectangle r, boolean raised)
 	{
+		if (palette.log)
+		{
+			// The log's boxes: a bronze rim; sunk ones a black edge with a dark line inside.
+			g.setColor(raised ? LOG_RIM : Color.BLACK);
+			g.drawRect(r.x, r.y, r.width - 1, r.height - 1);
+			if (!raised && r.width > 4 && r.height > 4)
+			{
+				g.setColor(LOG_LINE);
+				g.drawRect(r.x + 1, r.y + 1, r.width - 3, r.height - 3);
+			}
+			return;
+		}
 		if (oldSchool())
 		{
 			nine(g, raised ? RAISED : SUNK, r, 2);
@@ -305,6 +416,22 @@ public final class Skin
 
 	private static void drawFrame(Graphics2D g, Rectangle r, int header)
 	{
+		if (palette.log)
+		{
+			g.setColor(new Color(0, 0, 0, 110));
+			g.fillRect(r.x + 3, r.y + 3, r.width, r.height);
+			g.setColor(palette.base);
+			g.fillRect(r.x, r.y, r.width, r.height);
+			if (header > 0)
+			{
+				g.setColor(palette.baseDark);
+				g.fillRect(r.x + 4, r.y + 4, r.width - 8, header - 4);
+				g.setColor(LOG_RIM);
+				g.drawLine(r.x + 4, r.y + header, r.x + r.width - 5, r.y + header);
+			}
+			logRim(g, r);
+			return;
+		}
 		if (!oldSchool())
 		{
 			themedFrame(g, r, header);
@@ -366,10 +493,16 @@ public final class Skin
 		{
 			int in = p.frameWidth + 1;
 			g.setStroke(new java.awt.BasicStroke(1f));
-			g.setColor(p.frameInner);
+			// The temple look keeps the inner line faint and lets its corner brackets carry the gold.
+			g.setColor(p.brackets ? new Color(p.frameInner.getRed(), p.frameInner.getGreen(), p.frameInner.getBlue(), 80) : p.frameInner);
 			g.drawRoundRect(r.x + in, r.y + in, r.width - 1 - 2 * in, r.height - 1 - 2 * in, Math.max(0, rad - in), Math.max(0, rad - in));
 		}
-		if (p.flourishes)
+		if (p.brackets)
+		{
+			g.setStroke(new java.awt.BasicStroke(1f));
+			trim(g, new Rectangle(r.x + p.frameWidth - 1, r.y + p.frameWidth - 1, r.width - 2 * p.frameWidth + 2, r.height - 2 * p.frameWidth + 2));
+		}
+		else if (p.flourishes)
 		{
 			// Little gold L-shapes at each corner.
 			int c = Math.min(8, Math.min(r.width, r.height) / 8);
@@ -401,6 +534,19 @@ public final class Skin
 	/** A stone button's face (the caller draws its label). {@code active}: pressed or chosen. */
 	public static void button(Graphics2D g, Rectangle r, boolean hover, boolean active)
 	{
+		if (palette.log)
+		{
+			g.setColor(active ? palette.buttonActive : palette.button);
+			g.fillRect(r.x, r.y, r.width, r.height);
+			if (hover)
+			{
+				g.setColor(new Color(255, 255, 255, 22));
+				g.fillRect(r.x, r.y, r.width, r.height);
+			}
+			g.setColor(active ? palette.title : LOG_RIM);
+			g.drawRect(r.x, r.y, r.width - 1, r.height - 1);
+			return;
+		}
 		if (oldSchool())
 		{
 			g.setPaint(at(STONE, r));
@@ -456,9 +602,20 @@ public final class Skin
 	public static void scrollbar(Graphics2D g, Rectangle area, int thumbY, int thumbHeight)
 	{
 		Rectangle track = new Rectangle(area.x + area.width - 8, area.y + 1, 7, area.height - 2);
+		Rectangle thumb = new Rectangle(track.x, Math.max(track.y, thumbY), track.width, thumbHeight);
+		if (palette.brackets)
+		{
+			// Varlamore: a gold thumb in a dark groove.
+			g.setColor(new Color(30, 22, 16));
+			g.fillRect(track.x, track.y, track.width, track.height);
+			g.setColor(palette.frameInner);
+			g.fillRect(thumb.x + 1, thumb.y, thumb.width - 2, thumb.height);
+			g.setColor(new Color(240, 220, 150));
+			g.drawLine(thumb.x + 2, thumb.y + 1, thumb.x + 2, thumb.y + thumb.height - 2);
+			return;
+		}
 		g.setColor(FIELD);
 		g.fillRect(track.x, track.y, track.width, track.height);
-		Rectangle thumb = new Rectangle(track.x, Math.max(track.y, thumbY), track.width, thumbHeight);
 		button(g, thumb, false, false);
 	}
 

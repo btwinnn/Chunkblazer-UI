@@ -80,6 +80,8 @@ public class ChunkBlazerUiModule implements ChunkBlazerUi
 	private ChunkPathing pathing;
 	@Inject
 	private FightConditions fightConditions;
+	@Inject
+	private SidePanelSkin sidePanelSkin;
 
 	@Override
 	public void startUp()
@@ -96,7 +98,7 @@ public class ChunkBlazerUiModule implements ChunkBlazerUi
 	public void shutDown()
 	{
 		// The side panel goes back to ChunkBlazer's own look.
-		core.applyPanelTheme(null);
+		core.setSidePainter(null);
 		overlayManager.remove(tutorial);
 		mouseManager.unregisterMouseListener(tutorial.mouse);
 		eventBus.unregister(tutorial);
@@ -114,12 +116,12 @@ public class ChunkBlazerUiModule implements ChunkBlazerUi
 		applyTheme();
 	}
 
-	/** The theme: everything here takes it, and ChunkBlazer's side panel too. */
+	/** The theme: everything here takes it, and ChunkBlazer's side panel too (drawn from here; its own look for ChunkBlazer). */
 	private void applyTheme()
 	{
 		ThemePalette palette = Themes.palette(config.theme());
 		Skin.setPalette(palette);
-		core.applyPanelTheme(palette);
+		core.setSidePainter(palette.theme == Theme.ORIGINAL ? null : sidePanelSkin);
 	}
 
 	@Override
