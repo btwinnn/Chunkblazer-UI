@@ -550,33 +550,45 @@ public class TaskWindow implements TaskWindowHook
 	}
 
 	/**
-	 * Settings > Theme's Test button: closes this window and deals 4 sample cards,
+	 * Settings > Theme's Test button: closes this window and deals 5 sample cards (one of each tier),
 	 * arriving the way Card entrance is set and drawn in the current Theme.
 	 */
-	/** Settings' Test beside Task complete popup: the popup for this theme, for a made-up task. */
+	/** Settings' Test beside Task complete popup: the popup for this theme, for made-up tasks (one of each tier). */
 	private void testCompletion()
 	{
 		close();
-		NuzlockeTask demo = new NuzlockeTask();
-		demo.setTaskId("demo_completion");
-		demo.setName("Defeat the Kalphite Queen");
-		demo.setBasePoints(3);
-		// And the sound a real completion plays.
+		// And the sound a real completion plays (on Old School and Varlamore, each popup plays its own).
 		plugin.playTaskCompleteSound();
 		if (Skin.theme() == Theme.ORIGINAL)
 		{
-			originalCompletion.showTaskCompletion(demo, 3, "Kalphite Lair");
+			originalCompletion.showTaskCompletion(demoTask(2), 3, "Kalphite Lair");
+			return;
 		}
-		else
+		List<NuzlockeTask> demos = new ArrayList<>();
+		for (int tier = 0; tier < DEMO_TASKS.length; tier++)
 		{
-			stampCompletion.showTest(demo, 3, "Kalphite Lair");
+			demos.add(demoTask(tier));
 		}
+		stampCompletion.showTests(demos, "Lumbridge");
+	}
+
+	/** Made-up tasks for the popup's Test, Easy to Master. */
+	private static final String[] DEMO_TASKS = {"Plant some Potatoes", "Obtain a Blue Wizard Hat",
+		"Defeat the Kalphite Queen", "Equip an Ancient Wyvern Shield", "Obtain the Olm Pet"};
+
+	private static NuzlockeTask demoTask(int tier)
+	{
+		NuzlockeTask demo = new NuzlockeTask();
+		demo.setTaskId("demo_completion_" + tier);
+		demo.setName(DEMO_TASKS[tier]);
+		demo.setBasePoints(tier + 1);
+		return demo;
 	}
 
 	private void testCards()
 	{
 		close();
-		cardOverlay.requestDemoDeal(4);
+		cardOverlay.requestDemoDeal(5);
 	}
 
 	private void markSeen(Set<String> ids)
@@ -1513,16 +1525,15 @@ public class TaskWindow implements TaskWindowHook
 	{
 		if (settings == null)
 		{
-			settings = Arrays.asList(
+			List<Setting> all = new ArrayList<>(Arrays.asList(
 				heading("Look"),
 				withAction(choice("Theme", "theme", config::theme, Theme.values(),
-					"ChunkBlazer's look: cards, this window, boxes and the side panel. Click to change; Test deals 4 cards."),
+					"ChunkBlazer's look: cards, this window, boxes and the side panel. Click to change; Test deals 5 cards, one of each tier."),
 					"Test", this::testCards),
 				choice("Card entrance", "cardEntrance", config::cardEntrance, CardEntrance.values(),
 					"How a fresh deal of task cards arrives on screen. Click to change."),
-				withAction(toggle("Theme sounds", "themeSounds", config::themeSounds,
-					"Varlamore's sounds for dealing and turning cards and the task complete popup, at the Task Sound Volume. "
-						+ "Test plays a deal, a cascade, a flip and the popup."), "Test", cardSounds::preview),
+				toggle("Theme sounds", "themeSounds", config::themeSounds,
+					"Old School and Varlamore sounds for dealing and turning cards and the task complete popup, at the Task Sound Volume."),
 				heading("Tracked task"),
 				choice("Task box", "taskTrackerStyle", config::taskTrackerStyle, TaskTrackerStyle.values(),
 					"How the task you track is shown in game. Off hides it. Click to change."),
@@ -1563,11 +1574,12 @@ public class TaskWindow implements TaskWindowHook
 				toggle("Chunk name banner", "showChunkNamePopups", config::showChunkNamePopups,
 					"Show a chunk's name at the top of the screen when you enter it."),
 				withAction(toggle("Task complete popup", "showTaskCompletionPopup", plugin::showTaskCompletionPopup,
-					"The popup when you complete a task (also in RuneLite's settings). Test shows it."),
+					"The popup when you complete a task (also in RuneLite's settings). Test shows one of each tier, Easy to Master."),
 					"Test", this::testCompletion),
 				heading("Tutorial"),
 				withAction(new Setting("Tutorial", "Go through the tutorial's tour of the interface again, from the mainland part.",
-					"", () -> null, null, 0, 0, 0), "Restart", () -> clientThread.invoke(() -> tutorial.get().replay())));
+					"", () -> null, null, 0, 0, 0), "Restart", () -> clientThread.invoke(() -> tutorial.get().replay()))));
+			settings = all;
 		}
 		return settings;
 	}

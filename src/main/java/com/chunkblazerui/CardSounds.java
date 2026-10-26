@@ -27,7 +27,6 @@
 package com.chunkblazerui;
 
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
@@ -35,19 +34,17 @@ import net.runelite.client.audio.AudioPlayer;
 import net.runelite.client.config.ConfigManager;
 
 /**
- * Varlamore's sounds for the task cards and the task complete popup: real card sounds as
- * they're dealt and turned, then voices singing to the sun as each lands, thunder for Master. Other themes stay silent. At the volume of
- * ChunkBlazer's task sound; while they're on, the popup's sound plays instead of the area jingle.
+ * The Varlamore and Old School themes' sounds for the task cards and the task complete popup:
+ * real card sounds as they're dealt and turned, then the theme's own as each lands (Old School's
+ * Hellfire, Varlamore's Sun flute), bigger each tier, and a fanfare of its own for each tier of task. ChunkBlazer's own theme stays
+ * silent. At the volume of ChunkBlazer's task sound; while they're on, the popup's sound plays
+ * instead of the area jingle.
  */
 @Slf4j
 @Singleton
 public class CardSounds
 {
-	private static final String FOLDER = "Sounds/Varlamore/";
-	/** The Test's run through a set: when each sound starts, ms, and which. */
-	private static final long[] PREVIEW_AT = {0, 507, 1014, 1900, 1973, 2046, 2119, 2192, 2265, 3000, 6600};
-	private static final String[] PREVIEW = {"deal_0", "deal_1", "deal_2", "cascade_0", "cascade_1", "cascade_2",
-		"cascade_3", "cascade_4", "cascade_5", "flip_3", "complete_4"};
+	private static final String FOLDER = "Sounds/";
 	private static final int DEALS = 3;
 	private static final int CASCADES = 6;
 	private static final int TIERS = 5;
@@ -56,7 +53,6 @@ public class CardSounds
 	private final ConfigManager configManager;
 	private final ChunkBlazerUiConfig config;
 	private final ScheduledExecutorService executor;
-	private long lastComplete;
 
 	@Inject
 	CardSounds(AudioPlayer audio, ConfigManager configManager, ChunkBlazerUiConfig config, ScheduledExecutorService executor)
@@ -79,44 +75,33 @@ public class CardSounds
 		play("cascade_" + Math.max(0, Math.min(CASCADES - 1, index)));
 	}
 
-	/** A card turned over: the drag, the turn, the landing and the sun rising, timed to the tier's flip. */
+	/** A card turned over: the drag, the turn, the landing and the theme's show, timed to the tier's flip. */
 	void flip(int tier)
 	{
-		play("flip_" + Math.max(0, Math.min(TIERS - 1, tier)));
+		play(folder(Skin.theme()) + "flip_" + tier(tier));
 	}
 
-	/** The task complete popup: the card dropping in and turning, then stamped COMPLETE (bigger each tier). */
+	/** A theme's folder: Old School's, or Varlamore's (for any other theme asked for). */
+	private static String folder(Theme theme)
+	{
+		return theme == Theme.OLD_SCHOOL ? "OldSchool/" : "Varlamore/";
+	}
+
+	private static int tier(int tier)
+	{
+		return Math.max(0, Math.min(TIERS - 1, tier));
+	}
+
+	/** The task complete popup: the card dropping in and turning, then stamped COMPLETE (each tier its own fanfare). */
 	void complete(int tier)
 	{
-		// Several tasks completing at once: one sound, like the jingle.
-		long now = System.currentTimeMillis();
-		if (now - lastComplete < 1500)
-		{
-			return;
-		}
-		lastComplete = now;
-		play("complete_" + Math.max(0, Math.min(TIERS - 1, tier)));
+		play(folder(Skin.theme()) + "complete_" + tier(tier));
 	}
 
-	/**
-	 * The sounds run through, whatever the theme (the Settings page's Test): three cards
-	 * dealt, a cascade, an Elite flip and a Master popup.
-	 */
-	void preview()
-	{
-		float gain = gain();
-		String folder = FOLDER;
-		for (int i = 0; i < PREVIEW.length; i++)
-		{
-			String name = PREVIEW[i];
-			executor.schedule(() -> playNow(folder, name, gain), PREVIEW_AT[i], TimeUnit.MILLISECONDS);
-		}
-	}
-
-	/** Whether this theme's sounds play (Varlamore, with Theme sounds on). */
+	/** Whether this theme's sounds play (Varlamore or Old School, with Theme sounds on). */
 	boolean on()
 	{
-		return config.themeSounds() && Skin.theme() == Theme.ROYAL;
+		return config.themeSounds() && Skin.theme() != Theme.ORIGINAL;
 	}
 
 	private void play(String name)

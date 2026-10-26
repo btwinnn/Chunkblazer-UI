@@ -61,13 +61,20 @@ public class StampCompletionOverlay extends Overlay
 	private static final Color GOLD = new Color(255, 200, 100);
 	private static final Color INK = new Color(200, 40, 20);
 	private static final Color INK_TEXT = new Color(225, 55, 25);
-	private static final int CARD_WIDTH = 300;
+	private static final int CARD_WIDTH = 150;
+	/** The stamp and its sparks were sized for a card this wide: scaled with the card. */
+	private static final double DESIGN_WIDTH = 300.0;
+	/** How many times finer than shown the popup's card is painted. */
+	private static final int DETAIL = 3;
 	private static final double ASPECT = 200.0 / 356.0;
 
 	private final ChunkBlazerCore core;
 	private final Client client;
 	private final CardSounds sounds;
 	private volatile long startTime = -1;
+	// Tasks completed while a popup showed: {task, points, region}, each shown after.
+	private final java.util.Deque<Object[]> queue = new java.util.ArrayDeque<>();
+	private static final int QUEUE_MAX = 10;
 	// A test from the task window's Settings: shown even with the popup setting off.
 	private boolean test;
 	// This popup's card, back and face, drawn once (null until the first frame).
@@ -88,12 +95,32 @@ public class StampCompletionOverlay extends Overlay
 		setPriority(OverlayPriority.HIGH);
 	}
 
+	/**
+	 * A task completed: its popup, or if one's still showing, after it (each plays out in
+	 * turn, so several completing at once are all seen and heard).
+	 */
 	public void showTaskCompletion(NuzlockeTask task, int points, String region)
 	{
-		if (task == null)
+		if (task == null || !core.showTaskCompletionPopup())
 		{
 			return;
 		}
+		synchronized (queue)
+		{
+			if (startTime != -1 && System.currentTimeMillis() - startTime <= TOTAL)
+			{
+				if (queue.size() < QUEUE_MAX)
+				{
+					queue.add(new Object[]{task, points, region});
+				}
+				return;
+			}
+		}
+		start(task, points, region);
+	}
+
+	private void start(NuzlockeTask task, int points, String region)
+	{
 		int awarded = points > 0 ? points : task.getBasePoints();
 		String chunk = region == null ? "" : region.replaceAll("\\s*\\(.*", "").trim();
 		taskName = task.getName() == null ? "" : task.getName();
@@ -103,21 +130,25 @@ public class StampCompletionOverlay extends Overlay
 		back = null;
 		face = null;
 		startTime = System.currentTimeMillis();
-		if (core.showTaskCompletionPopup())
-		{
-			sounds.complete(tier.ordinal());
-		}
+		sounds.complete(tier.ordinal());
 	}
 
-	/** The popup for a made-up task, whatever the popup setting (the Settings page's Test). */
-	void showTest(NuzlockeTask task, int points, String region)
+	/** Popups for made-up tasks, one after another, whatever the popup setting (the Settings page's Test). */
+	void showTests(java.util.List<NuzlockeTask> tasks, String region)
 	{
-		showTaskCompletion(task, points, region);
-		if (!core.showTaskCompletionPopup())
+		if (tasks.isEmpty())
 		{
-			// Shown anyway for the test, so heard anyway too.
-			sounds.complete(tier.ordinal());
+			return;
 		}
+		synchronized (queue)
+		{
+			queue.clear();
+			for (NuzlockeTask task : tasks.subList(1, tasks.size()))
+			{
+				queue.add(new Object[]{task, task.getBasePoints(), region, Boolean.TRUE});
+			}
+		}
+		start(tasks.get(0), tasks.get(0).getBasePoints(), region);
 		test = true;
 	}
 
@@ -132,6 +163,17 @@ public class StampCompletionOverlay extends Overlay
 		if (t > TOTAL)
 		{
 			startTime = -1;
+			// The next task that completed while this one showed.
+			Object[] next;
+			synchronized (queue)
+			{
+				next = queue.poll();
+			}
+			if (next != null)
+			{
+				start((NuzlockeTask) next[0], (Integer) next[1], (String) next[2]);
+				test = next.length > 3;
+			}
 			return null;
 		}
 		Graphics2D g = (Graphics2D) graphics.create();
@@ -170,13 +212,14 @@ public class StampCompletionOverlay extends Overlay
 		turn.scale(Math.max(0.01, Math.abs(Math.cos(flip * Math.PI))), 1);
 		// Drawn once, flat, then squashed as a picture: drawing it straight into the squashed
 		// view re-fitted the text every frame, so the lines jumped about as it turned.
-		if (back == null || face == null || back.getWidth() != cw)
+		if (back == null || face == null || back.getWidth() != cw * DETAIL)
 		{
 			back = render(cw, ch, c -> CardFace.paintBack(c, new Rectangle(0, 0, cw, ch), design, accent, tier.ordinal() + 1, LOGO));
 			face = render(cw, ch, c -> CardFace.paint(c, new Rectangle(0, 0, cw, ch), design, accent, tier.getDisplayName(),
 				tier.ordinal() + 1, taskName, bold));
 		}
-		turn.drawImage(flip < 0.5f ? back : face, -cw / 2, -ch / 2, null);
+		turn.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		turn.drawImage(flip < 0.5f ? back : face, -cw / 2, -ch / 2, cw, ch, null);
 		turn.dispose();
 
 		// The points and chunk under the card.
@@ -200,7 +243,8 @@ public class StampCompletionOverlay extends Overlay
 			alpha(stamp, a * s);
 			stamp.translate(x + cw / 4, y + (int) (ch * 0.86));
 			stamp.rotate(-0.18);
-			stamp.scale(2.4 - 1.4 * s, 2.4 - 1.4 * s);
+			double k = (2.4 - 1.4 * s) * cw / DESIGN_WIDTH;
+			stamp.scale(k, k);
 			Font big = bold.deriveFont(32f);
 			stamp.setFont(big);
 			int sw = stamp.getFontMetrics().stringWidth("COMPLETE");
@@ -218,7 +262,7 @@ public class StampCompletionOverlay extends Overlay
 		for (int i = 0; b > 0 && b < 1 && i < 18; i++)
 		{
 			double angle = i * 0.35 + i % 3 * 0.1;
-			double speed = 50 + i * 37 % 60;
+			double speed = (50 + i * 37 % 60) * cw / DESIGN_WIDTH;
 			alpha(g, a * (1 - b));
 			g.setColor(new Color(255, 120 + i * 7, 30));
 			g.fillOval(x + cw / 4 + (int) (Math.cos(angle) * speed * b),
@@ -229,12 +273,15 @@ public class StampCompletionOverlay extends Overlay
 	}
 
 	/** A card side drawn into a picture of its own. */
+	/** Laid out at w x h, painted DETAIL times finer, so the small card's words stay crisp drawn down to size. */
 	private static BufferedImage render(int w, int h, java.util.function.Consumer<Graphics2D> draw)
 	{
-		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage image = new BufferedImage(w * DETAIL, h * DETAIL, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = image.createGraphics();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+		g.scale(DETAIL, DETAIL);
 		draw.accept(g);
 		g.dispose();
 		return image;

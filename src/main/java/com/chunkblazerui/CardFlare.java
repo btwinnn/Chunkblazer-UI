@@ -44,8 +44,8 @@ import java.util.Random;
 /**
  * The show as a card turns face up, one of its own per Theme, growing with the tier:
  * <ul>
- * <li>Old School: the game's level-up fireworks, in blocky pixels (Easy just kicks up dust;
- * each tier above adds a firework, and Master gets a 99-style volley).</li>
+ * <li>Old School: an aura: the card's edge glowing in its tier's colour, sparks flickering up
+ * off it, in blocky pixels.</li>
  * <li>Royal: the sun of Ralos rises behind the card, its rays turning; higher tiers shower gold
  * and red-pink petals, and Master blazes with a full sun and a blinding flash.</li>
  * </ul>
@@ -82,7 +82,7 @@ final class CardFlare
 		switch (theme)
 		{
 			case OLD_SCHOOL:
-				fireworks(g, b, tier, t, seed, behind);
+				oldSchool(g, b, accent, tier, t, seed, behind);
 				break;
 			case ROYAL:
 				sunrise(g, b, accent, tier, t, seed, behind);
@@ -95,89 +95,78 @@ final class CardFlare
 		g.setStroke(new BasicStroke(1f));
 	}
 
-	// --- Old School: level-up fireworks -------------------------------------------------------
+	// --- Old School -----------------------------------------------------------------------
 
-	private static final Color[] FIREWORK = {new Color(255, 40, 40), new Color(255, 230, 40), new Color(60, 220, 60),
-		new Color(70, 140, 255), new Color(255, 255, 255), new Color(255, 140, 20)};
 
-	/**
-	 * The puff of dust as it slaps down, then (from Medium) fireworks bursting round the card in
-	 * square pixels like the game's level-up: one more each tier, and Master a 99-style volley
-	 * with rockets streaking up first.
-	 */
-	private static void fireworks(Graphics2D g, Rectangle b, int tier, float t, long seed, boolean behind)
+	private static void oldSchool(Graphics2D g, Rectangle b, Color accent, int tier, float t, long seed, boolean behind)
 	{
-		if (behind)
-		{
-			return;
-		}
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		Random r = new Random(seed);
-		// Dust thrown out from under the card.
-		float ease = 1 - (1 - t) * (1 - t);
-		int dust = 18 + tier * 6;
-		for (int i = 0; i < dust; i++)
+		aura(g, b, tier, t, swell(t), accent, r, behind);
+		// Elite and Master open with a flash over everything.
+		if (!behind && tier >= 3 && t < 0.12f)
 		{
-			double[] from = onEdge(b, r.nextDouble(), r.nextInt(4));
-			double out = (10 + r.nextDouble() * 26) * ease;
-			int size = 2 + r.nextInt(3);
-			int shade = 120 + r.nextInt(60);
-			alpha(g, (1 - t) * 0.6f);
-			g.setColor(new Color(shade, shade - 14, shade - 34));
-			g.fillRect((int) (from[0] + from[2] * out), (int) (from[1] + from[3] * out - 6 * ease), size, size);
+			glow(g, b.getCenterX(), b.getCenterY(), b.height * 1.5, Color.WHITE, (1 - t / 0.12f) * (tier >= 4 ? 0.9f : 0.55f));
 		}
-		int bursts = tier == 0 ? 0 : tier >= 4 ? 7 : tier;
-		for (int k = 0; k < bursts; k++)
+	}
+
+	/** How strongly the show is up: in fast, held, then out over the last part. */
+	private static float swell(float t)
+	{
+		return Math.min(1, t / 0.12f) * (t < 0.65f ? 1 : 1 - (t - 0.65f) / 0.35f);
+	}
+
+	/** A soft round glow of {@code c} centred on (cx, cy). */
+	private static void glow(Graphics2D g, double cx, double cy, double radius, Color c, float a)
+	{
+		alpha(g, a);
+		g.setPaint(new RadialGradientPaint((float) cx, (float) cy, (float) Math.max(1, radius), new float[]{0, 1},
+			new Color[]{c, Tints.alpha(c, 0)}));
+		g.fill(new Ellipse2D.Double(cx - radius, cy - radius, radius * 2, radius * 2));
+	}
+
+	/**
+	 * No beam: the card's edge glows in its tier's colour, sparks flickering up off its top edge
+	 * like heat, brighter each tier; Master's glow pulses.
+	 */
+	private static void aura(Graphics2D g, Rectangle b, int tier, float t, float s, Color c, Random r, boolean behind)
+	{
+		int px = px(b);
+		if (behind)
 		{
-			float start = k * (tier >= 4 ? 0.08f : 0.14f);
-			float u = (t - start) / 0.55f;
-			double ox = b.x + b.width * (0.1 + 0.8 * r.nextDouble());
-			double oy = b.y - b.height * (0.15 + 0.5 * r.nextDouble());
-			Color c1 = FIREWORK[r.nextInt(FIREWORK.length)];
-			Color c2 = FIREWORK[r.nextInt(FIREWORK.length)];
-			int sparks = 22 + tier * 6;
-			long sparkSeed = r.nextLong();
-			if (tier >= 4 && u < 0 && u > -0.4f)
+			float pulse = tier >= 4 ? 0.75f + 0.25f * (float) Math.sin(t * 24) : 1;
+			for (int ring = 3; ring >= 1; ring--)
 			{
-				// Master: the rocket going up first, trailing sparks.
-				float up = 1 + u / 0.4f;
-				double ry = b.y + b.height - (b.y + b.height - oy) * up;
-				for (int j = 0; j < 5; j++)
-				{
-					alpha(g, 1 - j * 0.18f);
-					g.setColor(j == 0 ? Color.WHITE : new Color(255, 200, 80));
-					g.fillRect((int) ox - 1, (int) ry + j * 4, 3, 3);
-				}
+				int grow = px * (2 + ring * (2 + tier));
+				alpha(g, s * pulse * (0.18f + 0.05f * tier) * (4 - ring) / 3f);
+				g.setColor(c);
+				g.fillRoundRect(b.x - grow, b.y - grow, b.width + grow * 2, b.height + grow * 2, grow * 2, grow * 2);
 			}
-			if (u <= 0 || u >= 1)
-			{
-				continue;
-			}
-			Random sr = new Random(sparkSeed);
-			double reach = b.width * (0.22 + 0.06 * tier);
-			for (int i = 0; i < sparks; i++)
-			{
-				double ang = Math.PI * 2 * i / sparks + sr.nextDouble() * 0.2;
-				double d = reach * (1 - (1 - u) * (1 - u)) * (0.7 + sr.nextDouble() * 0.3);
-				double x = ox + Math.cos(ang) * d;
-				double y = oy + Math.sin(ang) * d + 30 * u * u;
-				int size = u < 0.5 ? 3 : 2;
-				alpha(g, 1 - u);
-				g.setColor(i % 2 == 0 ? c1 : c2);
-				g.fillRect((int) x, (int) y, size, size);
-				// A short trail back towards the centre.
-				alpha(g, (1 - u) * 0.5f);
-				g.fillRect((int) (ox + Math.cos(ang) * d * 0.8), (int) (oy + Math.sin(ang) * d * 0.8 + 30 * u * u), 2, 2);
-			}
-			if (u < 0.12f)
-			{
-				// The bang: a bright square flash.
-				alpha(g, 1 - u / 0.12f);
-				g.setColor(Color.WHITE);
-				int f = 6 + tier * 2;
-				g.fillRect((int) ox - f / 2, (int) oy - f / 2, f, f);
-			}
+			return;
 		}
+		alpha(g, s * 0.9f);
+		g.setColor(c);
+		g.setStroke(new BasicStroke(px));
+		g.drawRect(b.x, b.y, b.width, b.height);
+		for (int i = 0; i < 12 + tier * 10; i++)
+		{
+			double phase = (r.nextDouble() + t * (1.4 + r.nextDouble())) % 1;
+			int x = b.x + (int) (r.nextDouble() * b.width);
+			int y = b.y - (int) (phase * b.height * (0.35 + 0.1 * tier));
+			alpha(g, s * (float) (1 - phase));
+			g.setColor(i % 3 == 0 ? Color.WHITE : c);
+			g.fillRect(x, y, px, px * 2);
+		}
+		if (t < 0.35f)
+		{
+			sweep(g, b, t / 0.35f, c, 0.5f);
+		}
+	}
+
+	/** A blocky pixel's size for this card: bigger cards, bigger pixels. */
+	private static int px(Rectangle b)
+	{
+		return Math.max(2, b.width / 70);
 	}
 
 	// --- Royal: the sun of Ralos rising ------------------------------------------------------

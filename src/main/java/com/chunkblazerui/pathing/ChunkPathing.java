@@ -119,6 +119,8 @@ public class ChunkPathing
 	private KeyManager keyManager;
 	@Inject
 	private ChunkBlazerUiConfig config;
+	@Inject
+	private net.runelite.client.config.ConfigManager configManager;
 
 	// Whether the path key (Alt unless changed) is held right now.
 	private volatile boolean pathKeyHeld;
@@ -573,6 +575,73 @@ public class ChunkPathing
 
 	// Our own "clear" to Shortest Path is heard by us too: ignored.
 	private boolean postingClear;
+	// The region the player stood in last tick, and whether the patch states are read in yet.
+	private int patchRegion = -1;
+	private String patchesFor;
+
+	/**
+	 * Planted spirit trees only take you anywhere once grown. A patch's state can only be read
+	 * while you're near it, so this looks each tick you're there (once you've been in its region
+	 * two ticks, when the game has sent it) and remembers it for this account, like Shortest
+	 * Path does. Until you've been to a patch with a grown tree, its tree isn't used.
+	 */
+	private void checkSpiritTreePatch()
+	{
+		Transports t = transports;
+		String profile = configManager.getRSProfileKey();
+		Player player = client.getLocalPlayer();
+		if (t == null || profile == null || player == null || client.getGameState() != GameState.LOGGED_IN)
+		{
+			patchRegion = -1;
+			return;
+		}
+		if (!profile.equals(patchesFor))
+		{
+			// This account's patches, as last seen.
+			Set<String> grown = new HashSet<>();
+			for (String patch : Transports.PATCHES.keySet())
+			{
+				if ("true".equals(configManager.getRSProfileConfiguration(ChunkBlazerUiConfig.GROUP, "spiritTree." + patch)))
+				{
+					grown.add(patch);
+				}
+			}
+			t.grownPatches = Collections.unmodifiableSet(grown);
+			patchesFor = profile;
+			usableAge = TRANSPORT_REFRESH_TICKS;
+		}
+		int region = WorldPoint.fromLocalInstance(client, player.getLocalLocation()).getRegionID();
+		boolean settled = region == patchRegion;
+		patchRegion = region;
+		if (!settled)
+		{
+			return;
+		}
+		for (java.util.Map.Entry<String, int[]> patch : Transports.PATCHES.entrySet())
+		{
+			if (patch.getValue()[0] != region)
+			{
+				continue;
+			}
+			boolean grown = client.getVarbitValue(patch.getValue()[1]) == 20;
+			if (grown != t.grownPatches.contains(patch.getKey()))
+			{
+				Set<String> now = new HashSet<>(t.grownPatches);
+				if (grown)
+				{
+					now.add(patch.getKey());
+				}
+				else
+				{
+					now.remove(patch.getKey());
+				}
+				t.grownPatches = Collections.unmodifiableSet(now);
+				configManager.setRSProfileConfiguration(ChunkBlazerUiConfig.GROUP, "spiritTree." + patch.getKey(), String.valueOf(grown));
+				// Worked out again with the tree in or out.
+				usableAge = TRANSPORT_REFRESH_TICKS;
+			}
+		}
+	}
 	// The path is Quest Helper's current step (it asked Shortest Path for it).
 	private boolean fromQuestHelper;
 	// The path is to a quest's start, from the quest pane's Quest Helper button.
@@ -755,6 +824,7 @@ public class ChunkPathing
 	public void onGameTick(GameTick event)
 	{
 		usableAge++;
+		checkSpiritTreePatch();
 		if (enabled() && client.getGameState() == GameState.LOGGED_IN)
 		{
 			followTrackedTask();

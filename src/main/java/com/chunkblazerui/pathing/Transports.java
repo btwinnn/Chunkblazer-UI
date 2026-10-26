@@ -149,7 +149,27 @@ public final class Transports
 		String varbits;
 		String varps;
 		boolean fairyRing;
+		/** A spirit tree you plant yourself: only there once it's grown in this patch. */
+		String plantedPatch;
 	}
+
+	/**
+	 * Spirit tree patches: {region, varbit of the patch, while you're near it}. A grown tree
+	 * (varbit 20) is one you can travel from. From the Shortest Path plugin's patch table.
+	 */
+	public static final Map<String, int[]> PATCHES = new java.util.LinkedHashMap<>();
+
+	static
+	{
+		PATCHES.put("Port Sarim", new int[]{12082, 4771});
+		PATCHES.put("Etceteria", new int[]{10300, 4772});
+		PATCHES.put("Brimhaven", new int[]{11058, 4772});
+		PATCHES.put("Hosidius", new int[]{6711, 7904});
+		PATCHES.put("Farming Guild", new int[]{4922, 4771});
+	}
+
+	/** The spirit tree patches with a grown tree, as last seen there (ChunkPathing keeps it). */
+	volatile java.util.Set<String> grownPatches = java.util.Collections.emptySet();
 
 	private final List<Link> links = new ArrayList<>();
 	private final Map<String, int[]> itemGroups = new HashMap<>();
@@ -252,7 +272,11 @@ public final class Transports
 				need.varbits = cell(cells, col, "Varbits");
 				need.varps = cell(cells, col, "VarPlayers");
 				need.fairyRing = fairy;
-				String key = need.skills + "\t" + need.quests + "\t" + need.items + "\t" + need.varbits + "\t" + need.varps;
+				// The patch trees: a section of the spirit tree table named after its patch.
+				need.plantedPatch = file.equals("spirit_trees") && PATCHES.containsKey(section.replaceAll("\\s*\\(.*", "").trim())
+					? section.replaceAll("\\s*\\(.*", "").trim() : null;
+				String key = need.skills + "\t" + need.quests + "\t" + need.items + "\t" + need.varbits + "\t" + need.varps
+					+ "\t" + need.plantedPatch;
 				Requirement existing = shared.putIfAbsent(key, need);
 				if (existing != null)
 				{
@@ -373,6 +397,10 @@ public final class Transports
 		try
 		{
 			if (need.fairyRing && client.getVarbitValue(VarbitID.FAIRY2_QUEENCURE_QUEST) <= 39)
+			{
+				return false;
+			}
+			if (need.plantedPatch != null && !grownPatches.contains(need.plantedPatch))
 			{
 				return false;
 			}

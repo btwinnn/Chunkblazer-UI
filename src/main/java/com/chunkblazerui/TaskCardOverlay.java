@@ -133,7 +133,7 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 	 * Preferred width of the single centred card. One card at a time (pack-opening),
 	 * so it can be larger than the old grid allowed; clamped to the viewport below.
 	 */
-	private static final int CARD_WIDTH = 260;
+	private static final int CARD_WIDTH = 195;
 	/** How far each stacked "deck" card behind the current one is offset, px. */
 	private static final int DECK_OFFSET = 7;
 	/** How many face-down cards to draw in the neat deck behind the current card. */
@@ -238,6 +238,9 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 	private final Map<TaskCardTier, BufferedImage[]> backArt = new EnumMap<>(TaskCardTier.class);
 	private int artWidth;
 	private int artHeight;
+	// Card art is painted this many times finer than it's shown (more on a scaled-up screen),
+	// then drawn down to size, so small cards and their words stay crisp.
+	private int artDetail = 2;
 	// The face design the cached art was drawn in (Settings > Theme).
 	private Theme artDesign;
 
@@ -270,6 +273,8 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 		boolean activated;
 		/** Its deal sound has played. */
 		boolean dealSounded;
+		/** Where its show is, face up (the part behind is drawn under the pile, next frame). */
+		Rectangle flareAt;
 
 		// Where it comes from and how it lies in the scruffy pile, in card widths and
 		// radians, fixed when the card is made: it overshoots the middle a little in
@@ -438,7 +443,9 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 			return null;
 		}
 		Rectangle rest = restBounds(viewport);
-		prepareArt(rest.width, rest.height);
+		// Finer still where the screen itself is scaled up (stretched mode, display scaling).
+		double screen = Math.max(1, graphics.getTransform().getScaleX());
+		prepareArt(rest.width, rest.height, (int) Math.min(4, Math.max(2, Math.ceil(2 * screen))));
 
 		long now = System.currentTimeMillis();
 		processBatchReveal(rest, now);
@@ -469,6 +476,11 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 		List<Card> pile = pile();
 		Card current = pile.isEmpty() ? null : pile.get(0);
 		boolean entering = false;
+		if (current != null && now >= dealStart && current.flareAt != null)
+		{
+			// The show's part behind the card goes under the whole pile, so it shows round the cards.
+			flare(graphics, current, current.flareAt, true);
+		}
 		if (current != null && now >= dealStart)
 		{
 			CardEntrance style = config.cardEntrance();
@@ -1039,7 +1051,7 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 		if (p >= 1)
 		{
 			Rectangle up = scaled(rest, FACE_UP_SCALE);
-			flare(graphics, card, up, true);
+			card.flareAt = up;
 			drawShadow(graphics, midX + 6, midY + 12, 0, FACE_UP_SCALE, rest, 0.45);
 			drawArt(graphics, frontArt(card), midX, midY, 0, FACE_UP_SCALE, FACE_UP_SCALE, 1f, 0f);
 			flare(graphics, card, up, false);
@@ -1075,7 +1087,7 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 		double x = midX + FLIP_AXIS * w * (1 - a);
 		Rectangle up = scaled(rest, FACE_UP_SCALE);
 		up.x += (int) Math.round(x - midX);
-		flare(graphics, card, up, true);
+		card.flareAt = up;
 		drawShadow(graphics, x + 6, midY + 12, 0, FACE_UP_SCALE, rest, 0.45);
 		drawArt(graphics, frontArt(card), x, midY, 0, FACE_UP_SCALE, FACE_UP_SCALE, 1f, 0f);
 		flare(graphics, card, up, false);
@@ -1127,7 +1139,8 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 		}
 		AffineTransform before = graphics.getTransform();
 		Composite oldComposite = graphics.getComposite();
-		graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 		graphics.translate(cx, cy);
 		graphics.rotate(angle);
 		graphics.scale(scale, scale);
@@ -1379,15 +1392,16 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 	}
 
 	/** Throw away cached art if the card size changed (the window was resized). */
-	private void prepareArt(int w, int h)
+	private void prepareArt(int w, int h, int detail)
 	{
 		Theme design = config.theme();
-		if (w == artWidth && h == artHeight && design == artDesign)
+		if (w == artWidth && h == artHeight && design == artDesign && detail == artDetail)
 		{
 			return;
 		}
 		artWidth = w;
 		artHeight = h;
+		artDetail = detail;
 		artDesign = design;
 		backArt.clear();
 		for (Card card : cards)
@@ -1418,10 +1432,13 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 		double res = front ? FACE_UP_SCALE : 1;
 		int w = Math.max(1, (int) Math.round(artWidth * res));
 		int h = Math.max(1, (int) Math.round(artHeight * res));
-		BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		// Laid out at its size, painted artDetail times finer (drawArt scales it back down).
+		BufferedImage img = new BufferedImage(w * artDetail, h * artDetail, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = img.createGraphics();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+		g.scale(artDetail, artDetail);
 		paintCard(g, new Rectangle(0, 0, w, h), tier, front, name, artDesign);
 		g.dispose();
 		// Same picture, near black: drawn over the top (by alpha) to shade it,
