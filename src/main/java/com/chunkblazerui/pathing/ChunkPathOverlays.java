@@ -178,8 +178,8 @@ final class ChunkPathOverlays
 		}
 
 		/**
-		 * Over each stair, ladder and door the path takes from here, a little sign: stairs with
-		 * an arrow up or down, or a doorway. The first few only, so a long path stays tidy.
+		 * Over each stair, ladder and door the path takes from here, a sign: an arrow up or down,
+		 * or a door. The first few only, so a long path stays tidy.
 		 */
 		private void stepIcons(Graphics2D graphics, WorldView view, int plane, int[] path)
 		{
@@ -207,36 +207,47 @@ final class ChunkPathOverlays
 			}
 		}
 
-		/** A 16px round sign at (cx, cy): stairs and an arrow for {@code UP}/{@code DOWN}, a doorway for {@code DOOR}. */
+		/**
+		 * A round sign at (cx, cy) big enough to read from a distance: a bold arrow up or down
+		 * for stairs and ladders, a door for doors and gates, with its word underneath.
+		 */
 		private void stepIcon(Graphics2D graphics, int cx, int cy, int kind)
 		{
-			int x = cx - 9;
-			int y = cy - 9;
-			graphics.setColor(new Color(20, 16, 12, 200));
-			graphics.fillOval(x, y, 18, 18);
-			graphics.setStroke(new BasicStroke(1f));
+			int r = 12;
+			graphics.setColor(new Color(20, 16, 12, 215));
+			graphics.fillOval(cx - r, cy - r, r * 2, r * 2);
+			graphics.setStroke(new BasicStroke(1.5f));
 			graphics.setColor(PATH);
-			graphics.drawOval(x, y, 18, 18);
+			graphics.drawOval(cx - r, cy - r, r * 2, r * 2);
 			graphics.setColor(TARGET);
+			String word;
 			if (kind == Transports.DOOR)
 			{
-				// An arched doorway, open (dark inside).
-				graphics.fillRoundRect(cx - 4, cy - 5, 8, 11, 8, 8);
+				// A door, its handle on the right.
+				java.awt.geom.RoundRectangle2D door = new java.awt.geom.RoundRectangle2D.Double(cx - 5, cy - 8, 10, 16, 6, 6);
+				graphics.fill(door);
 				graphics.setColor(new Color(20, 16, 12));
-				graphics.fillRoundRect(cx - 2, cy - 3, 4, 9, 4, 4);
-				return;
+				graphics.fillOval(cx + 1, cy, 3, 3);
+				word = "Door";
 			}
-			// Three steps rising to the right.
-			graphics.fillRect(cx - 6, cy + 2, 3, 3);
-			graphics.fillRect(cx - 3, cy - 1, 3, 6);
-			graphics.fillRect(cx, cy - 4, 3, 9);
-			// The arrow beside them.
-			int ax = cx + 5;
-			java.awt.Polygon arrow = kind == Transports.UP
-				? new java.awt.Polygon(new int[]{ax - 3, ax + 3, ax}, new int[]{cy - 1, cy - 1, cy - 5}, 3)
-				: new java.awt.Polygon(new int[]{ax - 3, ax + 3, ax}, new int[]{cy + 1, cy + 1, cy + 5}, 3);
-			graphics.fillPolygon(arrow);
-			graphics.fillRect(ax - 1, kind == Transports.UP ? cy - 1 : cy - 3, 2, 4);
+			else
+			{
+				// One bold arrow: its head and a thick shaft.
+				int dir = kind == Transports.UP ? -1 : 1;
+				int tip = cy + dir * 8;
+				int base = cy + dir * 1;
+				graphics.fillPolygon(new int[]{cx - 7, cx + 7, cx}, new int[]{base, base, tip}, 3);
+				graphics.fillRect(cx - 2, Math.min(cy - dir * 8, base), 5, Math.abs(base - (cy - dir * 8)));
+				word = kind == Transports.UP ? "Up" : "Down";
+			}
+			graphics.setFont(FontManager.getRunescapeSmallFont());
+			FontMetrics metrics = graphics.getFontMetrics();
+			int tx = cx - metrics.stringWidth(word) / 2;
+			int ty = cy + r + metrics.getAscent() + 1;
+			graphics.setColor(Color.BLACK);
+			graphics.drawString(word, tx + 1, ty + 1);
+			graphics.setColor(TARGET);
+			graphics.drawString(word, tx, ty);
 		}
 
 		/** A small tag over the next transport the path takes, saying where to take it: "To Port Sarim". */

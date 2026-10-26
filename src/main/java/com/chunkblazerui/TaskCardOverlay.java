@@ -162,6 +162,10 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 	private final Client client;
 	private final ChunkBlazerUiConfig config;
 	private final ChunkBlazerCore plugin;
+	private final CardSounds sounds;
+	// The cascade the drop sounds are for (its dealStart), and how many cards have sounded.
+	private long cascadeFor = -1;
+	private int cascadeSounded;
 	private final Random random = new Random();
 
 	/** Cards currently on screen: the pile (index 0 on top) plus any flying to the orb. */
@@ -264,6 +268,8 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 		long flyStart = -1;
 		/** Set once the task has been handed to the plugin, so it happens exactly once. */
 		boolean activated;
+		/** Its deal sound has played. */
+		boolean dealSounded;
 
 		// Where it comes from and how it lies in the scruffy pile, in card widths and
 		// radians, fixed when the card is made: it overshoots the middle a little in
@@ -333,11 +339,12 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 	}
 
 	@Inject
-	private TaskCardOverlay(Client client, ChunkBlazerUiConfig config, ChunkBlazerCore plugin)
+	private TaskCardOverlay(Client client, ChunkBlazerUiConfig config, ChunkBlazerCore plugin, CardSounds sounds)
 	{
 		this.client = client;
 		this.config = config;
 		this.plugin = plugin;
+		this.sounds = sounds;
 		setPosition(OverlayPosition.DYNAMIC);
 		setLayer(OverlayLayer.ABOVE_WIDGETS);
 		setPriority(OverlayPriority.HIGH);
@@ -380,6 +387,7 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 		if (current.isFaceDown())
 		{
 			current.flipStart = System.currentTimeMillis();
+			sounds.flip(current.tier.ordinal());
 			return true;
 		}
 		if (current.isFaceUp())
@@ -872,6 +880,11 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 			{
 				entering = true;
 			}
+			if (t > 0 && t < 1 && !card.dealSounded)
+			{
+				card.dealSounded = true;
+				sounds.deal(card.taskId.hashCode());
+			}
 			if (i == 0 && card.isStarted())
 			{
 				continue; // the top card is being turned or is face up: drawn below
@@ -966,6 +979,11 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 	{
 		List<Card> pile = pile();
 		TaskCardTier tier = pile.size() > 1 ? pile.get(1).tier : current.tier;
+		if (cascadeFor != dealStart)
+		{
+			cascadeFor = dealStart;
+			cascadeSounded = 0;
+		}
 		for (int i = 0; i <= deckVisible; i++)
 		{
 			double t = (elapsed - i * CASCADE_STAGGER) / (double) CASCADE_FALL;
@@ -974,6 +992,12 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 				continue; // not dealt yet
 			}
 			t = Math.min(1, t);
+			if (t >= DROP_FALL && i == cascadeSounded)
+			{
+				// It hits the deck: a note higher each card.
+				cascadeSounded++;
+				sounds.cascade(i);
+			}
 			int k = deckVisible - i; // deck offset: 0 = the current card
 			double cx = rest.getCenterX() - k * DECK_OFFSET;
 			double cy = rest.getCenterY() - k * DECK_OFFSET;

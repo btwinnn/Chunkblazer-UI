@@ -586,8 +586,10 @@ public class ChunkPathing
 	 * Quest Helper, with its "Use Shortest Path" option on, asks the Shortest Path plugin for a
 	 * path to each step of the quest. That same message is heard here, so each step gets a
 	 * path through your chunks (through the quest's own chunks when yours don't reach).
+	 * Heard after the Shortest Path plugin (a lower priority) and handled after its queued
+	 * search starts, so the clear this sends takes its path away: one line on the ground, not two.
 	 */
-	@Subscribe
+	@Subscribe(priority = -1)
 	public void onPluginMessage(PluginMessage event)
 	{
 		if (!SHORTEST_PATH.equals(event.getNamespace()) || postingClear || !enabled())
@@ -612,7 +614,9 @@ public class ChunkPathing
 			return;
 		}
 		int tile = PathTile.pack((WorldPoint) to);
-		clientThread.invoke(() ->
+		// Later, not now: Shortest Path starts its search later too (it queues it on the client
+		// thread), so the clear pathTo sends has to come after that or its red path stays.
+		clientThread.invokeLater(() ->
 		{
 			NuzlockeTask tracked = core.getSelectedTask();
 			Set<Integer> through = tracked != null && QuestRequirements.isQuestTask(tracked)

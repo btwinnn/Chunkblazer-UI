@@ -636,6 +636,12 @@ public class ChunkBlazerCore
 		ask("setSidePainter", painter);
 	}
 
+	/** Whether the theme plays its own task complete sound, so ChunkBlazer skips its area jingle. */
+	public void setUiCompletionSound(boolean on)
+	{
+		ask("setUiCompletionSound", on);
+	}
+
 	/** The side panel's "show all": no search, filters or chunk limit. */
 	public void sidePanelShowAll()
 	{

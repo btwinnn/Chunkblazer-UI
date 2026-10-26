@@ -102,6 +102,19 @@ public interface ChunkBlazerUiConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "themeSounds",
+		hidden = true, // shown on the task window's Settings page
+		name = "Theme Sounds",
+		description = "Varlamore's sounds for dealing and turning task cards and the task complete popup",
+		section = taskSection,
+		position = 0
+	)
+	default boolean themeSounds()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 		keyName = "theme",
 		hidden = true, // shown on the task window's Settings page
 		name = "Theme",

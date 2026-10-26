@@ -66,6 +66,7 @@ public class StampCompletionOverlay extends Overlay
 
 	private final ChunkBlazerCore core;
 	private final Client client;
+	private final CardSounds sounds;
 	private volatile long startTime = -1;
 	// A test from the task window's Settings: shown even with the popup setting off.
 	private boolean test;
@@ -77,10 +78,11 @@ public class StampCompletionOverlay extends Overlay
 	private TaskCardTier tier = TaskCardTier.EASY;
 
 	@Inject
-	StampCompletionOverlay(ChunkBlazerCore core, Client client)
+	StampCompletionOverlay(ChunkBlazerCore core, Client client, CardSounds sounds)
 	{
 		this.core = core;
 		this.client = client;
+		this.sounds = sounds;
 		setPosition(OverlayPosition.DYNAMIC);
 		setLayer(OverlayLayer.ABOVE_WIDGETS);
 		setPriority(OverlayPriority.HIGH);
@@ -101,12 +103,21 @@ public class StampCompletionOverlay extends Overlay
 		back = null;
 		face = null;
 		startTime = System.currentTimeMillis();
+		if (core.showTaskCompletionPopup())
+		{
+			sounds.complete(tier.ordinal());
+		}
 	}
 
 	/** The popup for a made-up task, whatever the popup setting (the Settings page's Test). */
 	void showTest(NuzlockeTask task, int points, String region)
 	{
 		showTaskCompletion(task, points, region);
+		if (!core.showTaskCompletionPopup())
+		{
+			// Shown anyway for the test, so heard anyway too.
+			sounds.complete(tier.ordinal());
+		}
 		test = true;
 	}
 

@@ -100,6 +100,8 @@ public class TaskWindow implements TaskWindowHook
 	@Inject
 	private StampCompletionOverlay stampCompletion;
 	@Inject
+	private CardSounds cardSounds;
+	@Inject
 	private com.chunkblazerui.TaskCompletionAnimationOverlay originalCompletion;
 
 	@Inject
@@ -1518,6 +1520,9 @@ public class TaskWindow implements TaskWindowHook
 					"Test", this::testCards),
 				choice("Card entrance", "cardEntrance", config::cardEntrance, CardEntrance.values(),
 					"How a fresh deal of task cards arrives on screen. Click to change."),
+				withAction(toggle("Theme sounds", "themeSounds", config::themeSounds,
+					"Varlamore's sounds for dealing and turning cards and the task complete popup, at the Task Sound Volume. "
+						+ "Test plays a deal, a cascade, a flip and the popup."), "Test", cardSounds::preview),
 				heading("Tracked task"),
 				choice("Task box", "taskTrackerStyle", config::taskTrackerStyle, TaskTrackerStyle.values(),
 					"How the task you track is shown in game. Off hides it. Click to change."),

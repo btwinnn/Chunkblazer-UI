@@ -82,6 +82,8 @@ public class ChunkBlazerUiModule implements ChunkBlazerUi
 	private FightConditions fightConditions;
 	@Inject
 	private SidePanelSkin sidePanelSkin;
+	@Inject
+	private CardSounds cardSounds;
 
 	@Override
 	public void startUp()
@@ -99,17 +101,18 @@ public class ChunkBlazerUiModule implements ChunkBlazerUi
 	{
 		// The side panel goes back to ChunkBlazer's own look.
 		core.setSidePainter(null);
+		core.setUiCompletionSound(false);
 		overlayManager.remove(tutorial);
 		mouseManager.unregisterMouseListener(tutorial.mouse);
 		eventBus.unregister(tutorial);
 		eventBus.unregister(this);
 	}
 
-	/** Settings > Theme changed: everything takes the new look, the side panel included. */
+	/** Settings > Theme (or its sounds) changed: everything takes the new look, the side panel included. */
 	@Subscribe
 	public void onConfigChanged(ConfigChanged event)
 	{
-		if (!CONFIG_GROUP.equals(event.getGroup()) || !"theme".equals(event.getKey()))
+		if (!CONFIG_GROUP.equals(event.getGroup()) || !"theme".equals(event.getKey()) && !"themeSounds".equals(event.getKey()))
 		{
 			return;
 		}
@@ -122,6 +125,8 @@ public class ChunkBlazerUiModule implements ChunkBlazerUi
 		ThemePalette palette = Themes.palette(config.theme());
 		Skin.setPalette(palette);
 		core.setSidePainter(palette.theme == Theme.ORIGINAL ? null : sidePanelSkin);
+		// Varlamore's own completion sound plays instead of the area jingle.
+		core.setUiCompletionSound(cardSounds.on());
 	}
 
 	@Override
