@@ -46,6 +46,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -468,6 +469,8 @@ public class TaskPaneOverlay extends Overlay
 	@Subscribe
 	public void onGameTick(GameTick event)
 	{
+		// Levels, items and quests may have moved on: the pane's lines are worked out afresh.
+		keptDetails.clear();
 		if (client.getGameState() != GameState.LOGGED_IN || configManager.getRSProfileKey() == null)
 		{
 			return;
@@ -714,6 +717,15 @@ public class TaskPaneOverlay extends Overlay
 	}
 
 	/** A task's detail lines, wrapped to {@code width}. */
+	// The pane's wrapped lines per task and width, kept for the tick (not rebuilt every frame).
+	private final Map<String, List<QuestRequirements.Line>> keptDetails = new HashMap<>();
+
+	private List<QuestRequirements.Line> keptDetail(FontMetrics sm, NuzlockeTask task, int width)
+	{
+		return keptDetails.computeIfAbsent(task.getTaskId() + "|" + width + "|" + sm.getFont().getSize(),
+			k -> wrapDetail(sm, task, width));
+	}
+
 	public List<QuestRequirements.Line> wrapDetail(FontMetrics sm, NuzlockeTask task, int width)
 	{
 		List<QuestRequirements.Line> wrapped = new ArrayList<>();
@@ -909,7 +921,7 @@ public class TaskPaneOverlay extends Overlay
 		}
 		else
 		{
-			List<QuestRequirements.Line> lines = wrapDetail(graphics.getFontMetrics(small), task, pane.width - 12);
+			List<QuestRequirements.Line> lines = keptDetail(graphics.getFontMetrics(small), task, pane.width - 12);
 			paneScroll = Math.max(0, Math.min(paneScroll, detailHeight(lines) - body.height));
 			drawDetail(graphics, lines, pane.x + 6, body.y - paneScroll, body, mx, my, small);
 			drawScrollbar(graphics, body, detailHeight(lines), paneScroll);
@@ -993,7 +1005,7 @@ public class TaskPaneOverlay extends Overlay
 			names.add(lines.size() > 2 ? Arrays.asList(lines.get(0), Skin.fit(fm, lines.get(1) + " " + lines.get(2), width)) : lines);
 			// Opened: the same details as an expanded task in the window, under the card.
 			List<QuestRequirements.Line> detail = paneExpanded.contains(task.getTaskId())
-				? wrapDetail(fm, task, width) : Collections.emptyList();
+				? keptDetail(fm, task, width) : Collections.emptyList();
 			details.add(detail);
 			total += 24 + 12 * names.get(names.size() - 1).size() + paneDetailHeight(detail);
 		}
@@ -1321,6 +1333,9 @@ public class TaskPaneOverlay extends Overlay
 		return task.getName().replaceFirst("^Complete ", "");
 	}
 
+	/** How RuneLite names Recipe for Disaster's parts: "Recipe for Disaster - Evil Dave". */
+	private static final String RFD_PART = "Recipe for Disaster - ";
+
 	/** The game's quest list, where Quest Helper adds its "Start Quest Helper" right-click option. */
 	private static final int QUEST_LIST = 399 << 16 | 7;
 
@@ -1374,10 +1389,20 @@ public class TaskPaneOverlay extends Overlay
 	 */
 	private MenuEntry questHelperOption(String quest, boolean[] open)
 	{
+		// Recipe for Disaster's parts are one quest in the game's list ("Recipe for Disaster"),
+		// with an option for each part named Quest Helper's way ("RFD - Evil Dave").
+		String listed = quest;
+		String wanted = quest;
+		if (quest.startsWith(RFD_PART))
+		{
+			listed = "Recipe for Disaster";
+			String part = quest.substring(RFD_PART.length());
+			wanted = "RFD - " + ("Another Cook's Quest".equals(part) ? "Start" : "Culinaromancer".equals(part) ? "Finale" : part);
+		}
 		Menu menu = client.getMenu();
 		MenuEntry journal = menu.createMenuEntry(-1)
 			.setOption("Read journal:")
-			.setTarget("<col=ff9900>" + quest + "</col>")
+			.setTarget("<col=ff9900>" + listed + "</col>")
 			.setType(MenuAction.CC_OP)
 			.setIdentifier(1)
 			.setParam0(-1)
@@ -1394,14 +1419,14 @@ public class TaskPaneOverlay extends Overlay
 			}
 			String option = entry.getOption() == null ? "" : entry.getOption();
 			String target = Text.removeTags(entry.getTarget() == null ? "" : entry.getTarget());
-			if (option.startsWith("Stop "))
+			if (option.startsWith("Stop ") && (wanted.equals(listed) || target.equalsIgnoreCase(wanted)))
 			{
 				open[0] = true;
 			}
 			else if (option.startsWith("Start ") && entry.onClick() != null)
 			{
-				// This quest by name, else a split quest's start, else its first part.
-				int rank = target.equalsIgnoreCase(quest) ? 3 : target.endsWith("- Start") ? 2 : 1;
+				// This quest (or part) by name, else a split quest's start, else its first part.
+				int rank = target.equalsIgnoreCase(wanted) ? 3 : target.endsWith("- Start") ? 2 : 1;
 				if (rank > best)
 				{
 					best = rank;

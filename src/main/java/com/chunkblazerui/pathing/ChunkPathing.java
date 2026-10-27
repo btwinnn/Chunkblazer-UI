@@ -32,6 +32,7 @@ import com.chunkblazerui.QuestRequirements;
 import com.chunkblazerui.TaskSources;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -411,6 +412,33 @@ public class ChunkPathing
 	public boolean isQuestStart()
 	{
 		return questStart && !fromQuestHelper;
+	}
+
+	// Where along the path it takes a transport (path indices), worked out once per path.
+	private int[] stepsFor;
+	private Map<Integer, List<Transports.Link>> stepsLinks;
+	private int[] steps = new int[0];
+
+	/** The path's indices where it takes a transport (stairs, doors, charters), in order. */
+	public synchronized int[] steps()
+	{
+		int[] tiles = path;
+		Map<Integer, List<Transports.Link>> links = usable;
+		if (tiles != stepsFor || links != stepsLinks)
+		{
+			stepsFor = tiles;
+			stepsLinks = links;
+			List<Integer> found = new ArrayList<>();
+			for (int i = 0; tiles != null && i < tiles.length - 1; i++)
+			{
+				if (link(tiles[i], tiles[i + 1]) != null)
+				{
+					found.add(i);
+				}
+			}
+			steps = found.stream().mapToInt(Integer::intValue).toArray();
+		}
+		return steps;
 	}
 
 	/** The transport the path takes from one tile to the next, or null if it walks. */

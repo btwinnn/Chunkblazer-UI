@@ -1139,8 +1139,7 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 		}
 		AffineTransform before = graphics.getTransform();
 		Composite oldComposite = graphics.getComposite();
-		graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-		graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+		graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		graphics.translate(cx, cy);
 		graphics.rotate(angle);
 		graphics.scale(scale, scale);
@@ -1432,13 +1431,15 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 		double res = front ? FACE_UP_SCALE : 1;
 		int w = Math.max(1, (int) Math.round(artWidth * res));
 		int h = Math.max(1, (int) Math.round(artHeight * res));
-		// Laid out at its size, painted artDetail times finer (drawArt scales it back down).
-		BufferedImage img = new BufferedImage(w * artDetail, h * artDetail, BufferedImage.TYPE_INT_ARGB);
+		// Laid out at its size, painted finer (drawArt scales it back down): faces, with their
+		// words, the most; backs, drawn many times over in the pile, just enough for the screen.
+		int detail = front ? artDetail : Math.max(1, artDetail / 2);
+		BufferedImage img = new BufferedImage(w * detail, h * detail, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = img.createGraphics();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-		g.scale(artDetail, artDetail);
+		g.scale(detail, detail);
 		paintCard(g, new Rectangle(0, 0, w, h), tier, front, name, artDesign);
 		g.dispose();
 		// Same picture, near black: drawn over the top (by alpha) to shade it,
@@ -1488,7 +1489,11 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 		BufferedImage img = art[0];
 		AffineTransform before = graphics.getTransform();
 		Composite oldComposite = graphics.getComposite();
-		graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		// The slow, smoothest scaling only for the card lying face up to be read; moving and
+		// piled cards (many, every frame) use the quick one.
+		boolean reading = angle == 0 && sx >= FACE_UP_SCALE - 0.001;
+		graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, reading
+			? RenderingHints.VALUE_INTERPOLATION_BICUBIC : RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		graphics.translate(cx, cy);
 		graphics.rotate(angle);
 		graphics.scale(sx, sy);

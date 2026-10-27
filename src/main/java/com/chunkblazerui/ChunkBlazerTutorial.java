@@ -1419,13 +1419,14 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 		String id = aside != null ? aside : step;
 		// Nothing while the name and look are picked, or while a chunk's unlock plays out.
 		// ChunkBlazer's add-ons check comes first: nothing here until it's done or skipped.
-		if (Boolean.parseBoolean(configManager.getConfiguration("chunkblazer", "companionCheckPending")))
+		// (Checked after the cheap tests, so a finished tutorial costs nothing per frame.)
+		if (id == null || !isRunning() || settingUp || client.getGameState() != GameState.LOGGED_IN
+			|| Boolean.parseBoolean(configManager.getConfiguration("chunkblazer", "companionCheckPending")))
 		{
 			shown = null;
 			return null;
 		}
-		if (id == null || !isRunning() || settingUp || client.getGameState() != GameState.LOGGED_IN
-			|| System.currentTimeMillis() < quietUntil
+		if (System.currentTimeMillis() < quietUntil
 			|| id.equals("practice") || id.equals("deal") || id.equals("leave") || id.equals("cards")
 			|| (id.equals("cards") || id.equals("deal")) && !cards.isActive())
 		{

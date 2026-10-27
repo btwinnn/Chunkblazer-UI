@@ -196,7 +196,14 @@ public class QuestRequirements
 	public int[] startOf(NuzlockeTask task)
 	{
 		TaskConstraints c = task == null ? null : task.getConstraints();
-		return c == null || c.getQuest() == null ? null : starts.get(c.getQuest());
+		if (c == null || c.getQuest() == null)
+		{
+			return null;
+		}
+		int[] start = starts.get(c.getQuest());
+		// A part of a quest (RECIPE_FOR_DISASTER__EVIL_DAVE) starts where the quest does.
+		int part = c.getQuest().indexOf("__");
+		return start != null || part < 0 ? start : starts.get(c.getQuest().substring(0, part));
 	}
 
 	/** Reads quest_requirements.json. Missing or broken data just means no quest info. */

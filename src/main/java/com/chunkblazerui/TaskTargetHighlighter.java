@@ -61,6 +61,8 @@ import net.runelite.api.MenuEntry;
 import net.runelite.api.NPC;
 import net.runelite.api.NPCComposition;
 import net.runelite.api.ObjectComposition;
+import net.runelite.api.Perspective;
+import net.runelite.api.Player;
 import net.runelite.api.Scene;
 import net.runelite.api.Skill;
 import net.runelite.api.Tile;
@@ -935,18 +937,33 @@ public class TaskTargetHighlighter extends Overlay
 		}
 		Color doable = config.taskHighlightColor();
 		Color unavailable = config.taskHighlightUnavailableColor();
+		// What each NPC and object is outlined in is worked out once a tick, not every frame:
+		// it can only change when the tick does (or a setting does).
+		int tick = client.getTickCount();
+		if (tick != colourTick || mode != colourMode || !doable.equals(colourDoable) || !unavailable.equals(colourUnavailable))
+		{
+			npcColours.clear();
+			objectColours.clear();
+			colourTick = tick;
+			colourMode = mode;
+			colourDoable = doable;
+			colourUnavailable = unavailable;
+		}
 		Set<String> saved = mode == OutlineMode.SAVED ? archive.savedIds() : Collections.emptySet();
+		Player me = client.getLocalPlayer();
+		LocalPoint here = me == null ? null : me.getLocalLocation();
 
 		if (!npcTasks.isEmpty() || !npcRules.isEmpty())
 		{
 			for (NPC npc : client.getNpcs())
 			{
-				if (npc == null || inLockedChunk(npc.getLocalLocation()))
+				if (npc == null || far(here, npc.getLocalLocation()))
 				{
 					continue;
 				}
-				Color color = mode.color(tasksForNpc(npc), saved, doable, unavailable, this::canDo);
-				if (color != null)
+				Color color = npcColours.computeIfAbsent(npc.getIndex(), i -> orNone(inLockedChunk(npc.getLocalLocation())
+					? null : mode.color(tasksForNpc(npc), saved, doable, unavailable, this::canDo)));
+				if (color != NONE)
 				{
 					outlineRenderer.drawOutline(npc, OUTLINE_WIDTH, color, OUTLINE_FEATHER);
 				}
@@ -956,17 +973,40 @@ public class TaskTargetHighlighter extends Overlay
 		int plane = client.getPlane();
 		for (TileObject object : trackedObjects)
 		{
-			if (object.getPlane() != plane || inLockedChunk(object.getLocalLocation()))
+			if (object.getPlane() != plane || far(here, object.getLocalLocation()))
 			{
 				continue;
 			}
-			Color color = mode.color(tasksForObject(object.getId()), saved, doable, unavailable, this::canDo);
-			if (color != null)
+			Color color = objectColours.computeIfAbsent(object, o -> orNone(inLockedChunk(o.getLocalLocation())
+				? null : mode.color(tasksForObject(o.getId()), saved, doable, unavailable, this::canDo)));
+			if (color != NONE)
 			{
 				outlineRenderer.drawOutline(object, OUTLINE_WIDTH, color, OUTLINE_FEATHER);
 			}
 		}
 		return null;
+	}
+
+	/** No outline (a map can't hold null). */
+	private static final Color NONE = new Color(0, 0, 0, 0);
+	/** Outlines are drawn this far from you at most, in tiles: past it they're too small to matter. */
+	private static final int OUTLINE_RANGE = 24;
+	private final Map<Integer, Color> npcColours = new HashMap<>();
+	private final Map<TileObject, Color> objectColours = new HashMap<>();
+	private int colourTick = -1;
+	private OutlineMode colourMode;
+	private Color colourDoable;
+	private Color colourUnavailable;
+
+	private static Color orNone(Color color)
+	{
+		return color == null ? NONE : color;
+	}
+
+	/** Whether {@code at} is too far from {@code here} to outline. */
+	private static boolean far(LocalPoint here, LocalPoint at)
+	{
+		return here != null && at != null && here.distanceTo(at) > OUTLINE_RANGE * Perspective.LOCAL_TILE_SIZE;
 	}
 
 	/** True if this spot is in a chunk you haven't unlocked: its outline is hidden there. */

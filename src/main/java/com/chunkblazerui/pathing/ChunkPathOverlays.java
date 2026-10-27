@@ -88,9 +88,10 @@ final class ChunkPathOverlays
 	/** The next far-off transport the path takes (a charter, glider), or null. */
 	private Transports.Link nextTravel(int[] path)
 	{
-		for (int i = Math.max(0, pathing.progress()); i < path.length - 1; i++)
+		int from = pathing.progress();
+		for (int i : pathing.steps())
 		{
-			if (PathTile.distance(path[i], path[i + 1]) > 1)
+			if (i >= from && i < path.length - 1)
 			{
 				Transports.Link link = pathing.link(path[i], path[i + 1]);
 				if (link != null && link.kind == Transports.TRAVEL)
@@ -184,8 +185,13 @@ final class ChunkPathOverlays
 		private void stepIcons(Graphics2D graphics, WorldView view, int plane, int[] path)
 		{
 			int shown = 0;
-			for (int i = Math.max(0, pathing.progress()); i < path.length - 1 && shown < 6; i++)
+			int start = pathing.progress();
+			for (int i : pathing.steps())
 			{
+				if (i < start || i >= path.length - 1 || shown >= 6)
+				{
+					continue;
+				}
 				int from = path[i];
 				if (PathTile.z(from) != plane)
 				{
@@ -305,6 +311,12 @@ final class ChunkPathOverlays
 			Widget best = null;
 			for (int group : TRAVEL_MENUS)
 			{
+				// Only an open one is searched: a closed interface has no root.
+				Widget root = client.getWidget(group, 0);
+				if (root == null || root.isHidden())
+				{
+					continue;
+				}
 				int misses = 0;
 				for (int child = 0; misses < 40; child++)
 				{
