@@ -517,6 +517,25 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 		return pile;
 	}
 
+	/** What's clickable on screen (the top card and the batch buttons), or null with no cards. */
+	Rectangle mouseArea()
+	{
+		if (!isActive())
+		{
+			return null;
+		}
+		Card top = topCard();
+		Rectangle area = top == null || top.bounds == null ? null : new Rectangle(top.bounds);
+		for (Rectangle button : new Rectangle[]{revealFiveBounds, revealAllBounds})
+		{
+			if (button != null)
+			{
+				area = area == null ? new Rectangle(button) : area.union(button);
+			}
+		}
+		return area;
+	}
+
 	/** The card on top of the pile, or null. Safe to call from the mouse thread. */
 	private Card topCard()
 	{

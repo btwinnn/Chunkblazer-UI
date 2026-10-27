@@ -90,6 +90,10 @@ public class SelectedTaskOverlay extends OverlayPanel
 	private static final int TICK_MS = 600;
 
 	// Where the X was last drawn, relative to the overlay's top-left. Null while hidden.
+	@javax.inject.Inject
+	private MouseShield shield;
+	// When the box was last drawn, for the mouse shield.
+	private volatile long drawnAt;
 	private volatile Rectangle closeButton;
 	private volatile boolean closeHovered;
 	// Same for the archive book in the opposite corner, plus the task it would archive.
@@ -139,7 +143,23 @@ public class SelectedTaskOverlay extends OverlayPanel
 				e -> plugin.clearSelectedTask());
 	}
 
+	/** The box on screen (drawn in the last moment), or null. */
+	Rectangle shownArea()
+	{
+		return System.currentTimeMillis() - drawnAt < 250 ? getBounds() : null;
+	}
+
 	public Dimension render(Graphics2D graphics)
+	{
+		Dimension size = renderBox(graphics);
+		if (size != null)
+		{
+			drawnAt = System.currentTimeMillis();
+		}
+		return size;
+	}
+
+	private Dimension renderBox(Graphics2D graphics)
 	{
 		TaskTrackerStyle style = config.taskTrackerStyle();
 		if (style == TaskTrackerStyle.OFF || config.trackedTaskShows() == TrackedTaskShows.SIDE_PANEL
@@ -178,7 +198,7 @@ public class SelectedTaskOverlay extends OverlayPanel
 		Color tier = TaskCardTier.fromTask(task).getAccent();
 		// Compact: one small line, out of the way. Hovering it opens the full box (what to do,
 		// requirements, missing levels), and so does a timed kill once its countdown starts.
-		net.runelite.api.Point at = client.getMouseCanvasPosition();
+		net.runelite.api.Point at = shield.mouse();
 		Rectangle shown = getBounds();
 		// While it opens, the box changes size (a long name is wider as a strip than as the box,
 		// and wraps to more lines in it), so it can slide out from under the mouse, shut, slide
@@ -299,7 +319,7 @@ public class SelectedTaskOverlay extends OverlayPanel
 		// Hover test using the game's own mouse position, which is in the same
 		// coordinate space the overlay is drawn in (works in stretched/resized
 		// modes too). The click handler just asks "is the X hovered right now?".
-		net.runelite.api.Point mouse = client.getMouseCanvasPosition();
+		net.runelite.api.Point mouse = shield.mouse();
 		Rectangle bounds = getBounds();
 		closeHovered = isHovered(mouse, bounds, box);
 		archiveHovered = isHovered(mouse, bounds, book);

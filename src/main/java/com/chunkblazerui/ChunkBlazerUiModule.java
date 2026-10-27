@@ -31,6 +31,7 @@ import java.awt.Rectangle;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -84,6 +85,16 @@ public class ChunkBlazerUiModule implements ChunkBlazerUi
 	private SidePanelSkin sidePanelSkin;
 	@Inject
 	private CardSounds cardSounds;
+	@Inject
+	private MusicDuck music;
+	@Inject
+	private ClientThread clientThread;
+	@Inject
+	private MouseShield shield;
+	@Inject
+	private net.runelite.client.input.KeyManager keyManager;
+	@Inject
+	private SavedTaskTracker savedButton;
 
 	@Override
 	public void startUp()
@@ -94,6 +105,14 @@ public class ChunkBlazerUiModule implements ChunkBlazerUi
 		overlayManager.add(tutorial);
 		mouseManager.registerMouseListener(tutorial.mouse);
 		eventBus.register(tutorial);
+		// Nothing behind ChunkBlazer's boxes gets hover text or tooltips (the window does its own).
+		shield.add(tutorial::shownBox);
+		shield.add(cards::mouseArea);
+		shield.add(taskBox::shownArea);
+		shield.add(savedButton::getButtonBounds);
+		mouseManager.registerMouseListener(shield);
+		keyManager.registerKeyListener(tutorial.keys);
+		eventBus.register(music);
 	}
 
 	@Override
@@ -102,8 +121,14 @@ public class ChunkBlazerUiModule implements ChunkBlazerUi
 		// The side panel goes back to ChunkBlazer's own look.
 		core.setSidePainter(null);
 		core.setUiCompletionSound(false);
+		cardSounds.shutDown();
+		eventBus.unregister(music);
+		clientThread.invoke(music::restore);
 		overlayManager.remove(tutorial);
 		mouseManager.unregisterMouseListener(tutorial.mouse);
+		mouseManager.unregisterMouseListener(shield);
+		shield.clear();
+		keyManager.unregisterKeyListener(tutorial.keys);
 		eventBus.unregister(tutorial);
 		eventBus.unregister(this);
 	}

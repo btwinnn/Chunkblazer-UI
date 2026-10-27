@@ -69,10 +69,17 @@ public class TaskCompletionAnimationOverlay extends Overlay
 	private final ChunkBlazerCore core;
 	private final Client client;
 
-	private long startTime = -1;
+	private volatile long startTime = -1;
 	private String taskName = "";
 	private String regionName = "";
 	private int pointsAwarded;
+
+	/** The popup up. */
+	boolean isShowing()
+	{
+		long start = startTime;
+		return start != -1 && System.currentTimeMillis() - start <= TOTAL;
+	}
 
 	@Inject
 	public TaskCompletionAnimationOverlay(ChunkBlazerCore core, Client client)

@@ -17,6 +17,11 @@
 [lumbridge]
 3218,3214,3226,3222
 
+# The very first box, on either start: Task Sound Volume, with a Test.
+[sound|Confirm]
+Sound check
+How loud ChunkBlazer's card and task sounds are. Press Test, then go up a step at a time.
+
 [welcome|Next]
 Welcome to ChunkBlazer
 The world is split into chunks, and you can only use the ones you've unlocked. Everything is locked for now.

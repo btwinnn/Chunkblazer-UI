@@ -119,6 +119,20 @@ public class StampCompletionOverlay extends Overlay
 		start(task, points, region);
 	}
 
+	/** A popup up, or one waiting its turn. */
+	boolean isShowing()
+	{
+		long start = startTime;
+		if (start != -1 && System.currentTimeMillis() - start <= TOTAL)
+		{
+			return true;
+		}
+		synchronized (queue)
+		{
+			return !queue.isEmpty();
+		}
+	}
+
 	private void start(NuzlockeTask task, int points, String region)
 	{
 		int awarded = points > 0 ? points : task.getBasePoints();

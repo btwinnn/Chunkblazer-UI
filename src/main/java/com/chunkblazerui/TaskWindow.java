@@ -1578,7 +1578,9 @@ public class TaskWindow implements TaskWindowHook
 					"Test", this::testCompletion),
 				heading("Tutorial"),
 				withAction(new Setting("Tutorial", "Go through the tutorial's tour of the interface again, from the mainland part.",
-					"", () -> null, null, 0, 0, 0), "Restart", () -> clientThread.invoke(() -> tutorial.get().replay()))));
+					"", () -> null, null, 0, 0, 0), "Restart", () -> clientThread.invoke(() -> tutorial.get().replay())),
+				withAction(new Setting("Start over", "This account's whole tutorial again from its first box: Tutorial Island's on the island, Lumbridge's anywhere else.",
+					"", () -> null, null, 0, 0, 0), "Reset", () -> clientThread.invoke(() -> tutorial.get().reset()))));
 			settings = all;
 		}
 		return settings;

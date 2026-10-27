@@ -127,7 +127,7 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 	// tasks have just been dealt.
 	// The first chunk unlocks once the practice cards are dealt and the first one's tracked, so
 	// nobody's off across the island before they've seen them.
-	private static final List<String> ISLAND_FLOW = Arrays.asList("welcome", "tasks", "deal", "iorb", "itrack", "iclose", "itaskshow", "iassist",
+	private static final List<String> ISLAND_FLOW = Arrays.asList("sound", "welcome", "tasks", "deal", "iorb", "itrack", "iclose", "itaskshow", "iassist",
 		"iunlock",
 		"imap", "map", "walls", "practice", "leave", "arrive", "sync", "mode", "verify", "home");
 	// Tutorial Island's progress (VarPlayerID.TUTORIAL) from walking into the Quest Guide's
@@ -135,7 +135,7 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 	private static final int QUEST_GUIDE = 220;
 	private static final int QUEST_GUIDE_LEFT = 250;
 	// (The first chunk unlocks on leaving the start room; there's no step for it.)
-	private static final List<String> LUMBRIDGE_FLOW = Arrays.asList("lwelcome", "lunlock", "ltasks", "ltokens", "group", "sync", "mode",
+	private static final List<String> LUMBRIDGE_FLOW = Arrays.asList("sound", "lwelcome", "lunlock", "ltasks", "ltokens", "group", "sync", "mode",
 		"verify");
 	// The task box's book archives the tracked task; the next steps bring that same task back
 	// from the Archived list, so nothing's left archived by accident.
@@ -172,6 +172,9 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 	private final TaskLists lists;
 	private final TaskPaneOverlay pane;
 	private final TaskCardOverlay cards;
+	private final CardSounds sounds;
+	@Inject
+	private MouseShield shield;
 	private final SelectedTaskOverlay taskBox;
 	private final SavedTaskTracker savedButton;
 
@@ -247,12 +250,20 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 		}
 	}
 
+	/** The box on screen, or null. */
+	Rectangle shownBox()
+	{
+		return shown;
+	}
+
 	/** Clicks on the tutorial box: its buttons, and nothing behind it. */
 	final MouseAdapter mouse = new MouseAdapter()
 	{
 		@Override
 		public MouseEvent mousePressed(MouseEvent event)
 		{
+			// A click anywhere sets a level being typed (clicking its box again starts it afresh).
+			finishTyping();
 			Rectangle box = shown;
 			if (box == null || !box.contains(event.getPoint()))
 			{
@@ -274,11 +285,139 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 		}
 	};
 
+	// The sound step's level being typed in (null while it isn't).
+	private volatile StringBuilder typing;
+
+	/** Typing a level into the sound step's box: digits, Backspace, Enter to set it, Escape to leave it. */
+	final net.runelite.client.input.KeyListener keys = new net.runelite.client.input.KeyListener()
+	{
+		@Override
+		public void keyTyped(java.awt.event.KeyEvent event)
+		{
+			StringBuilder typed = typing;
+			if (typed == null)
+			{
+				return;
+			}
+			char c = event.getKeyChar();
+			if (Character.isDigit(c) && typed.length() < 3 && Integer.parseInt(typed.toString() + c) <= 100)
+			{
+				typed.append(c);
+			}
+			event.consume();
+		}
+
+		@Override
+		public void keyPressed(java.awt.event.KeyEvent event)
+		{
+			StringBuilder typed = typing;
+			if (typed == null)
+			{
+				return;
+			}
+			switch (event.getKeyCode())
+			{
+				case java.awt.event.KeyEvent.VK_BACK_SPACE:
+					if (typed.length() > 0)
+					{
+						typed.setLength(typed.length() - 1);
+					}
+					break;
+				case java.awt.event.KeyEvent.VK_ENTER:
+					finishTyping();
+					break;
+				case java.awt.event.KeyEvent.VK_ESCAPE:
+					typing = null;
+					break;
+				default:
+					break;
+			}
+			event.consume();
+		}
+
+		@Override
+		public void keyReleased(java.awt.event.KeyEvent event)
+		{
+			if (typing != null)
+			{
+				event.consume();
+			}
+		}
+	};
+
+	/** The typed level set (nothing typed: as it was). */
+	private void finishTyping()
+	{
+		StringBuilder typed = typing;
+		typing = null;
+		if (typed != null && typed.length() > 0)
+		{
+			setLevel(Math.min(100, Integer.parseInt(typed.toString())));
+		}
+	}
+
+	// The sound step's levels, quietest first: 1% steps at the bottom, doubling from 3% to 48%, then 72% and 100%.
+	private static final int[] LEVELS = {0, 1, 2, 3, 6, 12, 24, 48, 72, 100};
+	private static final String VOLUME_KEY = "taskCompletionSoundVolume";
+	// ChunkBlazer's Task Sound Volume default (RuneLite's setting): where the steps start.
+	private static final int DEFAULT_VOLUME = 3;
+	// Shown whenever the level's above the default.
+	private static final String WARNING = "Louder than default: go up slowly.";
+
+	/** ChunkBlazer's Task Sound Volume, 0 to 100. */
+	private int volume()
+	{
+		Integer volume = configManager.getConfiguration(GROUP, VOLUME_KEY, Integer.class);
+		return volume == null ? DEFAULT_VOLUME : Math.max(0, Math.min(100, volume));
+	}
+
+	/** A step up or down from where it is (between steps, the next one that way), and a card put down to hear it. */
+	private void step(boolean up)
+	{
+		typing = null;
+		int now = volume();
+		int volume = now;
+		if (up)
+		{
+			for (int level : LEVELS)
+			{
+				if (level > now)
+				{
+					volume = level;
+					break;
+				}
+			}
+		}
+		else
+		{
+			for (int i = LEVELS.length - 1; i >= 0; i--)
+			{
+				if (LEVELS[i] < now)
+				{
+					volume = LEVELS[i];
+					break;
+				}
+			}
+		}
+		setLevel(volume);
+	}
+
+	/** The sound step's level set, and a card put down to hear it. */
+	private void setLevel(int volume)
+	{
+		if (volume != volume())
+		{
+			configManager.setConfiguration(GROUP, VOLUME_KEY, volume);
+		}
+		sounds.tick();
+	}
+
 	@Inject
 	ChunkBlazerTutorial(Client client, ClientThread clientThread, DrawManager drawManager, ConfigManager configManager, ChunkBlazerCore plugin,
 		ChunkBlazerUiConfig config, TaskWindow browser, TaskLists lists, TaskPaneOverlay pane, TaskCardOverlay cards,
-		SelectedTaskOverlay taskBox, SavedTaskTracker savedButton)
+		SelectedTaskOverlay taskBox, SavedTaskTracker savedButton, CardSounds sounds)
 	{
+		this.sounds = sounds;
 		this.client = client;
 		this.clientThread = clientThread;
 		this.drawManager = drawManager;
@@ -962,7 +1101,7 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 		{
 			// Players who already have a mode, or any progress, don't need it.
 			boolean veteran = plugin.isModeLocked() || !plugin.getCompletedTaskIdSet().isEmpty();
-			saved = veteran ? "over" : island < ISLAND_DONE ? "welcome" : "lwelcome";
+			saved = veteran ? "over" : "sound";
 		}
 		practice.clear();
 		seen.clear();
@@ -1078,6 +1217,12 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 	private void next()
 	{
 		String current = step;
+		if (current.equals("sound"))
+		{
+			// Both starts begin with it: on with the one for where you are.
+			setStep(onIsland ? "welcome" : "lwelcome");
+			return;
+		}
 		if (current.equals("mode"))
 		{
 			// Picked in the side panel (the picker itself goes straight to "verify").
@@ -1134,6 +1279,7 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 			// A first start: its locked view lasts until Lumbridge is unlocked ("home").
 			see(id.equals("practice") ? id : "island");
 		}
+		typing = null;
 		if (id.equals("save"))
 		{
 			savedBefore = lists.savedIdsCopy();
@@ -1176,6 +1322,121 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 		aside = null;
 		replaying = true;
 		setStep("orb");
+	}
+
+	/**
+	 * Settings > Tutorial > Reset: this account's tutorial from its very first box, as if it had
+	 * never been seen. On Tutorial Island that's the island's start (what the island already has
+	 * done, like a finished practice task, counts straight away); anywhere else, Lumbridge's.
+	 * Client thread.
+	 */
+	void reset()
+	{
+		browser.close();
+		for (String key : Arrays.asList("tutorialStep", "tutorialChunks", "tutorialSeen", "tutorialCards", "tutorialTasks", "tutorialGuide"))
+		{
+			configManager.unsetRSProfileConfiguration(GROUP, key);
+		}
+		aside = null;
+		replaying = false;
+		practice.clear();
+		seen.clear();
+		dealt.clear();
+		revealed.clear();
+		practiceDone = -1;
+		quietUntil = 0;
+		previewWritten = null;
+		clearWritten = null;
+		startTiles = null;
+		NuzlockeTask tracked = plugin.getSelectedTask();
+		if (tracked != null && practiceTask(tracked.getTaskId()) != null)
+		{
+			plugin.clearSelectedTask();
+		}
+		for (NuzlockeTask task : practiceTasks)
+		{
+			task.setCompleted(false);
+			task.setCurrentProgress(0);
+		}
+		setStep("sound");
+	}
+
+	/** The sound step: a slider for ChunkBlazer's Task Sound Volume, Test to hear it, then Confirm. */
+	private Rectangle drawSound(Graphics2D graphics, List<Hit> frame)
+	{
+		String[] content = text.getOrDefault("sound", new String[]{"Sound check", "", "Confirm"});
+		graphics.setFont(Skin.regular());
+		FontMetrics fm = graphics.getFontMetrics();
+		List<String> lines = new ArrayList<>();
+		for (String paragraph : content[1].split("\n"))
+		{
+			if (!lines.isEmpty())
+			{
+				lines.add("");
+			}
+			lines.addAll(TaskLists.wrap(fm, paragraph, WIDTH - PAD * 2));
+		}
+		List<String> warn = volume() > DEFAULT_VOLUME ? TaskLists.wrap(fm, WARNING, WIDTH - PAD * 2) : Collections.emptyList();
+		int height = PAD + 22 + lines.size() * 15 + PAD + 34 + warn.size() * 15 + (warn.isEmpty() ? 0 : 6) + 26;
+		Rectangle box = place(WIDTH, height);
+		Skin.panel(graphics, box, 24, TITLE);
+		graphics.setFont(Skin.bold());
+		Skin.centred(graphics, content[0], box.x + box.width / 2, box.y + 20, TITLE);
+		graphics.setFont(Skin.regular());
+		int y = box.y + PAD + 30;
+		for (String line : lines)
+		{
+			Skin.text(graphics, line, box.x + PAD, y, BODY);
+			y += 15;
+		}
+		net.runelite.api.Point mouse = shield.mouse();
+		// Quieter, the level, louder, and Test at the end of the row.
+		int volume = volume();
+		int rowY = y + 4;
+		Rectangle down = new Rectangle(box.x + PAD, rowY - 4, 70, 22);
+		Rectangle up = new Rectangle(down.x + down.width + 60, rowY - 4, 70, 22);
+		Rectangle test = new Rectangle(box.x + box.width - PAD - 60, rowY - 4, 60, 22);
+		button(graphics, down, "Quieter", mouse);
+		button(graphics, up, "Louder", mouse);
+		// The level, typed into: click it, type a number up to 100, Enter.
+		Rectangle field = new Rectangle(down.x + down.width + 6, rowY - 4, 48, 22);
+		StringBuilder typed = typing;
+		graphics.setColor(new Color(0, 0, 0, 120));
+		graphics.fillRect(field.x, field.y, field.width, field.height);
+		graphics.setColor(typed != null ? Color.WHITE : hovered(field, mouse) ? TITLE : DIM);
+		graphics.drawRect(field.x, field.y, field.width - 1, field.height - 1);
+		boolean caret = typed != null && System.currentTimeMillis() / 500 % 2 == 0;
+		String shownLevel = typed != null ? typed + (caret ? "|" : "") : volume + "%";
+		graphics.setFont(Skin.bold());
+		Skin.centred(graphics, shownLevel, field.x + field.width / 2, rowY + 12,
+			typed != null ? Color.WHITE : volume > DEFAULT_VOLUME ? RED : BODY);
+		graphics.setFont(Skin.regular());
+		int warnY = rowY + 36;
+		for (String line : warn)
+		{
+			Skin.text(graphics, line, box.x + PAD, warnY, RED);
+			warnY += 15;
+		}
+		button(graphics, test, "Test", mouse);
+		frame.add(new Hit(field, () -> typing = new StringBuilder()));
+		frame.add(new Hit(down, () -> step(false)));
+		frame.add(new Hit(up, () -> step(true)));
+		frame.add(new Hit(test, () ->
+		{
+			finishTyping();
+			sounds.test();
+		}));
+		if (content[2] != null)
+		{
+			Rectangle confirm = new Rectangle(box.x + box.width - PAD - 110, box.y + box.height - 30, 110, 22);
+			button(graphics, confirm, content[2], mouse);
+			frame.add(new Hit(confirm, () -> clientThread.invoke(() -> press("sound"))));
+		}
+		graphics.setFont(Skin.small());
+		Rectangle skip = new Rectangle(box.x + PAD, box.y + box.height - 24, 80, 14);
+		Skin.text(graphics, "Skip tutorial", skip.x, skip.y + 11, hovered(skip, mouse) ? Color.WHITE : DIM);
+		frame.add(new Hit(skip, () -> clientThread.invoke(() -> setStep("over"))));
+		return box;
 	}
 
 	/** Show a one-off message (once per account) over the current step. */
@@ -1443,6 +1704,10 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 		{
 			box = drawThemes(graphics, frame);
 		}
+		else if (id.equals("sound"))
+		{
+			box = drawSound(graphics, frame);
+		}
 		else if (id.equals("iassist") || id.equals("assist"))
 		{
 			box = drawAssists(graphics, id, frame);
@@ -1528,7 +1793,7 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 			Skin.text(graphics, line, box.x + PAD, y, BODY);
 			y += 15;
 		}
-		net.runelite.api.Point mouse = client.getMouseCanvasPosition();
+		net.runelite.api.Point mouse = shield.mouse();
 		if (content[2] != null)
 		{
 			Rectangle button = new Rectangle(box.x + box.width - PAD - 110, box.y + box.height - 30, 110, 22);
@@ -1656,7 +1921,7 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 			Skin.text(graphics, line, box.x + PAD, y, BODY);
 			y += 15;
 		}
-		net.runelite.api.Point mouse = client.getMouseCanvasPosition();
+		net.runelite.api.Point mouse = shield.mouse();
 		Theme current = Skin.theme();
 		for (int i = 0; i < themes.length; i++)
 		{
@@ -1678,7 +1943,14 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 			graphics.setFont(Skin.bold());
 			Skin.centred(graphics, theme.toString(), card.x + card.width / 2, card.y + card.height + 18,
 				picked ? TITLE : hover ? Color.WHITE : BODY);
-			frame.add(new Hit(card, () -> configManager.setConfiguration(ChunkBlazerUiConfig.GROUP, "theme", theme)));
+			frame.add(new Hit(card, () ->
+			{
+				if (theme != Skin.theme())
+				{
+					sounds.preview(theme);
+				}
+				configManager.setConfiguration(ChunkBlazerUiConfig.GROUP, "theme", theme);
+			}));
 		}
 		Rectangle confirm = new Rectangle(box.x + (box.width - 110) / 2, box.y + box.height - 30, 110, 22);
 		button(graphics, confirm, content[2] == null ? "Confirm" : content[2], mouse);
@@ -1767,7 +2039,7 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 			Skin.text(graphics, line, box.x + PAD, y, BODY);
 			y += 15;
 		}
-		net.runelite.api.Point mouse = client.getMouseCanvasPosition();
+		net.runelite.api.Point mouse = shield.mouse();
 		AssistLevel current = config.assistLevel();
 		ThemePalette p = Skin.palette();
 		for (int i = 0; i < levels.length; i++)
@@ -1860,7 +2132,7 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 			showCards.clear();
 			showCardsPalette = Skin.palette();
 		}
-		net.runelite.api.Point mouse = client.getMouseCanvasPosition();
+		net.runelite.api.Point mouse = shield.mouse();
 		TrackedTaskShows current = config.trackedTaskShows();
 		for (int i = 0; i < choices.length; i++)
 		{
@@ -1880,7 +2152,14 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 			graphics.setFont(Skin.bold());
 			Skin.centred(graphics, choice.toString(), card.x + card.width / 2, card.y + card.height + 18,
 				picked ? TITLE : hover ? Color.WHITE : BODY);
-			frame.add(new Hit(card, () -> configManager.setConfiguration(ChunkBlazerUiConfig.GROUP, "trackedTaskShows", choice)));
+			frame.add(new Hit(card, () ->
+			{
+				if (choice != config.trackedTaskShows())
+				{
+					sounds.pick();
+				}
+				configManager.setConfiguration(ChunkBlazerUiConfig.GROUP, "trackedTaskShows", choice);
+			}));
 		}
 		Rectangle confirm = new Rectangle(box.x + (box.width - 110) / 2, box.y + box.height - 30, 110, 22);
 		button(graphics, confirm, content[2] == null ? "Confirm" : content[2], mouse);
@@ -2051,7 +2330,7 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 		Skin.centred(graphics, content[0], box.x + box.width / 2, box.y + 20, TITLE);
 		graphics.setFont(Skin.small());
 		Skin.text(graphics, content[1].trim(), box.x + PAD, box.y + 40, RED);
-		net.runelite.api.Point mouse = client.getMouseCanvasPosition();
+		net.runelite.api.Point mouse = shield.mouse();
 		boolean ironman = isIronman();
 		String[][] modes = {text.getOrDefault("casual", new String[]{"Casual", "", null}),
 			text.getOrDefault("competitive", new String[]{"Competitive", "", null})};

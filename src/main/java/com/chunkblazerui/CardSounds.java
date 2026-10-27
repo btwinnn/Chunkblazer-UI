@@ -26,7 +26,8 @@
 
 package com.chunkblazerui;
 
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
@@ -52,15 +53,45 @@ public class CardSounds
 	private final AudioPlayer audio;
 	private final ConfigManager configManager;
 	private final ChunkBlazerUiConfig config;
-	private final ScheduledExecutorService executor;
+	// Sounds get a thread of their own: RuneLite's shared one also saves config and syncs
+	// (busy while logging in and on a new account), and a sound queued behind that is lost.
+	private ExecutorService executor;
 
 	@Inject
-	CardSounds(AudioPlayer audio, ConfigManager configManager, ChunkBlazerUiConfig config, ScheduledExecutorService executor)
+	private MusicDuck music;
+	// Each sound's length in ms, read once (for how long the music stays down).
+	private final java.util.Map<String, Long> lengths = new java.util.concurrent.ConcurrentHashMap<>();
+
+	@Inject
+	CardSounds(AudioPlayer audio, ConfigManager configManager, ChunkBlazerUiConfig config)
 	{
 		this.audio = audio;
 		this.configManager = configManager;
 		this.config = config;
-		this.executor = executor;
+	}
+
+	private synchronized void run(Runnable sound)
+	{
+		if (executor == null)
+		{
+			executor = Executors.newSingleThreadExecutor(r ->
+			{
+				Thread thread = new Thread(r, "ChunkBlazer card sounds");
+				thread.setDaemon(true);
+				return thread;
+			});
+		}
+		executor.execute(sound);
+	}
+
+	/** The sound thread stops (a new one starts if a sound plays again). */
+	synchronized void shutDown()
+	{
+		if (executor != null)
+		{
+			executor.shutdownNow();
+			executor = null;
+		}
 	}
 
 	/** A card dealt onto the pile ({@code seed} picks one of a few, so a deal isn't the same knock each time). */
@@ -98,6 +129,54 @@ public class CardSounds
 		play(folder(Skin.theme()) + "complete_" + tier(tier));
 	}
 
+	/** A theme picked in the tutorial: that theme's card turning over (a plain card for ChunkBlazer's own). */
+	void preview(Theme theme)
+	{
+		if (config.themeSounds())
+		{
+			String name = theme == Theme.ORIGINAL ? "deal_0" : folder(theme) + "flip_0";
+			float gain = gain();
+			run(() -> playNow(FOLDER, name, gain));
+		}
+	}
+
+	/** One of the tutorial's picture cards picked: a card put down. */
+	void pick()
+	{
+		play("deal_1");
+	}
+
+	/** The tutorial's sound check let go of: a card put down, at the new volume. */
+	void tick()
+	{
+		float gain = gain();
+		run(() -> playNow(FOLDER, "deal_2", gain));
+	}
+
+	/**
+	 * The tutorial's sound check Test: a card turned over, then a task complete fanfare, the
+	 * loudest there is, in this theme (Old School's for ChunkBlazer's own, which has none).
+	 */
+	void test()
+	{
+		Theme theme = Skin.theme() == Theme.ORIGINAL ? Theme.OLD_SCHOOL : Skin.theme();
+		float gain = gain();
+		run(() ->
+		{
+			playNow(FOLDER, folder(theme) + "flip_2", gain);
+			try
+			{
+				Thread.sleep(1800);
+			}
+			catch (InterruptedException e)
+			{
+				Thread.currentThread().interrupt();
+				return;
+			}
+			playNow(FOLDER, folder(theme) + "complete_2", gain);
+		});
+	}
+
 	/** Whether this theme's sounds play (Varlamore or Old School, with Theme sounds on). */
 	boolean on()
 	{
@@ -113,19 +192,41 @@ public class CardSounds
 		float gain = gain();
 		String folder = FOLDER;
 		// Opening a sound line can take a moment: not on the client or mouse thread.
-		executor.execute(() -> playNow(folder, name, gain));
+		run(() -> playNow(folder, name, gain));
 	}
 
 	private void playNow(String folder, String name, float gain)
 	{
 		try
 		{
-			audio.play(CardSounds.class, folder + name + ".wav", gain);
+			String path = folder + name + ".wav";
+			music.hold(lengths.computeIfAbsent(path, CardSounds::length));
+			audio.play(CardSounds.class, path, gain);
 		}
 		catch (Exception e)
 		{
 			log.warn("Couldn't play {}", name, e);
 		}
+	}
+
+	/** How long a sound runs, in ms (a second and a half if it can't be read). */
+	private static long length(String path)
+	{
+		try (java.io.InputStream in = CardSounds.class.getResourceAsStream(path))
+		{
+			if (in != null)
+			{
+				try (javax.sound.sampled.AudioInputStream audio = javax.sound.sampled.AudioSystem.getAudioInputStream(new java.io.BufferedInputStream(in)))
+				{
+					return Math.round(audio.getFrameLength() * 1000.0 / audio.getFormat().getFrameRate());
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			log.debug("Couldn't read {}", path, e);
+		}
+		return 1500;
 	}
 
 	/** ChunkBlazer's Task Sound Volume (0 to 100) as decibels, 100 being 0 dB. */

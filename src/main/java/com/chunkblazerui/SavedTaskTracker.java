@@ -54,6 +54,8 @@ import net.runelite.client.ui.overlay.OverlayPriority;
 @Singleton
 public class SavedTaskTracker extends Overlay
 {
+	@javax.inject.Inject
+	private MouseShield shield;
 	private static final int SIZE = 32;
 
 	private final Client client;
@@ -133,7 +135,7 @@ public class SavedTaskTracker extends Overlay
 		int d = SIZE;
 		int top = d / 6;
 		Rectangle bounds = getBounds();
-		net.runelite.api.Point m = client.getMouseCanvasPosition();
+		net.runelite.api.Point m = shield.mouse();
 		// It's drawn over every interface, so it takes the click over them too (the click is
 		// kept from the interface underneath). Only an open right-click menu goes first.
 		boolean covered = client.isMenuOpen();
