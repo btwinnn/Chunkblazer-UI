@@ -42,6 +42,8 @@ import javax.inject.Singleton;
 import net.runelite.api.Client;
 import net.runelite.api.Player;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.PluginMessage;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
@@ -82,6 +84,16 @@ public class ChunkNameBanner extends Overlay
 	private static final int RECENT_PLACES = 4;
 	// Dungeons sit 6400 tiles (100 regions) north of the land above them.
 	private static final int UNDERGROUND_REGION_Y = 100;
+
+	// ChunkBlazer GPU's unlock: after the lava sweep the sign falls to where the cards land, turns
+	// from Unlock to Unlocked, and the cards come in two seconds later.
+	private static final long FALL_MS = 650;
+	private static final long TURN_AT = 900;
+	private static final long TURN_MS = 600;
+	/** From the sweep ending to the cards coming in. */
+	public static final long CARDS_AFTER_SWEEP_MS = TURN_AT + TURN_MS + 2000;
+	private static final long DROP_FADE_MS = 350;
+	private static final double DROP_SCALE = 1.35;
 
 	private enum Phase
 	{
@@ -140,6 +152,22 @@ public class ChunkNameBanner extends Overlay
 	// The next banner, shown once the current one has slid away.
 	private Banner pending;
 
+	// The sign falling for an unlock: when (-1: not), what it said, and how far down it was.
+	private volatile long dropAt = -1;
+	private String dropTitle;
+	private String dropFrom;
+	private Color dropFromColor;
+	private double dropFromShown;
+	// A sweep is playing over the chunk the sign is waiting on: it stays put for the drop.
+	private volatile boolean heldForSweep;
+	// Its unlock sound has played (it plays as the status turns).
+	private boolean dropTurned;
+	@javax.inject.Inject
+	private CardSounds sounds;
+	// Drawn at twice the size and scaled down, so the text stays sharp as the sign grows.
+	private static final int SHARP = 2;
+	private static final int GLOW_PAD = 4;
+
 	@Inject
 	public ChunkNameBanner(Client client, ChunkBlazerCore plugin, ChunkBlazerUiConfig config)
 	{
@@ -162,8 +190,13 @@ public class ChunkNameBanner extends Overlay
 			pending = null;
 			return null;
 		}
-		checkForNewChunk();
 		long now = System.currentTimeMillis();
+		if (dropAt >= 0)
+		{
+			drawDrop(graphics, now - dropAt);
+			return null;
+		}
+		checkForNewChunk();
 		advance(now);
 		if (phase == Phase.HIDDEN)
 		{
@@ -190,8 +223,9 @@ public class ChunkNameBanner extends Overlay
 			case HOLD:
 				if (sticky)
 				{
-					// Waiting in a locked chunk: the moment it's unlocked, say so, then leave.
-					if (plugin.isRegionUnlocked(bannerRegion))
+					// Waiting in a locked chunk: the moment it's unlocked, say so, then leave
+					// (or, with ChunkBlazer GPU's sweep playing, wait to fall for it).
+					if (!heldForSweep && plugin.isRegionUnlocked(bannerRegion))
 					{
 						subtitle = "Unlocked!";
 						subtitleColor = ChunkUnlockType.UNLOCKED.color;
@@ -332,6 +366,150 @@ public class ChunkNameBanner extends Overlay
 			type.color, regionId, type.isUnlockable()));
 	}
 
+	/**
+	 * ChunkBlazer GPU's lava sweep: while it plays, the sign for that chunk stays where it is;
+	 * when it ends, the sign falls to the middle of the screen and turns to Unlocked.
+	 */
+	@Subscribe
+	public void onPluginMessage(PluginMessage message)
+	{
+		Object region = message.getData().get("regionId");
+		if (!"chunkblazer".equals(message.getNamespace()) || !(region instanceof Number))
+		{
+			return;
+		}
+		int id = ((Number) region).intValue();
+		if ("unlockSweepStarted".equals(message.getName()))
+		{
+			heldForSweep = phase != Phase.HIDDEN && id == bannerRegion;
+		}
+		else if ("unlockSweepFinished".equals(message.getName()) && config.showChunkNamePopups() && !plugin.isOnTutorialIsland())
+		{
+			startDrop(id);
+		}
+	}
+
+	/** Whether an unlock now gets the falling sign (so the cards wait for it). */
+	public boolean dropsForUnlocks()
+	{
+		return config.showChunkNamePopups() && !plugin.isOnTutorialIsland();
+	}
+
+	/**
+	 * A chunk unlocked with no ChunkBlazer GPU sweep: the sign falls and turns all the same.
+	 * True if it does (the cards then wait {@link #CARDS_AFTER_SWEEP_MS} for it).
+	 */
+	public boolean dropForUnlock(int regionId)
+	{
+		if (regionId <= 0 || !dropsForUnlocks() || chunkName(regionId) == null)
+		{
+			return false;
+		}
+		startDrop(regionId);
+		return true;
+	}
+
+	private void startDrop(int regionId)
+	{
+		String name = chunkName(regionId);
+		if (name == null)
+		{
+			return;
+		}
+		long now = System.currentTimeMillis();
+		boolean ours = phase != Phase.HIDDEN && regionId == bannerRegion && !"Unlocked!".equals(subtitle);
+		dropTitle = name;
+		dropFrom = ours ? subtitle : "Unlock";
+		dropFromColor = ours ? subtitleColor : ChunkUnlockType.PAID.color;
+		dropFromShown = phase == Phase.HIDDEN ? 0 : shownAmount(now);
+		phase = Phase.HIDDEN;
+		pending = null;
+		sticky = false;
+		heldForSweep = false;
+		lastName = name;
+		dropTurned = false;
+		dropAt = now;
+		sounds.banner("banner_drop");
+	}
+
+	/**
+	 * The falling sign, {@code e} ms in: dropping from the top (bouncing as it lands, growing),
+	 * then its status turning from Unlock (yellow) to Unlocked! (green) with a pop and a flash,
+	 * held until the cards come in, then fading as they arrive.
+	 */
+	private void drawDrop(Graphics2D graphics, long e)
+	{
+		if (e > CARDS_AFTER_SWEEP_MS + DROP_FADE_MS)
+		{
+			dropAt = -1;
+			return;
+		}
+		double turn = Math.max(0, Math.min(1, (e - TURN_AT) / (double) TURN_MS));
+		if (turn >= 0.5 && !dropTurned)
+		{
+			dropTurned = true;
+			sounds.banner("banner_unlock");
+		}
+		title = dropTitle;
+		subtitle = turn < 0.5 ? dropFrom : "Unlocked!";
+		subtitleColor = blend(dropFromColor, ChunkUnlockType.UNLOCKED.color, turn);
+		Font titleFont = Skin.bold();
+		FontMetrics tm = graphics.getFontMetrics(titleFont);
+		FontMetrics sm = graphics.getFontMetrics(FontManager.getRunescapeSmallFont());
+		boolean oldSchool = Skin.theme() == Theme.OLD_SCHOOL;
+		int width = Math.max(tm.stringWidth(title) + (oldSchool ? 2 * tm.getAscent() : 0),
+			Math.max(sm.stringWidth(dropFrom), sm.stringWidth("Unlocked!"))) + PAD_X * 2;
+		int height = tm.getAscent() + sm.getHeight() + PAD_Y * 2 + (oldSchool ? 6 : 0);
+		int top = client.getViewportYOffset() + TOP_MARGIN;
+		double fromY = top - (height + TOP_MARGIN) * (1 - dropFromShown);
+		double toY = client.getViewportYOffset() + (client.getViewportHeight() - height) / 2.0;
+		double fall = bounce(Math.min(1, e / (double) FALL_MS));
+		double y = fromY + (toY - fromY) * fall;
+		double scale = 1 + (DROP_SCALE - 1) * Math.min(1, e / (double) FALL_MS) + 0.12 * Math.sin(Math.PI * turn);
+		double alpha = e < CARDS_AFTER_SWEEP_MS ? 1 : 1 - (e - CARDS_AFTER_SWEEP_MS) / (double) DROP_FADE_MS;
+		double flash = turn <= 0.5 ? 0 : 1 - (turn - 0.5) * 2;
+		// Scaling the game's pixel font on screen blurs it into chunky blocks. Instead the sign is
+		// drawn at twice its size (the font drawn big, not stretched) and then scaled down smoothly.
+		int padW = width + 2 * GLOW_PAD;
+		int padH = height + 2 * GLOW_PAD;
+		java.awt.image.BufferedImage sign = new java.awt.image.BufferedImage(padW * SHARP, padH * SHARP,
+			java.awt.image.BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = sign.createGraphics();
+		g.scale(SHARP, SHARP);
+		paint(g, GLOW_PAD, GLOW_PAD, width, height, 1, flash);
+		g.dispose();
+		double cx = client.getViewportXOffset() + client.getViewportWidth() / 2.0;
+		double cy = y + height / 2.0;
+		double w = padW * scale;
+		double h = padH * scale;
+		Composite before = graphics.getComposite();
+		Object interpolation = graphics.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
+		graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) Math.max(0, Math.min(1, alpha))));
+		graphics.drawImage(sign, (int) Math.round(cx - w / 2), (int) Math.round(cy - h / 2), (int) Math.round(w), (int) Math.round(h), null);
+		graphics.setComposite(before);
+		if (interpolation != null)
+		{
+			graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, interpolation);
+		}
+	}
+
+	/** Falls and bounces twice as it lands, like a sign dropped on a table. */
+	private static double bounce(double t)
+	{
+		if (t < 0.6)
+		{
+			return t * t / 0.36;
+		}
+		if (t < 0.85)
+		{
+			double k = (t - 0.725) / 0.125;
+			return 1 - 0.08 * (1 - k * k);
+		}
+		double k = (t - 0.925) / 0.075;
+		return 1 - 0.02 * (1 - k * k);
+	}
+
 	/** "Lumbridge (12850)" -> "Lumbridge"; null for regions without a chunk name. */
 	private String chunkName(int regionId)
 	{
@@ -392,10 +570,20 @@ public class ChunkNameBanner extends Overlay
 		int x = viewX + (viewWidth - width) / 2;
 		int shownY = client.getViewportYOffset() + TOP_MARGIN;
 		int y = (int) Math.round(shownY - (height + TOP_MARGIN) * (1 - shown));
+		paint(graphics, x, y, width, height, shown, flash);
+	}
 
+	/** The sign itself at (x, y), {@code alpha} opaque, its border flashing by {@code flash}. */
+	private void paint(Graphics2D graphics, int x, int y, int width, int height, double alpha, double flash)
+	{
+		boolean oldSchool = Skin.theme() == Theme.OLD_SCHOOL;
+		Font titleFont = Skin.bold();
+		Font subtitleFont = FontManager.getRunescapeSmallFont();
+		FontMetrics tm = graphics.getFontMetrics(titleFont);
+		FontMetrics sm = graphics.getFontMetrics(subtitleFont);
 		Composite previousComposite = graphics.getComposite();
 		Object previousAntialias = graphics.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-		graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) Math.max(0, Math.min(1, shown))));
+		graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) Math.max(0, Math.min(1, alpha))));
 		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		PixelText.crisp(graphics);
 		Color status = flash > 0 ? blend(subtitleColor, ChunkUnlockType.UNLOCKED.color, flash) : subtitleColor;

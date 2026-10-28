@@ -77,8 +77,7 @@ final class CardFlare
 		}
 		float t = age / (float) life;
 		Composite oldComposite = g.getComposite();
-		Object aa = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Object aa = Skin.smooth(g);
 		switch (theme)
 		{
 			case OLD_SCHOOL:
@@ -91,7 +90,7 @@ final class CardFlare
 				break;
 		}
 		g.setComposite(oldComposite);
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa == null ? RenderingHints.VALUE_ANTIALIAS_DEFAULT : aa);
+		Skin.restore(g, aa);
 		g.setStroke(new BasicStroke(1f));
 	}
 

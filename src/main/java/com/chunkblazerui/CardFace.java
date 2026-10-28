@@ -68,7 +68,7 @@ final class CardFace
 	static void paint(Graphics2D g, Rectangle b, Theme design, Color accent, String tierName, int stars,
 		String name, Font font)
 	{
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Skin.smooth(g);
 		PixelText.crisp(g);
 		g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 		switch (design)
@@ -113,7 +113,7 @@ final class CardFace
 	 */
 	static void paintBack(Graphics2D g, Rectangle b, Theme design, Color accent, int stars, Image logo)
 	{
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Skin.smooth(g);
 		g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 		double logoHeight = 0.8;
@@ -187,21 +187,7 @@ final class CardFace
 				break;
 			}
 		}
-		int y = panel.y + (panel.height - lines.size() * fm.getHeight()) / 2 + fm.getAscent();
-		for (String line : lines)
-		{
-			int x = panel.x + (panel.width - fm.stringWidth(line)) / 2;
-			if (shadow != null)
-			{
-				g.setColor(shadow);
-				// The drop shadow grows with the text: a pixel per 16.
-				int d = Math.max(1, Math.round(g.getFont().getSize2D() / 16f));
-				g.drawString(line, x + d, y + d);
-			}
-			g.setColor(color);
-			g.drawString(line, x, y);
-			y += fm.getHeight();
-		}
+		PixelText.centred(g, panel, text, g.getFont(), color, shadow, (m, w) -> wrap(m, text, w));
 	}
 
 	private static void centredText(Graphics2D g, Font font, String text, Rectangle r, Color color, Color shadow)

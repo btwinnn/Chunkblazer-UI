@@ -34,7 +34,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import javax.inject.Inject;
@@ -362,7 +361,7 @@ public class SelectedTaskOverlay extends OverlayPanel
 	 */
 	private Dimension drawCompact(Graphics2D graphics, NuzlockeTask task, Color tier)
 	{
-		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Skin.smooth(graphics);
 		graphics.setFont(Skin.small());
 		FontMetrics fm = graphics.getFontMetrics();
 		int target = Math.max(1, task.getTargetQuantity());

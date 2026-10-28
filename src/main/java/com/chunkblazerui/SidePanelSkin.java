@@ -467,7 +467,7 @@ public class SidePanelSkin implements BiPredicate<String, Object[]>
 			shield.quadTo(x + w, y + h * 0.85, x + w / 2.0, y + h);
 			shield.quadTo(x, y + h * 0.85, x, y + h * 0.5);
 			shield.closePath();
-			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			Skin.smooth(g);
 			g.setColor(tier);
 			g.fill(shield);
 			// The gold chief across the top, as on Varlamore's crest.
@@ -488,7 +488,7 @@ public class SidePanelSkin implements BiPredicate<String, Object[]>
 			g.drawPolygon(flag);
 			centreY = y + (h - 5) / 2.0 + 1;
 		}
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa == null ? RenderingHints.VALUE_ANTIALIAS_DEFAULT : aa);
+		Skin.restore(g, aa);
 		// Bold, and centred on the badge by the digits' own drawn outline, not the font's box.
 		// Two-digit numbers too wide for the badge in bold drop to the small font.
 		String text = String.valueOf(points);

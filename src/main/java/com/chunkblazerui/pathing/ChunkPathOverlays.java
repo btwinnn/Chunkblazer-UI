@@ -25,6 +25,7 @@
  */
 package com.chunkblazerui.pathing;
 
+import com.chunkblazerui.Skin;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -32,9 +33,10 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.util.ArrayList;
+import java.util.List;
 import net.runelite.api.Client;
 import net.runelite.api.Perspective;
 import net.runelite.api.Point;
@@ -156,8 +158,7 @@ final class ChunkPathOverlays
 				}
 				previous = tile;
 			}
-			Object aa = graphics.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			Object aa = Skin.smooth(graphics);
 			Stroke oldStroke = graphics.getStroke();
 			// A dark edge under it, so it reads on grass, sand and snow alike.
 			graphics.setStroke(new BasicStroke(5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
@@ -181,7 +182,7 @@ final class ChunkPathOverlays
 			stepIcons(graphics, view, plane, path);
 			graphics.setStroke(oldStroke);
 			nextTransport(graphics, view, plane, path);
-			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa == null ? RenderingHints.VALUE_ANTIALIAS_DEFAULT : aa);
+			Skin.restore(graphics, aa);
 			return null;
 		}
 
@@ -345,8 +346,7 @@ final class ChunkPathOverlays
 				return null;
 			}
 			Rectangle box = best.getBounds();
-			Object aa = graphics.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			Object aa = Skin.smooth(graphics);
 			Stroke oldStroke = graphics.getStroke();
 			graphics.setColor(new Color(TARGET.getRed(), TARGET.getGreen(), TARGET.getBlue(), 50));
 			graphics.fillRoundRect(box.x - 3, box.y - 2, box.width + 6, box.height + 4, 6, 6);
@@ -354,7 +354,7 @@ final class ChunkPathOverlays
 			graphics.setColor(TARGET);
 			graphics.drawRoundRect(box.x - 3, box.y - 2, box.width + 6, box.height + 4, 6, 6);
 			graphics.setStroke(oldStroke);
-			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa == null ? RenderingHints.VALUE_ANTIALIAS_DEFAULT : aa);
+			Skin.restore(graphics, aa);
 			return null;
 		}
 
@@ -431,8 +431,7 @@ final class ChunkPathOverlays
 			WorldView view = client.getTopLevelWorldView();
 			int plane = view.getPlane();
 			int last = path.length - 1;
-			Object aa = graphics.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			Object aa = Skin.smooth(graphics);
 			Stroke oldStroke = graphics.getStroke();
 			graphics.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 			graphics.setColor(PATH);
@@ -461,17 +460,104 @@ final class ChunkPathOverlays
 				graphics.fillOval(endDot.getX() - 3, endDot.getY() - 3, 6, 6);
 			}
 			graphics.setStroke(oldStroke);
-			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa == null ? RenderingHints.VALUE_ANTIALIAS_DEFAULT : aa);
+			Skin.restore(graphics, aa);
 			return null;
 		}
 	}
 
-	/** Off the surface map: dungeons and other areas stored outside the overworld's rows. */
-	private static boolean underground(int tile)
+	// A transport that moves you further than this (in tiles) gets map links instead of a line.
+	private static final int FAR = 8;
+	// The world map's transport links, from the last frame: {where on screen, the tile it goes to}.
+	private volatile List<Object[]> mapLinks = new ArrayList<>();
+
+	/** Where a transport comes out, for its link: the table's name for it, else the chunk's. */
+	private String place(Transports.Link link, int to)
 	{
-		int y = PathTile.y(tile);
-		return y < 2496 || y >= 4160;
+		return link != null && link.place != null && !link.place.isEmpty() ? link.place : pathing.chunkName(to);
 	}
+
+	/**
+	 * A world map link at (x, y): a round badge with the transport's symbol (a sparkle for a
+	 * teleport, an up or down arrow for stairs and ladders, a forward arrow for anything you ride
+	 * or walk through), its name in a tag only while the mouse is on it. Clicking it pans the map
+	 * to {@code goes}. Returns {its bounds, goes}.
+	 */
+	private Object[] mapLink(Graphics2D graphics, int kind, String name, int x, int y, int goes, net.runelite.api.Point mouse,
+		Rectangle clip)
+	{
+		int r = 8;
+		Rectangle box = new Rectangle(x - r, y - r, 2 * r, 2 * r);
+		boolean hover = mouse != null && box.contains(mouse.getX(), mouse.getY()) && clip.contains(mouse.getX(), mouse.getY());
+		// In the theme's own colours: its dark fill, its rim (Varlamore's gold, the others' bronze)
+		// with a dark line round it so it stands off the map, the symbol in its title colour.
+		com.chunkblazerui.ThemePalette theme = Skin.palette();
+		Color fill = theme.baseDark;
+		graphics.setColor(theme.dark);
+		graphics.fillOval(box.x - 2, box.y - 2, box.width + 4, box.height + 4);
+		graphics.setColor(new Color(fill.getRed(), fill.getGreen(), fill.getBlue(), 235));
+		graphics.fillOval(box.x, box.y, box.width, box.height);
+		graphics.setStroke(new BasicStroke(2f));
+		graphics.setColor(theme.frameInner != null ? theme.frameInner : theme.edge);
+		graphics.drawOval(box.x, box.y, box.width, box.height);
+		Color colour = hover ? theme.title.brighter() : theme.title;
+		graphics.setColor(colour);
+		graphics.setStroke(new BasicStroke(1.5f));
+		if (kind == Transports.TELEPORT)
+		{
+			// A four-pointed sparkle.
+			graphics.fillPolygon(new int[]{x, x + 1, x + 6, x + 1, x, x - 1, x - 6, x - 1},
+				new int[]{y - 6, y - 1, y, y + 1, y + 6, y + 1, y, y - 1}, 8);
+		}
+		else if (kind == Transports.UP || kind == Transports.DOWN)
+		{
+			// An arrow: its head up for going up, down for going down.
+			int d = kind == Transports.UP ? -1 : 1;
+			graphics.fillPolygon(new int[]{x - 4, x + 4, x}, new int[]{y + d, y + d, y + 5 * d}, 3);
+			graphics.drawLine(x, y - 4 * d, x, y + d);
+		}
+		else
+		{
+			graphics.fillPolygon(new int[]{x - 1, x + 4, x - 1}, new int[]{y - 4, y, y + 4}, 3);
+			graphics.drawLine(x - 4, y, x - 1, y);
+		}
+		if (hover)
+		{
+			// The name in the theme's own tooltip, above the badge.
+			graphics.setFont(FontManager.getRunescapeSmallFont());
+			int width = graphics.getFontMetrics().stringWidth(name) + 10;
+			Skin.tooltip(graphics, new Rectangle(x - width / 2, box.y - 21, width, 17), name);
+		}
+		return new Object[]{box, goes};
+	}
+
+	/** The path's end on the world map: a map pin, gold where it gets there, red where it stops short. */
+	private static void pin(Graphics2D graphics, int x, int y, Color colour)
+	{
+		int[] px = {x, x - 6, x - 6, x, x + 6, x + 6};
+		int[] py = {y, y - 9, y - 14, y - 18, y - 14, y - 9};
+		graphics.setColor(new Color(0, 0, 0, 160));
+		graphics.fillPolygon(new int[]{x + 1, x - 5, x - 5, x + 1, x + 7, x + 7}, new int[]{y + 1, y - 8, y - 13, y - 17, y - 13, y - 8}, 6);
+		graphics.setColor(colour);
+		graphics.fillPolygon(px, py, 6);
+		// Outlined and dotted in the theme's dark.
+		graphics.setColor(Skin.palette().dark);
+		graphics.drawPolygon(px, py, 6);
+		graphics.fillOval(x - 2, y - 14, 5, 5);
+	}
+
+	/** The tile a world map transport link at this point goes to, or -1 if there isn't one there. */
+	int mapLinkAt(int x, int y)
+	{
+		for (Object[] link : mapLinks)
+		{
+			if (((Rectangle) link[0]).contains(x, y))
+			{
+				return (int) link[1];
+			}
+		}
+		return -1;
+	}
+
 
 	/** A line on the world map, dashed where it takes a transport, with a ring at the end. */
 	private final class WorldMapOverlay extends Overlay
@@ -491,6 +577,7 @@ final class ChunkPathOverlays
 			WorldMap map = client.getWorldMap();
 			if (path == null || widget == null || map == null || map.getWorldMapPosition() == null)
 			{
+				mapLinks = new ArrayList<>();
 				return null;
 			}
 			Rectangle bounds = widget.getBounds();
@@ -501,10 +588,11 @@ final class ChunkPathOverlays
 			Shape oldClip = graphics.getClip();
 			Stroke oldStroke = graphics.getStroke();
 			graphics.setClip(bounds);
-			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			Skin.smooth(graphics);
 			Stroke solid = new BasicStroke(Math.max(2f, zoom * 0.6f), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-			Stroke dashed = new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 1f, new float[]{5f, 5f}, 0f);
 			int start = Math.max(0, pathing.progress());
+			List<Object[]> links = new ArrayList<>();
+			net.runelite.api.Point mouse = client.getMouseCanvasPosition();
 			for (int i = start + 1; i < path.length; i++)
 			{
 				int a = path[i - 1];
@@ -513,23 +601,29 @@ final class ChunkPathOverlays
 				int ay = midY - (int) ((PathTile.y(a) - centre.getY() + 0.5f) * zoom);
 				int bx = midX + (int) ((PathTile.x(b) - centre.getX() + 0.5f) * zoom);
 				int by = midY - (int) ((PathTile.y(b) - centre.getY() + 0.5f) * zoom);
-				boolean jump = PathTile.distance(a, b) > 1;
-				// Underground areas sit far off on the world map, so a line into or out of one
-				// would cross the whole map. Surface to surface (a charter ship) still shows.
-				if (jump && (underground(a) || underground(b)))
+				if (PathTile.distance(a, b) > 1)
 				{
+					// A transport: no line flying across the map, but a link where it's taken that
+					// shows where it comes out.
+					if (Math.max(Math.abs(PathTile.x(a) - PathTile.x(b)), Math.abs(PathTile.y(a) - PathTile.y(b))) > FAR)
+					{
+						Transports.Link link = pathing.link(a, b);
+						String to = place(link, b);
+						int kind = link == null ? Transports.TRAVEL : link.kind;
+						links.add(mapLink(graphics, kind, (kind == Transports.TELEPORT ? "Teleport: " : "To ") + to,
+							ax, ay, b, mouse, bounds));
+					}
 					continue;
 				}
-				graphics.setStroke(jump ? dashed : solid);
-				graphics.setColor(jump ? new Color(255, 230, 160, 200) : PATH);
+				graphics.setStroke(solid);
+				graphics.setColor(PATH);
 				graphics.drawLine(ax, ay, bx, by);
 			}
+			mapLinks = links;
 			int end = path[path.length - 1];
 			int ex = midX + (int) ((PathTile.x(end) - centre.getX() + 0.5f) * zoom);
 			int ey = midY - (int) ((PathTile.y(end) - centre.getY() + 0.5f) * zoom);
-			graphics.setStroke(new BasicStroke(2f));
-			graphics.setColor(pathing.reached() ? TARGET : STOPPED);
-			graphics.drawOval(ex - 6, ey - 6, 12, 12);
+			pin(graphics, ex, ey, pathing.reached() ? TARGET : STOPPED);
 			graphics.setStroke(oldStroke);
 			graphics.setClip(oldClip);
 			return null;

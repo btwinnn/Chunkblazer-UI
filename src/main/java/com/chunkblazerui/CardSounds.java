@@ -129,6 +129,16 @@ public class CardSounds
 		play(folder(Skin.theme()) + "complete_" + tier(tier));
 	}
 
+	/** The chunk's sign falling for an unlock ("banner_drop"), or turning to Unlocked ("banner_unlock"). */
+	void banner(String name)
+	{
+		if (config.themeSounds())
+		{
+			float gain = gain();
+			run(() -> playNow(FOLDER, name, gain));
+		}
+	}
+
 	/** A theme picked in the tutorial: that theme's card turning over (a plain card for ChunkBlazer's own). */
 	void preview(Theme theme)
 	{

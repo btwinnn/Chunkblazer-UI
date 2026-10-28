@@ -82,8 +82,7 @@ final class OldSchoolCard
 	static void banner(Graphics2D g, Rectangle r, String title, Font titleFont, String status, Font statusFont,
 		Color accent, Color statusColor)
 	{
-		Object antialias = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Object antialias = Skin.smooth(g);
 		shadow(g, r, r);
 		g.setColor(PAGE);
 		g.fill(r);
@@ -328,23 +327,8 @@ final class OldSchoolCard
 	/** The task's name, as big as fits in up to three lines, centred. Leaves the font set. */
 	private static void name(Graphics2D g, Rectangle panel, String text, Font font, Color color, Color shadow)
 	{
-		List<String> lines = fit(g, panel, text, font);
-		FontMetrics fm = g.getFontMetrics();
-		int y = panel.y + (panel.height - lines.size() * fm.getHeight()) / 2 + fm.getAscent();
-		for (String line : lines)
-		{
-			int x = panel.x + (panel.width - fm.stringWidth(line)) / 2;
-			if (shadow != null)
-			{
-				g.setColor(shadow);
-				// The drop shadow grows with the text: a pixel per 16.
-				int d = Math.max(1, Math.round(g.getFont().getSize2D() / 16f));
-				g.drawString(line, x + d, y + d);
-			}
-			g.setColor(color);
-			g.drawString(line, x, y);
-			y += fm.getHeight();
-		}
+		fit(g, panel, text, font);
+		PixelText.centred(g, panel, text, g.getFont(), color, shadow, (m, w) -> wrap(m, text, w));
 	}
 
 	private static List<String> fit(Graphics2D g, Rectangle panel, String text, Font font)
@@ -401,7 +385,7 @@ final class OldSchoolCard
 
 	private static void quality(Graphics2D g)
 	{
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Skin.smooth(g);
 		g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		PixelText.crisp(g);

@@ -152,6 +152,13 @@ public class ChunkPathing
 		}
 	};
 
+	/** The chunk a tile is in, by name ("Lumbridge"), or "there" if it has none. */
+	String chunkName(int tile)
+	{
+		String name = core.getRegionName(PathTile.region(tile));
+		return name == null || name.startsWith("Unknown") ? "there" : name.replaceAll("\\s*\\(\\d+\\)$", "").trim();
+	}
+
 	/** Whether paths are on (Settings > Assists > Shortest path). */
 	public boolean enabled()
 	{
@@ -164,6 +171,27 @@ public class ChunkPathing
 		@Override
 		public MouseEvent mousePressed(MouseEvent event)
 		{
+			// A transport's link on the world map: the map moves to where it comes out.
+			Widget map = client.getWidget(InterfaceID.Worldmap.MAP_CONTAINER);
+			int goes = overlays == null || map == null || event.getButton() != MouseEvent.BUTTON1
+				|| !map.getBounds().contains(event.getPoint()) ? -1 : overlays.mapLinkAt(event.getX(), event.getY());
+			if (goes >= 0)
+			{
+				WorldPoint there = new WorldPoint(PathTile.x(goes), PathTile.y(goes), PathTile.z(goes));
+				WorldMap worldMap = client.getWorldMap();
+				if (worldMap.getWorldMapData() == null || worldMap.getWorldMapData().surfaceContainsPosition(there.getX(), there.getY()))
+				{
+					clientThread.invoke(() -> worldMap.setWorldMapPositionTarget(there));
+					event.consume();
+					return event;
+				}
+				// It comes out on another of the map's layers (a dungeon): the click goes on to the
+				// game's own link underneath, which opens that layer, and the map is then moved to
+				// where it comes out. With no link of the game's there, it's moved there anyway.
+				panAfterLoad = there;
+				panAfterLoadAt = System.currentTimeMillis();
+				return event;
+			}
 			if (!pathKeyHeld || !enabled() || event.getButton() != MouseEvent.BUTTON1)
 			{
 				return event;
@@ -187,6 +215,36 @@ public class ChunkPathing
 			return event;
 		}
 	};
+
+	// A transport link into another layer of the world map: where to move it once that layer's open.
+	private volatile WorldPoint panAfterLoad;
+	private volatile long panAfterLoadAt;
+	// How long to wait for the game's own link to open the layer before moving the map anyway.
+	private static final long LAYER_WAIT_MS = 600;
+
+	/** The world map opened another layer (or itself): finish a transport link's move there. */
+	@Subscribe
+	public void onScriptPostFired(net.runelite.api.events.ScriptPostFired event)
+	{
+		WorldPoint there = panAfterLoad;
+		if (event.getScriptId() == net.runelite.api.ScriptID.WORLDMAP_LOADMAP && there != null)
+		{
+			panAfterLoad = null;
+			clientThread.invokeLater(() -> client.getWorldMap().setWorldMapPositionTarget(there));
+		}
+	}
+
+	/** No layer opened for a transport link: move the map there on its own. */
+	@Subscribe
+	public void onClientTick(net.runelite.api.events.ClientTick event)
+	{
+		WorldPoint there = panAfterLoad;
+		if (there != null && System.currentTimeMillis() - panAfterLoadAt > LAYER_WAIT_MS)
+		{
+			panAfterLoad = null;
+			client.getWorldMap().setWorldMapPositionTarget(there);
+		}
+	}
 
 	private ExecutorService executor;
 	private ChunkPathOverlays overlays;
@@ -923,6 +981,28 @@ public class ChunkPathing
 	 * Each tick: a newly tracked task gets a path to it (unless you're already in its chunk),
 	 * and a path that only went to the task's chunk heads for its NPC once one's in sight.
 	 */
+	// Done at any range, fire, anvil or bank chest: there are too many to send anyone to one.
+	private static final Set<String> ANYWHERE = Set.of("COOKING", "CRAFTING", "FLETCHING", "HERBLORE", "FIREMAKING",
+		"PRAYER", "SMITHING");
+	// Fish, rocks and trees found all over the map (not barbarian fishing or the Witchaven gold).
+	private static final java.util.regex.Pattern COMMON = java.util.regex.Pattern.compile("(?i)\\b(anchovies|bass|cod|herring"
+		+ "|lobster|mackerel|pike|sardine|shark|swordfish|tuna|salmon|shrimp|trout|clay|coal|copper|tin|iron|silver|gold"
+		+ "|mithril|adamantite|a tree|oak|willow|maple|yew|magic|teak|mahogany)\\b");
+	private static final Set<String> GATHERED = Set.of("FISHING", "MINING", "WOODCUTTING");
+
+	/**
+	 * A task you can do virtually anywhere (cooking at any range, fishing a pike from any river,
+	 * chopping any willow): tracking it shows no path, rather than sending you across the map
+	 * to the one spot in its chunk.
+	 */
+	static boolean doneAnywhere(NuzlockeTask task)
+	{
+		String type = String.valueOf(task.getCompletionType()).toUpperCase();
+		String name = String.valueOf(task.getName());
+		return ANYWHERE.contains(type) || GATHERED.contains(type) && COMMON.matcher(name).find()
+			&& !name.contains("Leaping") && !name.contains("Perfect");
+	}
+
 	private void followTrackedTask()
 	{
 		NuzlockeTask tracked = core.getSelectedTask();
@@ -936,7 +1016,7 @@ public class ChunkPathing
 			}
 			// Already in its chunk, there's only somewhere to go when its exact tile's known.
 			int region = tracked == null ? -1 : core.findRegionForTask(id);
-			if (tracked != null && (region != core.getCurrentRegionId() || TaskTiles.tile(id, region) >= 0))
+			if (tracked != null && !doneAnywhere(tracked) && (region != core.getCurrentRegionId() || TaskTiles.tile(id, region) >= 0))
 			{
 				pathToTask(tracked);
 			}

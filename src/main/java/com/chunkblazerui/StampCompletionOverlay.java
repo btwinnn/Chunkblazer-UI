@@ -61,7 +61,7 @@ public class StampCompletionOverlay extends Overlay
 	private static final Color GOLD = new Color(255, 200, 100);
 	private static final Color INK = new Color(200, 40, 20);
 	private static final Color INK_TEXT = new Color(225, 55, 25);
-	private static final int CARD_WIDTH = 150;
+	private static final int CARD_WIDTH = 200;
 	/** The stamp and its sparks were sized for a card this wide: scaled with the card. */
 	private static final double DESIGN_WIDTH = 300.0;
 	/** How many times finer than shown the popup's card is painted. */
@@ -191,7 +191,7 @@ public class StampCompletionOverlay extends Overlay
 			return null;
 		}
 		Graphics2D g = (Graphics2D) graphics.create();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Skin.smooth(g);
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		// Fades in over 0.3s and out over the last 0.5s.
@@ -292,7 +292,7 @@ public class StampCompletionOverlay extends Overlay
 	{
 		BufferedImage image = new BufferedImage(w * DETAIL, h * DETAIL, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = image.createGraphics();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Skin.smooth(g);
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 		g.scale(DETAIL, DETAIL);

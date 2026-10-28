@@ -397,12 +397,6 @@ public class TaskWindow implements TaskWindowHook
 		return open ? closeBounds : null;
 	}
 
-	/** True while the window shows a list of tasks to track: New tasks or Active (not Settings, Saved...). */
-	boolean isShowingTasks()
-	{
-		return open && (tab == Tab.ACTIVE || tab == Tab.NEW) && !settingsOpen && !patchNotes;
-	}
-
 	// More of the window for the tutorial to point at, from the last frame drawn: "tab:ARCHIVED",
 	// "tab:NEW", "filters" (the Filters button), "cog".
 	private final Map<String, Rectangle> marks = new ConcurrentHashMap<>();
@@ -572,8 +566,8 @@ public class TaskWindow implements TaskWindowHook
 		stampCompletion.showTests(demos, "Lumbridge");
 	}
 
-	/** Made-up tasks for the popup's Test, Easy to Master. */
-	private static final String[] DEMO_TASKS = {"Plant some Potatoes", "Obtain a Blue Wizard Hat",
+	/** Made-up tasks for the popup's Test, Easy to Master (Medium's long, to see long names drawn small). */
+	private static final String[] DEMO_TASKS = {"Plant some Potatoes", "Complete every Grandmaster Combat Achievement in the Theatre of Blood: Hard Mode",
 		"Defeat the Kalphite Queen", "Equip an Ancient Wyvern Shield", "Obtain the Olm Pet"};
 
 	private static NuzlockeTask demoTask(int tier)
@@ -1220,8 +1214,7 @@ public class TaskWindow implements TaskWindowHook
 	/** A small cog: a toothed ring with a hole, centred in {@code r}. */
 	private static void cog(Graphics2D g, Rectangle r, Color color)
 	{
-		Object aa = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Object aa = Skin.smooth(g);
 		double cx = r.getCenterX();
 		double cy = r.getCenterY();
 		double outer = Math.min(r.width, r.height) * 0.36;
@@ -1249,7 +1242,7 @@ public class TaskWindow implements TaskWindowHook
 		g.fill(java.awt.geom.AffineTransform.getTranslateInstance(1, 1).createTransformedShape(shape));
 		g.setColor(color);
 		g.fill(shape);
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa == null ? RenderingHints.VALUE_ANTIALIAS_DEFAULT : aa);
+		Skin.restore(g, aa);
 	}
 
 	/** Down the left: the list tabs, the tier filter and the current-chunk switch. Returns the column. */
@@ -2083,7 +2076,7 @@ public class TaskWindow implements TaskWindowHook
 		}
 		double pulse = 0.5 + 0.5 * Math.sin(System.currentTimeMillis() * 2 * Math.PI / PULSE_MS);
 		Stroke previousStroke = graphics.getStroke();
-		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Skin.smooth(graphics);
 		graphics.setColor(new Color(255, 152, 31, (int) (35 * pulse)));
 		graphics.fillRect(b.x - 3, b.y - 3, b.width + 6, b.height + 6);
 		graphics.setColor(new Color(255, 152, 31, (int) (90 + 150 * pulse)));
@@ -2317,8 +2310,7 @@ public class TaskWindow implements TaskWindowHook
 		{
 			// The hearth: the points on a shiny coin in the tier's colour.
 			Rectangle coin = new Rectangle(rightEdge - 17, row.y + 3, 17, 17);
-			Object aa = graphics.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			Object aa = Skin.smooth(graphics);
 			graphics.setColor(new Color(0, 0, 0, 120));
 			graphics.fillOval(coin.x, coin.y + 1, coin.width, coin.height);
 			java.awt.Paint old = graphics.getPaint();
@@ -2328,7 +2320,7 @@ public class TaskWindow implements TaskWindowHook
 			graphics.setPaint(old);
 			graphics.setColor(new Color(0, 0, 0, 180));
 			graphics.drawOval(coin.x, coin.y, coin.width - 1, coin.height - 1);
-			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa == null ? RenderingHints.VALUE_ANTIALIAS_DEFAULT : aa);
+			Skin.restore(graphics, aa);
 			Skin.boxed(graphics, number, coin, Color.WHITE);
 		}
 		else if (Skin.log() && !number.isEmpty())
@@ -3101,7 +3093,7 @@ public class TaskWindow implements TaskWindowHook
 		windowY = y;
 		Rectangle window = new Rectangle(x, y, width, height);
 
-		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Skin.smooth(graphics);
 		Font regular = Skin.regular();
 		Font small = Skin.small();
 

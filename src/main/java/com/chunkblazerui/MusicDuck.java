@@ -95,6 +95,17 @@ public class MusicDuck
 		}
 	}
 
+	/** ChunkBlazer GPU's lava sweep (and its unlock sound) starting: the music steps aside for it too. */
+	@Subscribe
+	public void onPluginMessage(net.runelite.client.events.PluginMessage message)
+	{
+		if ("chunkblazer".equals(message.getNamespace()) && "unlockSweepStarted".equals(message.getName()))
+		{
+			Object duration = message.getData().get("durationMs");
+			hold((duration instanceof Number ? ((Number) duration).longValue() : 2500) + 1500);
+		}
+	}
+
 	@Subscribe
 	public void onClientTick(ClientTick event)
 	{

@@ -154,15 +154,23 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 	private static final long SWEEP_START_GRACE_MS = 500;
 	/** Never hold cards longer than this, whatever the GPU plugin says. */
 	private static final long MAX_SWEEP_WAIT_MS = 15000;
-	// Cards start dealing this long before a ChunkBlazer GPU sweep ends, when it says how long it runs.
-	private static final long DEAL_BEFORE_SWEEP_ENDS_MS = 3000;
-	/** A beat after the sweep ends before the cards fall. */
-	private static final long SWEEP_GRACE_MS = 150;
+	/**
+	 * After a ChunkBlazer GPU sweep ends, this long before the cards fall: the lava reaches the
+	 * walls, its sound settles, then the deal.
+	 */
+	private static final long AFTER_SWEEP_MS = 900;
 
 	private final Client client;
 	private final ChunkBlazerUiConfig config;
 	private final ChunkBlazerCore plugin;
 	private final CardSounds sounds;
+	@Inject
+	private net.runelite.client.game.chatbox.ChatboxPanelManager chatboxPanelManager;
+	@Inject
+	private net.runelite.client.config.ConfigManager configManager;
+	// The chunk's sign, which falls for an unlock before the cards come in.
+	@Inject
+	private javax.inject.Provider<ChunkNameBanner> banner;
 	// The cascade the drop sounds are for (its dealStart), and how many cards have sounded.
 	private long cascadeFor = -1;
 	private int cascadeSounded;
@@ -216,9 +224,10 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 	private volatile boolean demoRequested;
 	private volatile int demoCount = DEMO_CARDS;
 	// Sample names for demo cards, so they show off the card design like real tasks.
-	private static final String[] DEMO_NAMES = {"Plant some Potatoes", "Obtain a Blue Wizard Hat",
+	// Medium's is long, so a test always shows a long name drawn small.
+	private static final String[] DEMO_NAMES = {"Plant some Potatoes", "Complete every Grandmaster Combat Achievement in the Theatre of Blood: Hard Mode",
 		"Defeat the Kalphite Queen", "Equip an Ancient Wyvern Shield", "Obtain the Olm Pet"};
-	private static final int DEMO_CARDS = 3;
+	private static final int DEMO_CARDS = 5;
 
 	/** Each card that's landed in the orb recently, and the heat it added. */
 	private final List<Impact> impacts = new ArrayList<>();
@@ -470,7 +479,7 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 			return null;
 		}
 
-		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Skin.smooth(graphics);
 		graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 			RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
@@ -792,12 +801,26 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 			return; // real cards are up: don't bury them under demos
 		}
 		TaskCardTier[] tiers = TaskCardTier.values();
+		// Real tasks to show, by tier, picked at random from yours (a sample name where a tier has none).
+		java.util.Map<TaskCardTier, List<String>> named = new java.util.EnumMap<>(TaskCardTier.class);
+		List<NuzlockeTask> yours = new ArrayList<>(plugin.getActiveTasks());
+		yours.addAll(plugin.getVisibleGlobalTasks());
+		for (NuzlockeTask task : yours)
+		{
+			if (task != null && task.getName() != null)
+			{
+				named.computeIfAbsent(TaskCardTier.fromTask(task), k -> new ArrayList<>()).add(task.getName());
+			}
+		}
 		int count = demoCount;
 		for (int i = 0; i < count; i++)
 		{
-			// Rising tiers, each with a sample name of its tier.
+			// Rising tiers, one of each for five.
 			int tier = count >= tiers.length ? i % tiers.length : Math.round(i * (tiers.length - 1f) / Math.max(1, count - 1));
-			Card card = new Card("demo-" + i, DEMO_NAMES[tier], tiers[tier], true);
+			List<String> pick = named.get(tiers[tier]);
+			String name = pick == null || pick.isEmpty() || tier == 1 ? DEMO_NAMES[tier]
+				: pick.get(java.util.concurrent.ThreadLocalRandom.current().nextInt(pick.size()));
+			Card card = new Card("demo-" + i, name, tiers[tier], true);
 			assignPose(card);
 			cards.add(card);
 		}
@@ -827,18 +850,41 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 		if (sweepsRunning > 0)
 		{
 			holding = true;
-			holdUntil = sweepEndsAt > 0 ? Math.max(now, sweepEndsAt - DEAL_BEFORE_SWEEP_ENDS_MS) : now + MAX_SWEEP_WAIT_MS;
+			holdUntil = sweepEndsAt > 0 ? sweepEndsAt + afterSweep() : now + MAX_SWEEP_WAIT_MS;
 		}
-		else if (sinceUnlock >= 0 && sinceUnlock < UNLOCK_LINK_MS)
+		else if (sinceUnlock >= 0 && sinceUnlock < UNLOCK_LINK_MS && gpuSweeps())
 		{
 			holding = true;
 			holdUntil = now + SWEEP_START_GRACE_MS;
+		}
+		else if (sinceUnlock >= 0 && sinceUnlock < UNLOCK_LINK_MS && !pile.isEmpty() && !pile.get(0).demo
+			&& banner.get().dropForUnlock(plugin.findRegionForTask(pile.get(0).taskId)))
+		{
+			// No sweep to wait for, but the chunk's sign still falls and turns to Unlocked first.
+			holding = true;
+			holdUntil = now + ChunkNameBanner.CARDS_AFTER_SWEEP_MS;
 		}
 		else
 		{
 			holding = false;
 			dealStart = now;
 		}
+	}
+
+	/**
+	 * Whether ChunkBlazer GPU is on with its unlock sweep: only then is there an animation to
+	 * wait for after an unlock. (RuneLite keeps each plugin's on/off under "runelite".)
+	 */
+	private boolean gpuSweeps()
+	{
+		return Boolean.parseBoolean(configManager.getConfiguration("runelite", "chunkblazergpu"))
+			&& !"false".equals(configManager.getConfiguration("chunkblazergpu", "gpuUnlockSweep"));
+	}
+
+	/** How long after a sweep ends the cards come in: after the chunk's sign has fallen and turned, if it does. */
+	private long afterSweep()
+	{
+		return banner.get().dropsForUnlocks() ? ChunkNameBanner.CARDS_AFTER_SWEEP_MS : AFTER_SWEEP_MS;
 	}
 
 	/** ChunkBlazer GPU began an unlock sweep. Client thread. */
@@ -851,10 +897,12 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 		if (test)
 		{
 			requestDemoDeal();
+			// A test plays over whatever was open: the chatbox's "Unlock this chunk?" goes.
+			chatboxPanelManager.close();
 		}
 		if (holding)
 		{
-			holdUntil = sweepEndsAt > 0 ? Math.max(now, sweepEndsAt - DEAL_BEFORE_SWEEP_ENDS_MS) : now + MAX_SWEEP_WAIT_MS;
+			holdUntil = sweepEndsAt > 0 ? sweepEndsAt + afterSweep() : now + MAX_SWEEP_WAIT_MS;
 		}
 	}
 
@@ -870,7 +918,7 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 		if (sweepsRunning == 0 && holding)
 		{
 			holding = false;
-			dealStart = System.currentTimeMillis() + SWEEP_GRACE_MS;
+			dealStart = System.currentTimeMillis() + afterSweep();
 		}
 	}
 
@@ -1465,7 +1513,7 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 		int detail = front ? artDetail : Math.max(1, artDetail / 2);
 		BufferedImage img = new BufferedImage(w * detail, h * detail, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = img.createGraphics();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Skin.smooth(g);
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 		g.scale(detail, detail);

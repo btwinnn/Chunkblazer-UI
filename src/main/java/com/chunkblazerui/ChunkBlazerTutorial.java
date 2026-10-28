@@ -1966,7 +1966,7 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 	{
 		BufferedImage art = new BufferedImage(THEME_CARD_W, THEME_CARD_H, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = art.createGraphics();
-		g.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+		Skin.smooth(g);
 		ThemePalette before = Skin.palette();
 		ThemePalette p = Themes.palette(theme);
 		try
@@ -2251,7 +2251,7 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 		Color fill = p.barFill != null ? p.barFill : new Color(90, 200, 90);
 		BufferedImage art = new BufferedImage(THEME_CARD_W, THEME_CARD_H, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = art.createGraphics();
-		g.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+		Skin.smooth(g);
 		int w = THEME_CARD_W - 4;
 		int h = THEME_CARD_H - 4;
 		Rectangle view = new Rectangle(0, 0, w - 36, h);
@@ -2582,7 +2582,7 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 		{
 			return;
 		}
-		graphics.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+		Skin.smooth(graphics);
 		// The head: a solid triangle, its tip at (x2, y2).
 		int headLength = 13;
 		java.awt.Polygon head = new java.awt.Polygon();

@@ -55,6 +55,20 @@ public final class Skin
 	private static final BufferedImage FRAME = image("frame");
 	private static final BufferedImage RAISED = image("raised");
 	private static final BufferedImage SUNK = image("sunk");
+	/** Antialiasing on; returns what it was, for {@link #restore}. */
+	public static Object smooth(Graphics2D g)
+	{
+		Object was = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		return was;
+	}
+
+	/** Antialiasing back to {@code was}, from {@link #smooth}. */
+	public static void restore(Graphics2D g, Object was)
+	{
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, was == null ? RenderingHints.VALUE_ANTIALIAS_DEFAULT : was);
+	}
+
 	public static final BufferedImage CROSS = image("cross");
 	public static final BufferedImage CROSS_HOVER = image("cross_hover");
 	private static final Paint OS_STONE = tile("stone");
@@ -465,8 +479,7 @@ public final class Skin
 		}
 		ThemePalette p = palette;
 		Paint old = g.getPaint();
-		Object aa = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Object aa = smooth(g);
 		int rad = p.radius * 2;
 		g.setColor(new Color(0, 0, 0, 110));
 		g.fillRoundRect(r.x + 3, r.y + 3, r.width, r.height, rad, rad);
@@ -522,7 +535,7 @@ public final class Skin
 			}
 		}
 		g.setStroke(new java.awt.BasicStroke(1f));
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa == null ? RenderingHints.VALUE_ANTIALIAS_DEFAULT : aa);
+		restore(g, aa);
 		g.setPaint(old);
 	}
 
@@ -547,8 +560,7 @@ public final class Skin
 	/** A rounded box filled top to bottom from {@code top} to {@code bottom}, edged dark, with light catching its top edge. */
 	public static void lit(Graphics2D g, Rectangle r, int radius, Color top, Color bottom, Color edge)
 	{
-		Object aa = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Object aa = smooth(g);
 		Paint old = g.getPaint();
 		g.setPaint(new java.awt.GradientPaint(0, r.y, top, 0, r.y + r.height, bottom));
 		g.fillRoundRect(r.x, r.y, r.width, r.height, radius * 2, radius * 2);
@@ -557,14 +569,13 @@ public final class Skin
 		g.drawRoundRect(r.x, r.y, r.width - 1, r.height - 1, radius * 2, radius * 2);
 		g.setColor(new Color(255, 255, 255, 40));
 		g.drawLine(r.x + radius, r.y + 1, r.x + r.width - 1 - radius, r.y + 1);
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa == null ? RenderingHints.VALUE_ANTIALIAS_DEFAULT : aa);
+		restore(g, aa);
 	}
 
 	/** A window or box by firelight: warmer toward the top, a soft shadow, a bronze line inside a dark edge. */
 	private static void hearthFrame(Graphics2D g, Rectangle r, int header)
 	{
-		Object aa = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Object aa = smooth(g);
 		haze(g, r, 8, Color.BLACK, 150, 5, 3);
 		lit(g, r, 8, HEARTH_TOP, HEARTH_BOTTOM, HEARTH_EDGE);
 		// The fire's glow on the top of the window.
@@ -584,7 +595,7 @@ public final class Skin
 			g.setColor(new Color(255, 150, 60, 70));
 			g.drawLine(r.x + 10, r.y + header, r.x + r.width - 11, r.y + header);
 		}
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa == null ? RenderingHints.VALUE_ANTIALIAS_DEFAULT : aa);
+		restore(g, aa);
 	}
 
 	/** A horizontal groove. */
@@ -637,8 +648,7 @@ public final class Skin
 			return;
 		}
 		ThemePalette p = palette;
-		Object aa = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Object aa = smooth(g);
 		int rad = Math.min(p.radius, r.height / 2) * 2;
 		g.setColor(active ? p.buttonActive : p.button);
 		g.fillRoundRect(r.x, r.y, r.width, r.height, rad, rad);
@@ -647,7 +657,7 @@ public final class Skin
 			g.setColor(new Color(255, 255, 255, 26));
 			g.fillRoundRect(r.x, r.y, r.width, r.height, rad, rad);
 		}
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, aa == null ? RenderingHints.VALUE_ANTIALIAS_DEFAULT : aa);
+		restore(g, aa);
 		bevel(g, r, !active);
 		if (active && p.glow)
 		{
