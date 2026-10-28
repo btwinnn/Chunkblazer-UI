@@ -267,6 +267,7 @@ public class ChunkPathing
 					long started = System.currentTimeMillis();
 					CollisionMap loadedMap = CollisionMap.load();
 					Transports loadedTransports = Transports.load();
+					loadedTransports.dropDeadEnds(loadedMap);
 					ChunkCalculator loadedCalculator = new ChunkCalculator(loadedMap, loadedTransports);
 					map = loadedMap;
 					transports = loadedTransports;
@@ -456,6 +457,18 @@ public class ChunkPathing
 				}
 			}
 		}
+		// A teleport (only ever the path's first step, and never to the next tile).
+		List<Transports.Link> teleports = links == null || PathTile.distance(from, to) <= 1 ? null : links.get(Transports.ANYWHERE);
+		if (teleports != null)
+		{
+			for (Transports.Link link : teleports)
+			{
+				if (link.to == to)
+				{
+					return link;
+				}
+			}
+		}
 		return null;
 	}
 
@@ -572,6 +585,42 @@ public class ChunkPathing
 						message("Your chunks don't reach it yet, so this path goes through the quest's chunks.");
 					}
 				}
+				if (!result.reached && generation.get() == run)
+				{
+					// Out of reach only for want of a level, an item or a quest on the way: show
+					// that way, and say what it needs, rather than stopping somewhere beside it.
+					Map<Integer, List<Transports.Link>> any = new HashMap<>(transports.everything());
+					ChunkPathfinder.Result needing = ChunkPathfinder.find(tiles, any, open::contains, start, goal,
+						() -> generation.get() != run);
+					if (needing.reached && generation.get() == run)
+					{
+						String needs = missing(needing.path, links);
+						if (!needs.isEmpty() && goal != toldNeeds)
+						{
+							toldNeeds = goal;
+							message("The way there needs " + needs + ".");
+						}
+						result = needing;
+					}
+				}
+				if (!result.reached && generation.get() == run)
+				{
+					if (fromQuestHelper)
+					{
+						// Somewhere it can't get to (a quest's maze, a cutscene's area): Quest
+						// Helper's own arrows lead there, so no line of ours heads off elsewhere.
+						path = null;
+						reached = false;
+						return;
+					}
+					if (teleportsFirst(result.path, links))
+					{
+						// No teleporting off just to end up nearer something out of reach.
+						Map<Integer, List<Transports.Link>> walking = new HashMap<>(links);
+						walking.remove(Transports.ANYWHERE);
+						result = ChunkPathfinder.find(tiles, walking, open::contains, start, goal, () -> generation.get() != run);
+					}
+				}
 				if (generation.get() != run)
 				{
 					return;
@@ -589,6 +638,58 @@ public class ChunkPathing
 				searching = false;
 			}
 		});
+	}
+
+	// The target last told what its way needs (said once a target).
+	private volatile int toldNeeds = -1;
+
+	/** What the path's transports need that the player hasn't got, joined up ("15 Agility, Climbing boots"). */
+	private String missing(int[] path, Map<Integer, List<Transports.Link>> usable)
+	{
+		Set<String> needs = new java.util.LinkedHashSet<>();
+		for (int i = 0; path != null && i < path.length - 1; i++)
+		{
+			boolean ok = false;
+			for (Transports.Link link : usable.getOrDefault(path[i], Collections.emptyList()))
+			{
+				ok |= link.to == path[i + 1];
+			}
+			if (ok)
+			{
+				continue;
+			}
+			for (Transports.Link link : transports.everything().getOrDefault(path[i], Collections.emptyList()))
+			{
+				if (link.to == path[i + 1])
+				{
+					String text = Transports.needs(link);
+					if (!text.isEmpty())
+					{
+						needs.add(text);
+					}
+					break;
+				}
+			}
+		}
+		return String.join(", ", needs);
+	}
+
+	/** Whether the path's first step is a teleport. */
+	private static boolean teleportsFirst(int[] path, Map<Integer, List<Transports.Link>> links)
+	{
+		List<Transports.Link> teleports = links == null ? null : links.get(Transports.ANYWHERE);
+		if (teleports == null || path == null || path.length < 2 || PathTile.distance(path[0], path[1]) <= 1)
+		{
+			return false;
+		}
+		for (Transports.Link link : teleports)
+		{
+			if (link.to == path[1])
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void message(String text)
@@ -671,7 +772,7 @@ public class ChunkPathing
 		}
 	}
 	// The path is Quest Helper's current step (it asked Shortest Path for it).
-	private boolean fromQuestHelper;
+	private volatile boolean fromQuestHelper;
 	// The path is to a quest's start, from the quest pane's Quest Helper button.
 	private boolean questStart;
 	// The tracked task this path heads for, and whether it's still only to its chunk (no NPC seen yet).
@@ -747,7 +848,10 @@ public class ChunkPathing
 		{
 			return;
 		}
-		pathTo(walkableNear(region));
+		// Where the task's done, when that's known (a boss's entrance, a shop, an altar), else
+		// its chunk; either way its NPC instead once one's in sight.
+		int exact = TaskTiles.tile(task.getTaskId(), region);
+		pathTo(exact >= 0 ? exact : walkableNear(region));
 		taskPath = task.getTaskId();
 		toChunkOnly = true;
 	}
@@ -830,7 +934,9 @@ public class ChunkPathing
 			{
 				clear();
 			}
-			if (tracked != null && core.findRegionForTask(id) != core.getCurrentRegionId())
+			// Already in its chunk, there's only somewhere to go when its exact tile's known.
+			int region = tracked == null ? -1 : core.findRegionForTask(id);
+			if (tracked != null && (region != core.getCurrentRegionId() || TaskTiles.tile(id, region) >= 0))
 			{
 				pathToTask(tracked);
 			}

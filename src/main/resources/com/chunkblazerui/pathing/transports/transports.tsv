@@ -4658,17 +4658,15 @@
 2833 3627 0	2833 3629 0	Climb Rocks 3748							
 2833 3629 0	2833 3627 0	Climb Rocks 3748							
 2822 3635 0	2820 3635 0	Climb Rocks 3748							
-2827 3646 0	2823 10050 0	Open Secret Door 3762						1	
 2823 10050 0	2827 3646 0	Open Exit 3761							
-2828 3646 0	2823 10050 0	Open Secret Door 3762						1	
 2824 10050 0	2827 3646 0	Open Exit 3761							
 2825 10050 0	2827 3646 0	Open Exit 3761							
 2852 10105 0	2852 10109 1	Climb-up Stone Staircase 3788							
 2852 10109 1	2852 10105 0	Climb-down Stone Staircase 3789							
 2853 10105 0	2852 10109 1	Climb-up Stone Staircase 3788							
 2853 10109 1	2852 10105 0	Climb-down Stone Staircase 3789							
-2848 10107 1	2847 10107 1	Unlock Prison Door 3780						1	
-2847 10107 1	2848 10107 1	Unlock Prison Door 3780						1	
+2848 10107 1	2847 10107 1	Unlock Prison Door 3780			Troll Stronghold			1	
+2847 10107 1	2848 10107 1	Unlock Prison Door 3780			Troll Stronghold			1	
 2841 10052 1	2845 10051 2	Climb-up Stone Staircase 3788							
 2845 10051 2	2841 10051 1	Climb-down Stone Staircase 3789							
 2841 10051 1	2845 10051 2	Climb-up Stone Staircase 3788							

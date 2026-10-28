@@ -342,6 +342,7 @@ public class ChunkBlazerUiPlugin extends Plugin
 	{
 		TaskTargetExtras.load(core.targetExtrasJson(), gson);
 		TaskSources.load(gson);
+		com.chunkblazerui.pathing.TaskTiles.load(gson);
 		quests.load();
 	}
 

@@ -85,8 +85,15 @@ final class ChunkPathOverlays
 		overlays.remove(travelMenu);
 	}
 
-	/** The next far-off transport the path takes (a charter, glider), or null. */
+	/** The next far-off transport the path takes (a charter, glider, teleport), or null. */
 	private Transports.Link nextTravel(int[] path)
+	{
+		int i = nextTravelAt(path);
+		return i < 0 ? null : pathing.link(path[i], path[i + 1]);
+	}
+
+	/** Where along the path that is (its index), or -1. */
+	private int nextTravelAt(int[] path)
 	{
 		int from = pathing.progress();
 		for (int i : pathing.steps())
@@ -94,13 +101,13 @@ final class ChunkPathOverlays
 			if (i >= from && i < path.length - 1)
 			{
 				Transports.Link link = pathing.link(path[i], path[i + 1]);
-				if (link != null && link.kind == Transports.TRAVEL)
+				if (link != null && (link.kind == Transports.TRAVEL || link.kind == Transports.TELEPORT))
 				{
-					return link;
+					return i;
 				}
 			}
 		}
-		return null;
+		return -1;
 	}
 
 	/** The path as a line along the ground through each tile's middle; its end tile outlined (red if it couldn't get there). */
@@ -198,7 +205,7 @@ final class ChunkPathOverlays
 					continue;
 				}
 				Transports.Link link = pathing.link(from, path[i + 1]);
-				if (link == null || link.kind == Transports.OTHER || link.kind == Transports.TRAVEL)
+				if (link == null || link.kind == Transports.OTHER || link.kind == Transports.TRAVEL || link.kind == Transports.TELEPORT)
 				{
 					continue;
 				}
@@ -259,18 +266,21 @@ final class ChunkPathOverlays
 		/** A small tag over the next transport the path takes, saying where to take it: "To Port Sarim". */
 		private void nextTransport(Graphics2D graphics, WorldView view, int plane, int[] path)
 		{
-			Transports.Link link = nextTravel(path);
-			if (link == null || PathTile.z(link.from) != plane)
+			int i = nextTravelAt(path);
+			Transports.Link link = i < 0 ? null : pathing.link(path[i], path[i + 1]);
+			// Where it's taken: its own tile, or for a teleport, the tile you cast it from.
+			int from = i < 0 ? -1 : path[i];
+			if (link == null || PathTile.z(from) != plane)
 			{
 				return;
 			}
-			LocalPoint local = LocalPoint.fromWorld(view, PathTile.x(link.from), PathTile.y(link.from));
+			LocalPoint local = LocalPoint.fromWorld(view, PathTile.x(from), PathTile.y(from));
 			Point at = local == null ? null : Perspective.localToCanvas(client, local, plane, 150);
 			if (at == null)
 			{
 				return;
 			}
-			String text = "To " + link.place;
+			String text = (link.kind == Transports.TELEPORT ? "Teleport: " : "To ") + link.place;
 			graphics.setFont(FontManager.getRunescapeSmallFont());
 			FontMetrics metrics = graphics.getFontMetrics();
 			int width = metrics.stringWidth(text) + 8;
@@ -288,7 +298,7 @@ final class ChunkPathOverlays
 
 	/** The interfaces travel stops are picked from: charters, gliders, quetzals, spirit trees, chat options. */
 	private static final int[] TRAVEL_MENUS = {
-		InterfaceID.CHARTERING_MENU_SIDE, InterfaceID.SAILING_MENU, InterfaceID.GLIDERMAP, 874, 187, 219};
+		InterfaceID.CHARTERING_MENU_SIDE, InterfaceID.SAILING_MENU, InterfaceID.GLIDERMAP, 874, 187, 219, InterfaceID.MAGIC_SPELLBOOK};
 
 	/** With a charter, glider or the like open, the stop the path takes outlined in it. */
 	private final class TravelMenuOverlay extends Overlay

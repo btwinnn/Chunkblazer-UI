@@ -1,0 +1,5 @@
+# Origin	Destination	menuOption menuTarget objectID	Skills	Items	Quests	Varbits	VarPlayers	Duration	Display info
+# Transports Shortest Path's tables leave out, added by ChunkBlazer (same columns as transports.tsv).
+# Heroes' Guild staircase (the guild itself needs Heroes' Quest)
+2894 3513 0	2896 3512 1	Climb-up Staircase 16671			Heroes' Quest			1	
+2896 3512 1	2894 3513 0	Climb-down Staircase 16673			Heroes' Quest			1	

@@ -244,8 +244,74 @@ public class ChunkBlazerUiModule implements ChunkBlazerUi
 		return tutorial;
 	}
 
+	// Popups held back while the game's quest complete scroll is up, or its jingle's still
+	// playing: {task, points, region}, in order.
+	private final java.util.List<Object[]> held = new java.util.ArrayList<>();
+	// When the quest complete scroll was first seen up (0: not up), and last seen up.
+	private volatile long scrollFrom;
+	private long scrollLast;
+	// The game's quest complete jingle runs about this long; the popup waits it out.
+	private static final long JINGLE_MS = 7000;
+	// And this long after the scroll closes.
+	private static final long AFTER_SCROLL_MS = 800;
+
+	@Inject
+	private net.runelite.api.Client client;
+
+	/** Holds popups back over the quest complete scroll and its jingle, then shows them in turn. */
+	@Subscribe
+	public void onClientTick(net.runelite.api.events.ClientTick event)
+	{
+		long now = System.currentTimeMillis();
+		net.runelite.api.widgets.Widget scroll = client.getWidget(net.runelite.api.gameval.InterfaceID.Questscroll.QUEST_TITLE);
+		if (scroll != null && !scroll.isHidden())
+		{
+			if (scrollFrom == 0)
+			{
+				scrollFrom = now;
+			}
+			scrollLast = now;
+		}
+		else if (scrollFrom != 0 && now - scrollFrom > JINGLE_MS && now - scrollLast > AFTER_SCROLL_MS)
+		{
+			scrollFrom = 0;
+		}
+		if (scrollFrom != 0)
+		{
+			return;
+		}
+		java.util.List<Object[]> due;
+		synchronized (held)
+		{
+			if (held.isEmpty())
+			{
+				return;
+			}
+			due = new java.util.ArrayList<>(held);
+			held.clear();
+		}
+		for (Object[] popup : due)
+		{
+			show((NuzlockeTask) popup[0], (Integer) popup[1], (String) popup[2]);
+		}
+	}
+
 	@Override
 	public void showTaskCompletion(NuzlockeTask task, int points, String region)
+	{
+		if (scrollFrom != 0)
+		{
+			// A quest just finished: its own scroll and jingle first, then ours.
+			synchronized (held)
+			{
+				held.add(new Object[]{task, points, region});
+			}
+			return;
+		}
+		show(task, points, region);
+	}
+
+	private void show(NuzlockeTask task, int points, String region)
 	{
 		// ChunkBlazer's own look keeps the original popup; Old School and Varlamore get their
 		// card flipped and stamped COMPLETE.

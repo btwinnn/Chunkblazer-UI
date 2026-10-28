@@ -137,9 +137,12 @@
   "type": "Shop"
  },
  "Obtain_papaya_fruit": {
-  "rate": "1/31",
-  "source": "Kurask",
-  "type": "Drop"
+  "how": "Steal from the fruit stalls in Hosidius (25 Thieving)",
+  "outline": [
+   "Fruit Stall"
+  ],
+  "source": "Fruit Stall",
+  "type": "Other"
  },
  "Obtain_pharaoh's_sceptre": {
   "how": "Found in golden chests and sarcophagi during Pyramid Plunder in Sophanem.",
@@ -203,6 +206,10 @@
   "rate": "1/18",
   "source": "Dagannoth Prime",
   "type": "Drop"
+ },
+ "agility_level_64_volcanic_mine_rope": {
+  "source": "Volcanic Mine",
+  "type": "Other"
  },
  "amoxliatl_equip_glacial_temotli": {
   "level": "55 Attack",
@@ -658,9 +665,15 @@
  },
  "equip_adamant_longsword": {
   "level": "30 Attack",
-  "rate": "1/13",
-  "source": "Giant Mole",
-  "type": "Drop"
+  "npcIds": [
+   2884,
+   2885
+  ],
+  "outline": [
+   "Shop keeper"
+  ],
+  "source": "Varrock Swordshop",
+  "type": "Shop"
  },
  "equip_adamant_mace_sword": {
   "level": "30 Attack",
@@ -682,8 +695,23 @@
  },
  "equip_adamant_warhammer": {
   "level": "30 Attack",
-  "rate": "1/32",
-  "source": "Warped Terrorbird",
+  "npcIds": [
+   936,
+   937,
+   938,
+   939,
+   940,
+   941,
+   942,
+   16330,
+   16331,
+   16332
+  ],
+  "outline": [
+   "Mountain troll"
+  ],
+  "rate": "1/128",
+  "source": "Mountain troll",
   "type": "Drop"
  },
  "equip_ancient_staff": {
@@ -786,8 +814,10 @@
  },
  "equip_black_claws": {
   "level": "10 Attack",
-  "rate": "1/26",
-  "source": "King Sand Crab",
+  "outline": [
+   "Soldier"
+  ],
+  "source": "Soldier (Burthorpe)",
   "type": "Drop"
  },
  "equip_black_d'hide_body": {
@@ -834,15 +864,14 @@
   "type": "Shop"
  },
  "equip_black_platelegs": {
-  "cost": "1,920 coins (value)",
   "level": "10 Defence",
   "npcIds": [
-   2876
+   2870
   ],
   "outline": [
-   "Louie Legs"
+   "Valaine"
   ],
-  "source": "Louie's Armoured Legs Bazaar",
+  "source": "Valaine",
   "type": "Shop"
  },
  "equip_black_scimitar": {
@@ -910,15 +939,14 @@
   "type": "Drop"
  },
  "equip_coif": {
-  "cost": "200 coins",
   "level": "20 Ranged",
   "npcIds": [
-   2871
+   2870
   ],
   "outline": [
-   "Scavvo"
+   "Valaine"
   ],
-  "source": "Scavvo's Rune Store",
+  "source": "Valaine",
   "type": "Shop"
  },
  "equip_colossal_blade": {
@@ -1048,6 +1076,7 @@
  },
  "equip_decorative_sword_(gold)": {
   "cost": "500 Castle Wars tickets",
+  "how": "Buy with Castle Wars tickets from Lanthus",
   "level": "30 Attack",
   "npcIds": [
    11650
@@ -1055,11 +1084,12 @@
   "outline": [
    "Lanthus"
   ],
-  "source": "Castle Wars",
+  "source": "Lanthus",
   "type": "Shop"
  },
  "equip_decorative_sword_(red)": {
   "cost": "5 Castle Wars tickets",
+  "how": "Buy with Castle Wars tickets from Lanthus",
   "level": "5 Attack",
   "npcIds": [
    11650
@@ -1067,11 +1097,12 @@
   "outline": [
    "Lanthus"
   ],
-  "source": "Castle Wars",
+  "source": "Lanthus",
   "type": "Shop"
  },
  "equip_decorative_sword_(white)": {
   "cost": "50 Castle Wars tickets",
+  "how": "Buy with Castle Wars tickets from Lanthus",
   "level": "20 Attack",
   "npcIds": [
    11650
@@ -1079,7 +1110,7 @@
   "outline": [
    "Lanthus"
   ],
-  "source": "Castle Wars",
+  "source": "Lanthus",
   "type": "Shop"
  },
  "equip_dizana's_max_cape": {
@@ -1394,12 +1425,14 @@
  },
  "equip_green_d'hide_chaps": {
   "level": "40 Ranged",
-  "outline": [
-   "Archer"
+  "npcIds": [
+   2871
   ],
-  "rate": "1/21",
-  "source": "Archer (Burthorpe)",
-  "type": "Drop"
+  "outline": [
+   "Scavvo"
+  ],
+  "source": "Scavvo's Rune Store",
+  "type": "Shop"
  },
  "equip_guthix_cape": {
   "how": "Mage Arena I: beat Kolodion, then pray at the Statue of Guthix; afterwards buy from Perdu for 23,000 coins.",
@@ -1419,13 +1452,14 @@
  },
  "equip_halo": {
   "cost": "75 tickets",
+  "how": "Buy with Castle Wars tickets from Lanthus",
   "npcIds": [
    11650
   ],
   "outline": [
    "Lanthus"
   ],
-  "source": "Castle Wars Ticket Exchange",
+  "source": "Lanthus",
   "type": "Shop"
  },
  "equip_healer_hat": {
@@ -1995,9 +2029,14 @@
  },
  "equip_rune_platelegs": {
   "level": "40 Defence",
-  "rate": "Always",
-  "source": "Animated Rune Armour",
-  "type": "Drop"
+  "npcIds": [
+   2871
+  ],
+  "outline": [
+   "Scavvo"
+  ],
+  "source": "Scavvo's Rune Store",
+  "type": "Shop"
  },
  "equip_rune_rune_full_helm": {
   "level": "40 Defence",
@@ -2034,10 +2073,16 @@
   "type": "Shop"
  },
  "equip_rune_thrownaxe": {
+  "how": "Ranging Guild: buy with archery tickets",
   "level": "40 Ranged",
-  "rate": "1/26",
-  "source": "Dagannoth Supreme",
-  "type": "Drop"
+  "npcIds": [
+   6069
+  ],
+  "outline": [
+   "Tribal Weapon Salesman"
+  ],
+  "source": "Tribal Weapon Salesman",
+  "type": "Shop"
  },
  "equip_rune_warhammer": {
   "level": "40 Attack",
@@ -2111,7 +2156,6 @@
   "outline": [
    "H.A.M. Member"
   ],
-  "rate": "1/51",
   "source": "H.A.M. Member (pickpocket)",
   "type": "Drop"
  },
@@ -3117,8 +3161,13 @@
   "type": "Made"
  },
  "obtain_basic_elemental_staff": {
-  "rate": "1/21",
-  "source": "Waterfiend",
+  "npcIds": [
+   2880
+  ],
+  "outline": [
+   "Zaff"
+  ],
+  "source": "Zaff's Superior Staffs!",
   "type": "Shop"
  },
  "obtain_basic_quetzal_whistle": {
@@ -3269,8 +3318,15 @@
   "type": "Other"
  },
  "obtain_blue_dragon_leather": {
-  "source": "Blue dragon",
-  "type": "Drop"
+  "how": "Tan blue dragonhide at the Tanner in the Crafting Guild",
+  "npcIds": [
+   5809
+  ],
+  "outline": [
+   "Tanner"
+  ],
+  "source": "Tanner",
+  "type": "Shop"
  },
  "obtain_blue_dye": {
   "how": "Give Aggie (Draynor Village) 2 woad leaves + 5 coins; also sold by Oronwen (Lletya).",
@@ -3385,12 +3441,8 @@
   "type": "Drop"
  },
  "obtain_brass_necklace": {
-  "outline": [
-   "Cave goblin"
-  ],
-  "rate": "1/50",
-  "source": "Cave goblin (monster)",
-  "type": "Drop"
+  "source": "Telegrab under bank",
+  "type": "Other"
  },
  "obtain_brassica_halo": {
   "cost": "450 Last Man Standing points",
@@ -3415,9 +3467,8 @@
   "type": "Shop"
  },
  "obtain_bronze_scimitar": {
-  "rate": "1/26",
-  "source": "Ork",
-  "type": "Drop"
+  "source": "Table upstairs Rimmington",
+  "type": "Other"
  },
  "obtain_bruma_torch": {
   "how": "Supply crate reward from subduing the Wintertodt.",
@@ -3489,9 +3540,8 @@
   "type": "Shop"
  },
  "obtain_calcite": {
-  "rate": "1/6.6",
-  "source": "Ancient Zygomite",
-  "type": "Drop"
+  "source": "Volcanic Mine",
+  "type": "Other"
  },
  "obtain_camulet": {
   "how": "Quest reward from Enakhra's Lament (Lazim at the Desert Quarry).",
@@ -3499,9 +3549,11 @@
   "type": "Reward"
  },
  "obtain_candle": {
-  "rate": "1/26",
-  "source": "Cave bug",
-  "type": "Drop"
+  "outline": [
+   "Candle seller"
+  ],
+  "source": "Candle seller",
+  "type": "Shop"
  },
  "obtain_cape_of_legends": {
   "cost": "675 coins",
@@ -3797,9 +3849,8 @@
   "type": "Drop"
  },
  "obtain_dragon_pickaxe": {
-  "rate": "1/256",
-  "source": "Chaos Elemental",
-  "type": "Drop"
+  "source": "Volcanic Mine",
+  "type": "Other"
  },
  "obtain_dragon_warhammer": {
   "how": "Dropped by Lizardman shamans (rate raised from 1/5,000 in May 2024).",
@@ -3886,9 +3937,14 @@
   "type": "Shop"
  },
  "obtain_earth_talisman": {
-  "rate": "1/13",
-  "source": "Dagannoth Prime",
-  "type": "Drop"
+  "npcIds": [
+   3279
+  ],
+  "outline": [
+   "Cuffs"
+  ],
+  "source": "Cuffs",
+  "type": "Other"
  },
  "obtain_earthbound_tecpatl": {
   "how": "Dropped by Earthen Nagua in the Tonali Cavern (Varlamore).",
@@ -4048,8 +4104,23 @@
   "type": "Drop"
  },
  "obtain_ensouled_troll_head": {
-  "rate": "1/20",
-  "source": "Ice troll grunt",
+  "npcIds": [
+   936,
+   937,
+   938,
+   939,
+   940,
+   941,
+   942,
+   16330,
+   16331,
+   16332
+  ],
+  "outline": [
+   "Mountain troll"
+  ],
+  "rate": "1/45",
+  "source": "Mountain troll",
   "type": "Drop"
  },
  "obtain_ensouled_unicorn_head": {
@@ -4225,9 +4296,9 @@
   "type": "Drop"
  },
  "obtain_flax": {
-  "rate": "1/21",
-  "source": "Kurask",
-  "type": "Drop"
+  "how": "Pick flax from the field by the Sorcerer's Tower",
+  "source": "Flax field",
+  "type": "Other"
  },
  "obtain_fletching_knife": {
   "cost": "350 Vale research points",
@@ -4357,9 +4428,8 @@
   "type": "Drop"
  },
  "obtain_gold_bar": {
-  "rate": "1/26",
-  "source": "Skeleton brute",
-  "type": "Drop"
+  "source": "Telegrab under bank",
+  "type": "Other"
  },
  "obtain_gold_coffin": {
   "how": "Bring gold locks and a broken coffin to Dampe at the Shade Catacombs entrance in Mort'ton.",
@@ -4498,8 +4568,14 @@
   "type": "Shop"
  },
  "obtain_grimy_avantoe": {
-  "rate": "1/35",
-  "source": "Aberrant spectre",
+  "npcIds": [
+   520
+  ],
+  "outline": [
+   "Chaos druid"
+  ],
+  "rate": "1/59.4 of herb drops (about 1/165 a kill)",
+  "source": "Chaos druid",
   "type": "Drop"
  },
  "obtain_grimy_cadantine": {
@@ -4523,13 +4599,25 @@
   "type": "Drop"
  },
  "obtain_grimy_irit": {
-  "rate": "1/26",
-  "source": "Aberrant spectre",
+  "npcIds": [
+   520
+  ],
+  "outline": [
+   "Chaos druid"
+  ],
+  "rate": "1/44.5 of herb drops (about 1/124 a kill)",
+  "source": "Chaos druid",
   "type": "Drop"
  },
  "obtain_grimy_kwuarm": {
-  "rate": "1/6",
-  "source": "Fever spider",
+  "npcIds": [
+   520
+  ],
+  "outline": [
+   "Chaos druid"
+  ],
+  "rate": "1/71.2 of herb drops (about 1/198 a kill)",
+  "source": "Chaos druid",
   "type": "Drop"
  },
  "obtain_grimy_lantadyme": {
@@ -4558,8 +4646,15 @@
   "type": "Drop"
  },
  "obtain_grimy_torstol": {
-  "rate": "1/63",
-  "source": "Kalphite Queen",
+  "how": "Kill Salarin for a sinister key, then open the sinister chest in the Yanille Agility dungeon",
+  "npcIds": [
+   304
+  ],
+  "outline": [
+   "Salarin the twisted"
+  ],
+  "rate": "Sinister key 10/128, then the sinister chest always gives a torstol",
+  "source": "Salarin the twisted",
   "type": "Drop"
  },
  "obtain_guild_history_excerpt": {
@@ -4665,10 +4760,9 @@
   "type": "Shop"
  },
  "obtain_hangover_cure": {
-  "part": "Chocolate dust",
-  "rate": "Always",
-  "source": "Dessourt",
-  "type": "Drop"
+  "how": "Made during Plague City (chocolate dust in a bucket of milk, then snape grass)",
+  "source": "Plague City",
+  "type": "Other"
  },
  "obtain_hard_reward_casket": {
   "how": "Reward casket from finishing a hard clue scroll.",
@@ -4759,10 +4853,9 @@
   "type": "Other"
  },
  "obtain_imbued_ring": {
-  "part": "Seers ring",
-  "rate": "1/128",
-  "source": "Dagannoth Prime",
-  "type": "Drop"
+  "how": "Imbue the ring with Nightmare Zone points (Dominic Onion)",
+  "source": "Nightmare Zone",
+  "type": "Other"
  },
  "obtain_imcando_hammer": {
   "cost": "1,250 barronite shards",
@@ -4942,10 +5035,9 @@
   "type": "Drop"
  },
  "obtain_large_water_container": {
-  "how": "Given by Petrified Pete when entering the Volcanic Mine.",
   "level": "50 Mining",
-  "source": "Petrified Pete",
-  "type": "Reward"
+  "source": "Volcanic Mine",
+  "type": "Other"
  },
  "obtain_larran's_key": {
   "rate": "1/58",
@@ -5190,44 +5282,81 @@
   "type": "Drop"
  },
  "obtain_mystic_air_water_earth_fire_staff": {
-  "rate": "1/13",
-  "source": "Alchemical Hydra",
-  "type": "Drop"
+  "how": "After Scorpion Catcher, Thormac turns battlestaves into mystic staves (40,000 coins each)",
+  "npcIds": [
+   5232
+  ],
+  "outline": [
+   "Thormac"
+  ],
+  "source": "Thormac",
+  "type": "Other"
  },
  "obtain_mystic_dust_staff": {
-  "part": "Dust battlestaff",
-  "rate": "1/4,000",
-  "source": "Dust devil",
-  "type": "Drop"
+  "how": "After Scorpion Catcher, Thormac turns battlestaves into mystic staves (40,000 coins each)",
+  "npcIds": [
+   5232
+  ],
+  "outline": [
+   "Thormac"
+  ],
+  "source": "Thormac",
+  "type": "Other"
  },
  "obtain_mystic_lava_staff": {
-  "rate": "1/35",
-  "source": "Abyssal Sire",
-  "type": "Drop"
+  "how": "After Scorpion Catcher, Thormac turns battlestaves into mystic staves (40,000 coins each)",
+  "npcIds": [
+   5232
+  ],
+  "outline": [
+   "Thormac"
+  ],
+  "source": "Thormac",
+  "type": "Other"
  },
  "obtain_mystic_mist_staff": {
-  "part": "Mist battlestaff",
-  "rate": "1/3,000",
-  "source": "Waterfiend",
-  "type": "Drop"
+  "how": "After Scorpion Catcher, Thormac turns battlestaves into mystic staves (40,000 coins each)",
+  "npcIds": [
+   5232
+  ],
+  "outline": [
+   "Thormac"
+  ],
+  "source": "Thormac",
+  "type": "Other"
  },
  "obtain_mystic_mud_staff": {
-  "part": "Mud battlestaff",
-  "rate": "1/128",
-  "source": "Dagannoth Prime",
-  "type": "Drop"
+  "how": "After Scorpion Catcher, Thormac turns battlestaves into mystic staves (40,000 coins each)",
+  "npcIds": [
+   5232
+  ],
+  "outline": [
+   "Thormac"
+  ],
+  "source": "Thormac",
+  "type": "Other"
  },
  "obtain_mystic_smoke_staff": {
-  "part": "Smoke battlestaff",
-  "rate": "1/512",
-  "source": "Thermonuclear smoke devil",
-  "type": "Drop"
+  "how": "After Scorpion Catcher, Thormac turns battlestaves into mystic staves (40,000 coins each)",
+  "npcIds": [
+   5232
+  ],
+  "outline": [
+   "Thormac"
+  ],
+  "source": "Thormac",
+  "type": "Other"
  },
  "obtain_mystic_steam_staff": {
-  "part": "Steam battlestaff",
-  "rate": "1/127",
-  "source": "K'ril Tsutsaroth",
-  "type": "Drop"
+  "how": "After Scorpion Catcher, Thormac turns battlestaves into mystic staves (40,000 coins each)",
+  "npcIds": [
+   5232
+  ],
+  "outline": [
+   "Thormac"
+  ],
+  "source": "Thormac",
+  "type": "Other"
  },
  "obtain_nasty_surprise": {
   "how": "Trade all four nasty tokens to Nasty Nick at Mistrock.",
@@ -5235,15 +5364,8 @@
   "type": "Reward"
  },
  "obtain_needle": {
-  "cost": "1 coin (value)",
-  "npcIds": [
-   3842
-  ],
-  "outline": [
-   "Rimae Sirsalis"
-  ],
-  "source": "Moon Clan Fine Clothes",
-  "type": "Shop"
+  "source": "Haystack",
+  "type": "Other"
  },
  "obtain_numulite": {
   "rate": "1/4.4",
@@ -5251,9 +5373,14 @@
   "type": "Drop"
  },
  "obtain_oak_plank": {
-  "rate": "1/6.4",
-  "source": "Gangster",
-  "type": "Drop"
+  "npcIds": [
+   3101
+  ],
+  "outline": [
+   "Sawmill operator"
+  ],
+  "source": "Sawmill operator",
+  "type": "Other"
  },
  "obtain_odium_shard_1": {
   "rate": "1/256",
@@ -5334,8 +5461,7 @@
   "type": "Other"
  },
  "obtain_onion": {
-  "how": "Pick from an onion field (e.g. north of Rimmington) or buy from a general store for 3 coins.",
-  "source": "Onion",
+  "source": "Onion field",
   "type": "Other"
  },
  "obtain_ore_pack": {
@@ -5419,9 +5545,14 @@
   "type": "Reward"
  },
  "obtain_plank": {
-  "rate": "Always",
-  "source": "Undead Lumberjack",
-  "type": "Drop"
+  "npcIds": [
+   3101
+  ],
+  "outline": [
+   "Sawmill operator"
+  ],
+  "source": "Sawmill operator",
+  "type": "Other"
  },
  "obtain_poison_chalice": {
   "cost": "Free",
@@ -5435,14 +5566,12 @@
   "type": "Made"
  },
  "obtain_pot_of_flour": {
-  "rate": "1/64",
-  "source": "Imp",
-  "type": "Drop"
+  "source": "Windmill",
+  "type": "Other"
  },
  "obtain_potato": {
-  "rate": "1/22",
-  "source": "Sourhog",
-  "type": "Drop"
+  "source": "Potato field",
+  "type": "Other"
  },
  "obtain_prescription_goggles": {
   "cost": "320 coins (value)",
@@ -5492,9 +5621,8 @@
   "type": "Other"
  },
  "obtain_pyrophosphite": {
-  "rate": "1/6.6",
-  "source": "Ancient Zygomite",
-  "type": "Drop"
+  "source": "Volcanic Mine",
+  "type": "Other"
  },
  "obtain_rada's_census": {
   "how": "Found on a bookshelf in the Arceuus Library (Grand Library); fetched for Professor Gracklebone, Villia or Sam.",
@@ -5557,9 +5685,14 @@
   "type": "Reward"
  },
  "obtain_red_cape": {
-  "rate": "1/128",
-  "source": "Goblin",
-  "type": "Drop"
+  "npcIds": [
+   2887
+  ],
+  "outline": [
+   "Asyff"
+  ],
+  "source": "Asyff",
+  "type": "Shop"
  },
  "obtain_red_chinchompa_tuft": {
   "how": "Carnivorous chinchompa rare creature part from Hunters' Rumours (Hunter Guild); catch while on a rumour for this creature.",
@@ -5887,9 +6020,8 @@
   "type": "Reward"
  },
  "obtain_soft_clay": {
-  "rate": "1/11",
-  "source": "Frost Nagua",
-  "type": "Drop"
+  "source": "Bucket of water on clay",
+  "type": "Other"
  },
  "obtain_soft_clay_pack_stardust": {
   "cost": "150 stardust",
@@ -5937,9 +6069,14 @@
   "type": "Reward"
  },
  "obtain_splitbark_set": {
-  "rate": "1/26",
-  "source": "Chaos Fanatic",
-  "type": "Drop"
+  "npcIds": [
+   3232
+  ],
+  "outline": [
+   "Wizard Jalarast"
+  ],
+  "source": "Wizard Jalarast",
+  "type": "Shop"
  },
  "obtain_star_fragment": {
   "cost": "3,000 stardust",
@@ -6010,9 +6147,14 @@
   "type": "Shop"
  },
  "obtain_strength_potion_4": {
-  "rate": "1/24",
-  "source": "Bryophyta",
-  "type": "Drop"
+  "npcIds": [
+   5036
+  ],
+  "outline": [
+   "Apothecary"
+  ],
+  "source": "Apothecary",
+  "type": "Shop"
  },
  "obtain_stronghold_security_boots": {
   "how": "Claim from the Cradle of Life, level 4 of the Stronghold of Security (needs Jagex account + 2FA).",
@@ -6168,13 +6310,15 @@
   "type": "Made"
  },
  "obtain_uncut_dragonstone": {
-  "rate": "1/18",
-  "source": "Zalcano",
-  "type": "Drop"
+  "how": "Open the crystal chest in Taverley with a crystal key",
+  "source": "Crystal chest",
+  "type": "Other"
  },
  "obtain_uncut_jade": {
-  "rate": "1/55",
-  "source": "H.A.M. Guard",
+  "outline": [
+   "H.A.M. Member"
+  ],
+  "source": "H.A.M. Member (pickpocket)",
   "type": "Drop"
  },
  "obtain_uncut_onyx": {
@@ -6189,8 +6333,10 @@
   "type": "Shop"
  },
  "obtain_uncut_opal": {
-  "rate": "1/55",
-  "source": "H.A.M. Guard",
+  "outline": [
+   "H.A.M. Member"
+  ],
+  "source": "H.A.M. Member (pickpocket)",
   "type": "Drop"
  },
  "obtain_unholy_book": {
@@ -6462,6 +6608,97 @@
   "source": "The Nightmare",
   "type": "Drop"
  },
+ "pickpocket_HAM": {
+  "outline": [
+   "H.A.M. Member"
+  ],
+  "source": "H.A.M. Member (pickpocket)",
+  "type": "Drop"
+ },
+ "plant_avantoe": {
+  "how": "Avantoe seeds drop from mountain trolls; plant them in the Trollheim herb patch",
+  "npcIds": [
+   936,
+   937,
+   938,
+   939,
+   940,
+   941,
+   942,
+   16330,
+   16331,
+   16332
+  ],
+  "outline": [
+   "Mountain troll"
+  ],
+  "rate": "1/588.4",
+  "source": "Mountain troll",
+  "type": "Drop"
+ },
+ "plant_irit": {
+  "how": "Irit seeds drop from mountain trolls; plant them in the Trollheim herb patch",
+  "npcIds": [
+   936,
+   937,
+   938,
+   939,
+   940,
+   941,
+   942,
+   16330,
+   16331,
+   16332
+  ],
+  "outline": [
+   "Mountain troll"
+  ],
+  "rate": "1/392.2",
+  "source": "Mountain troll",
+  "type": "Drop"
+ },
+ "plant_ranarr": {
+  "how": "Ranarr seeds drop from mountain trolls; plant them in the Trollheim herb patch",
+  "npcIds": [
+   936,
+   937,
+   938,
+   939,
+   940,
+   941,
+   942,
+   16330,
+   16331,
+   16332
+  ],
+  "outline": [
+   "Mountain troll"
+  ],
+  "rate": "1/181",
+  "source": "Mountain troll",
+  "type": "Drop"
+ },
+ "plant_toadflax": {
+  "how": "Toadflax seeds drop from mountain trolls; plant them in the Trollheim herb patch",
+  "npcIds": [
+   936,
+   937,
+   938,
+   939,
+   940,
+   941,
+   942,
+   16330,
+   16331,
+   16332
+  ],
+  "outline": [
+   "Mountain troll"
+  ],
+  "rate": "1/261.5",
+  "source": "Mountain troll",
+  "type": "Drop"
+ },
  "royal_titans_equip_twinflame": {
   "how": "Combine the fire and ice element staff crowns dropped by the Royal Titans (Branda and Eldric).",
   "level": "60 Magic",
@@ -6494,6 +6731,21 @@
   "source": "Royal Titans",
   "type": "Drop"
  },
+ "runecraft_blood_rune": {
+  "how": "Craft at the Ourania Altar (pure essence)",
+  "source": "Ourania Altar",
+  "type": "Other"
+ },
+ "runecraft_death_rune": {
+  "how": "Craft at the Ourania Altar (pure essence)",
+  "source": "Ourania Altar",
+  "type": "Other"
+ },
+ "runecraft_nature_rune": {
+  "how": "Craft at the Ourania Altar (pure essence)",
+  "source": "Ourania Altar",
+  "type": "Other"
+ },
  "sarachnis_equip_cudgel": {
   "level": "65 Attack",
   "rate": "1/384",
@@ -6506,8 +6758,10 @@
   "type": "Drop"
  },
  "steal_rusty_sword": {
-  "rate": "1/28",
-  "source": "H.A.M. Guard",
+  "outline": [
+   "H.A.M. Member"
+  ],
+  "source": "H.A.M. Member (pickpocket)",
   "type": "Drop"
  },
  "toa_equip_elidinis_ward": {

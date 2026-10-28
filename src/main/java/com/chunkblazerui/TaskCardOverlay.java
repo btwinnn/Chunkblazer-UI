@@ -180,6 +180,7 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 	 * frame's finished bounds at its end: never null mid-frame while the buttons are up,
 	 * which used to let a click fall through to the game.
 	 */
+	private volatile Rectangle pileArea;
 	private volatile Rectangle revealFiveBounds;
 	private volatile Rectangle revealAllBounds;
 	// This frame's buttons, as drawPrompt places them (client thread only).
@@ -364,9 +365,17 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 	@Override
 	public boolean onClick(int x, int y)
 	{
-		if (!isActive() || !hasLanded())
+		if (!isActive())
 		{
 			return false;
+		}
+		// Anywhere on the pile is ours, even between turns and while cards fly in or out:
+		// a click there never walks you off behind the cards.
+		Rectangle pile = pileArea;
+		boolean onPile = pile != null && pile.contains(x, y);
+		if (!hasLanded())
+		{
+			return onPile;
 		}
 		// Batch controls first — the escape hatch from clicking through a big pack
 		// (e.g. a boss chunk's ~30 cards). Handled on the client thread in render().
@@ -385,9 +394,9 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 		// Pack-opening: only the top card is interactive. Click it to flip; click the
 		// face-up card to send it to the task list (into the Tasks orb).
 		Card current = topCard();
-		if (current == null || !current.bounds.contains(x, y))
+		if (current == null || current.bounds == null || !current.bounds.contains(x, y))
 		{
-			return false;
+			return onPile;
 		}
 		if (current.isFaceDown())
 		{
@@ -443,6 +452,8 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 			return null;
 		}
 		Rectangle rest = restBounds(viewport);
+		// The pile's area (the face-up card's size, the biggest it gets), for clicks and the mouse shield.
+		pileArea = scaled(rest, FACE_UP_SCALE);
 		// Finer still where the screen itself is scaled up (stretched mode, display scaling).
 		double screen = Math.max(1, graphics.getTransform().getScaleX());
 		prepareArt(rest.width, rest.height, (int) Math.min(4, Math.max(2, Math.ceil(2 * screen))));
@@ -524,8 +535,7 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 		{
 			return null;
 		}
-		Card top = topCard();
-		Rectangle area = top == null || top.bounds == null ? null : new Rectangle(top.bounds);
+		Rectangle area = pileArea == null ? null : new Rectangle(pileArea);
 		for (Rectangle button : new Rectangle[]{revealFiveBounds, revealAllBounds})
 		{
 			if (button != null)

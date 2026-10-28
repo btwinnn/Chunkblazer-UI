@@ -44,7 +44,9 @@ import net.runelite.api.ItemContainer;
 import net.runelite.api.Quest;
 import net.runelite.api.QuestState;
 import net.runelite.api.Skill;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.gameval.InventoryID;
+import net.runelite.api.gameval.ItemID;
 import net.runelite.api.gameval.VarbitID;
 
 /**
@@ -62,7 +64,15 @@ public final class Transports
 	private static final String[] FILES = {
 		"transports", "agility_shortcuts", "boats", "canoes", "charter_ships", "gnome_gliders",
 		"hot_air_balloons", "magic_carpets", "magic_mushtrees", "minecarts", "quetzals", "ships",
-		"spirit_trees", "fairy_rings"};
+		"spirit_trees", "fairy_rings", "chunkblazer_extra"};
+	// Teleports: from wherever you stand (no origin), so they're kept apart from the rest.
+	private static final String[] TELEPORT_FILES = {
+		"teleportation_spells_home", "teleportation_spells", "teleportation_items", "teleportation_minigames"};
+	/** Where teleports start from in {@link #usable}: the tile you're on, whatever it is. */
+	public static final int ANYWHERE = Integer.MIN_VALUE;
+	// A teleport costs this many tiles of walking on top of its cast (runes, a charge, a
+	// cooldown), so a short walk isn't swapped for one.
+	private static final int TELEPORT_PENALTY = 20;
 
 	/** One way across: from one tile to another, taking {@code cost} ticks, if every requirement is met. */
 	public static final class Link
@@ -75,10 +85,17 @@ public final class Transports
 		public final String place;
 		/** What to click ("Charter Trader Crewmember"), and what it costs ("2,500 coins") if anything. */
 		public final String how;
-		/** {@link #UP}, {@link #DOWN}, {@link #DOOR}, {@link #TRAVEL} or {@link #OTHER}. */
+		/** {@link #UP}, {@link #DOWN}, {@link #DOOR}, {@link #TRAVEL}, {@link #TELEPORT} or {@link #OTHER}. */
 		public final int kind;
+		/** A teleport's highest Wilderness level it works from, or -1 for anything else. */
+		final int maxWilderness;
 
 		Link(int from, int to, int cost, List<Requirement> requirements, String place, String how)
+		{
+			this(from, to, cost, requirements, place, how, -1);
+		}
+
+		Link(int from, int to, int cost, List<Requirement> requirements, String place, String how, int maxWilderness)
 		{
 			this.from = from;
 			this.to = to;
@@ -86,7 +103,8 @@ public final class Transports
 			this.requirements = requirements;
 			this.place = place;
 			this.how = how;
-			this.kind = kind(how, from, to, place);
+			this.maxWilderness = maxWilderness;
+			this.kind = from == ANYWHERE ? TELEPORT : kind(how, from, to, place);
 		}
 	}
 
@@ -98,6 +116,8 @@ public final class Transports
 	public static final int DOOR = 3;
 	/** Somewhere far: a charter, glider, spirit tree. */
 	public static final int TRAVEL = 4;
+	/** A teleport (a spell, a jewellery charge, a tablet): from where you stand. */
+	public static final int TELEPORT = 5;
 	/** Anything else (an agility shortcut). */
 	public static final int OTHER = 0;
 
@@ -172,7 +192,10 @@ public final class Transports
 	volatile java.util.Set<String> grownPatches = java.util.Collections.emptySet();
 
 	private final List<Link> links = new ArrayList<>();
+	private final List<Link> teleports = new ArrayList<>();
 	private final Map<String, int[]> itemGroups = new HashMap<>();
+	// Items that stand in for as many of a group as it takes (an air staff for air runes).
+	private final Map<String, int[]> unlimitedGroups = new HashMap<>();
 
 	private Transports()
 	{
@@ -183,6 +206,10 @@ public final class Transports
 		Transports transports = new Transports();
 		transports.loadItemGroups();
 		for (String file : FILES)
+		{
+			transports.loadFile(file);
+		}
+		for (String file : TELEPORT_FILES)
 		{
 			transports.loadFile(file);
 		}
@@ -215,15 +242,23 @@ public final class Transports
 				{
 					continue;
 				}
-				itemGroups.put(cells[0].trim().toUpperCase(),
-					Arrays.stream(cells[1].split(",")).map(String::trim).filter(s -> !s.isEmpty())
-						.mapToInt(Integer::parseInt).toArray());
+				itemGroups.put(cells[0].trim().toUpperCase(), ids(cells[1]));
+				if (cells.length > 2 && !cells[2].trim().isEmpty())
+				{
+					unlimitedGroups.put(cells[0].trim().toUpperCase(), ids(cells[2]));
+				}
 			}
 		}
 	}
 
+	private static int[] ids(String list)
+	{
+		return Arrays.stream(list.split(",")).map(String::trim).filter(s -> !s.isEmpty()).mapToInt(Integer::parseInt).toArray();
+	}
+
 	private void loadFile(String file) throws IOException
 	{
+		boolean teleport = file.startsWith("teleportation_");
 		boolean fairy = file.equals("fairy_rings");
 		// Rows with no destination are one stop on a network (fairy rings, spirit trees):
 		// each goes to every other stop in the same table.
@@ -260,8 +295,8 @@ public final class Transports
 					continue;
 				}
 				String[] cells = line.split("\t", -1);
-				int from = point(cell(cells, col, "Origin"));
-				if (from < 0)
+				int from = teleport ? ANYWHERE : point(cell(cells, col, "Origin"));
+				if (from < 0 && !teleport)
 				{
 					continue;
 				}
@@ -293,6 +328,24 @@ public final class Transports
 				}
 				int to = point(cell(cells, col, "Destination"));
 				String how = how(cell(cells, col, "menuOption menuTarget objectID"), need.items);
+				if (teleport)
+				{
+					if (to >= 0)
+					{
+						int wild = 20;
+						try
+						{
+							String level = cell(cells, col, "Wilderness level");
+							wild = level.isEmpty() ? 20 : Integer.parseInt(level);
+						}
+						catch (NumberFormatException e)
+						{
+						}
+						teleports.add(new Link(ANYWHERE, to, cost + TELEPORT_PENALTY, Collections.singletonList(need),
+							cell(cells, col, "Display info"), how, wild));
+					}
+					continue;
+				}
 				if (to < 0)
 				{
 					network.add(from);
@@ -355,6 +408,118 @@ public final class Transports
 		}
 	}
 
+	// Inside a player-owned house: the map has its floor but none of its portals out.
+	private static final int HOUSE_REGION = (1858 >> 6) << 8 | (7051 >> 6);
+
+	/**
+	 * Teleports a path can't go on from are fixed or left out. Into a player-owned house there's
+	 * no way back out on the map, so those go. A landing on a tile the map has as blocked (the
+	 * table gives the spot by an object) moves to the nearest tile you can stand on.
+	 */
+	void dropDeadEnds(CollisionMap map)
+	{
+		int dropped = 0;
+		int moved = 0;
+		for (int i = teleports.size() - 1; i >= 0; i--)
+		{
+			Link link = teleports.get(i);
+			if (PathTile.region(link.to) == HOUSE_REGION)
+			{
+				teleports.remove(i);
+				dropped++;
+				continue;
+			}
+			if (map.walkable(PathTile.x(link.to), PathTile.y(link.to), PathTile.z(link.to)))
+			{
+				continue;
+			}
+			int to = nearestWalkable(map, link.to);
+			if (to < 0)
+			{
+				teleports.remove(i);
+				dropped++;
+				continue;
+			}
+			teleports.set(i, new Link(ANYWHERE, to, link.cost, link.requirements, link.place, link.how, link.maxWilderness));
+			moved++;
+		}
+		log.debug("Teleports: {} moved onto a walkable tile, {} left out", moved, dropped);
+	}
+
+	/** The nearest tile within 3 you can stand on, or -1. */
+	private static int nearestWalkable(CollisionMap map, int tile)
+	{
+		int x = PathTile.x(tile);
+		int y = PathTile.y(tile);
+		int z = PathTile.z(tile);
+		for (int r = 1; r <= 3; r++)
+		{
+			for (int dx = -r; dx <= r; dx++)
+			{
+				for (int dy = -r; dy <= r; dy++)
+				{
+					if ((Math.abs(dx) == r || Math.abs(dy) == r) && map.walkable(x + dx, y + dy, z))
+					{
+						return PathTile.pack(x + dx, y + dy, z);
+					}
+				}
+			}
+		}
+		return -1;
+	}
+
+	private volatile Map<Integer, List<Link>> everything;
+
+	/** Every transport but the teleports, by where it starts, whatever it needs. */
+	Map<Integer, List<Link>> everything()
+	{
+		Map<Integer, List<Link>> all = everything;
+		if (all == null)
+		{
+			all = new HashMap<>();
+			for (Link link : links)
+			{
+				all.computeIfAbsent(link.from, k -> new ArrayList<>()).add(link);
+			}
+			everything = all;
+		}
+		return all;
+	}
+
+	/** What a transport needs, for saying so: "15 Agility, Climbing boots", or "" for nothing. */
+	static String needs(Link link)
+	{
+		java.util.Set<String> parts = new java.util.LinkedHashSet<>();
+		for (Requirement need : link.requirements)
+		{
+			for (String text : new String[]{need.skills, need.quests})
+			{
+				for (String part : text.split(";"))
+				{
+					if (!part.trim().isEmpty())
+					{
+						parts.add(part.trim());
+					}
+				}
+			}
+			for (String all : need.items.replace(" ", "").split("&"))
+			{
+				String first = all.split("\\|")[0];
+				String name = first.split("=")[0];
+				if (!name.isEmpty() && !name.equals("COINS") && !name.startsWith("UNLOCK_") && !name.chars().allMatch(Character::isDigit))
+				{
+					String words = name.replace('_', ' ').toLowerCase();
+					parts.add(Character.toUpperCase(words.charAt(0)) + words.substring(1));
+				}
+			}
+			if (need.fairyRing)
+			{
+				parts.add("Fairy rings");
+			}
+		}
+		return String.join(", ", parts);
+	}
+
 	public List<Link> all()
 	{
 		return links;
@@ -389,7 +554,51 @@ public final class Transports
 				out.computeIfAbsent(link.from, k -> new ArrayList<>()).add(link);
 			}
 		}
+		int wilderness = wildernessLevel(client);
+		for (Link link : teleports)
+		{
+			if (wilderness > link.maxWilderness)
+			{
+				continue;
+			}
+			Requirement need = link.requirements.get(0);
+			Boolean met = checked.get(need);
+			if (met == null)
+			{
+				met = meets(client, need, quests, carried);
+				checked.put(need, met);
+			}
+			if (met)
+			{
+				out.computeIfAbsent(ANYWHERE, k -> new ArrayList<>()).add(link);
+			}
+		}
 		return out;
+	}
+
+	/** The Wilderness level where you stand (0 outside it). */
+	private static int wildernessLevel(Client client)
+	{
+		if (client.getLocalPlayer() == null)
+		{
+			return 0;
+		}
+		WorldPoint at = WorldPoint.fromLocalInstance(client, client.getLocalPlayer().getLocalLocation());
+		int x = at.getX();
+		int y = at.getY();
+		if (x < 2944 || x >= 3392)
+		{
+			return 0;
+		}
+		if (y >= 3520 && y < 4000)
+		{
+			return (y - 3520) / 8 + 1;
+		}
+		if (y >= 9920 && y < 10400)
+		{
+			return (y - 9920) / 8 + 1;
+		}
+		return 0;
 	}
 
 	private boolean meets(Client client, Requirement need, Map<String, Boolean> quests, Map<Integer, Integer> carried)
@@ -518,15 +727,21 @@ public final class Transports
 				continue;
 			}
 			char op = term.charAt(at);
-			if (op == '@')
-			{
-				continue; // a cooldown: can't tell, so let it through
-			}
 			int id = Integer.parseInt(term.substring(0, at));
 			int want = Integer.parseInt(term.substring(at + 1));
 			int have = varbit ? client.getVarbitValue(id) : client.getVarpValue(id);
+			if (op == '@')
+			{
+				// A cooldown: the minute it was last used, and how many minutes it takes.
+				if (System.currentTimeMillis() / 60_000L - have <= want)
+				{
+					return false;
+				}
+				continue;
+			}
+			// "&": one of the bits set (Shortest Path's meaning).
 			boolean ok = op == '=' ? have == want : op == '>' ? have > want : op == '<' ? have < want
-				: (have & want) == want;
+				: (have & want) != 0;
 			if (!ok)
 			{
 				return false;
@@ -585,6 +800,12 @@ public final class Transports
 				else
 				{
 					int[] ids = itemGroups.get(name);
+					int[] unlimited = unlimitedGroups.get(name);
+					if (unlimited != null && Arrays.stream(unlimited).anyMatch(carried::containsKey))
+					{
+						any = true;
+						break;
+					}
 					int have = 0;
 					if (ids != null)
 					{
@@ -608,6 +829,13 @@ public final class Transports
 		return true;
 	}
 
+	private static final java.util.Set<Integer> POUCHES = java.util.Set.of(ItemID.BH_RUNE_POUCH, ItemID.BH_RUNE_POUCH_TROUVER,
+		ItemID.DIVINE_RUNE_POUCH, ItemID.DIVINE_RUNE_POUCH_TROUVER);
+	private static final int[] POUCH_TYPES = {VarbitID.RUNE_POUCH_TYPE_1, VarbitID.RUNE_POUCH_TYPE_2, VarbitID.RUNE_POUCH_TYPE_3,
+		VarbitID.RUNE_POUCH_TYPE_4};
+	private static final int[] POUCH_AMOUNTS = {VarbitID.RUNE_POUCH_QUANTITY_1, VarbitID.RUNE_POUCH_QUANTITY_2,
+		VarbitID.RUNE_POUCH_QUANTITY_3, VarbitID.RUNE_POUCH_QUANTITY_4};
+
 	private static Map<Integer, Integer> carried(Client client)
 	{
 		Map<Integer, Integer> out = new HashMap<>();
@@ -623,6 +851,21 @@ public final class Transports
 				if (item.getId() > 0)
 				{
 					out.merge(item.getId(), item.getQuantity(), Integer::sum);
+				}
+			}
+		}
+		// The runes in a rune pouch you're carrying count too.
+		if (POUCHES.stream().anyMatch(out::containsKey))
+		{
+			net.runelite.api.EnumComposition runes = client.getEnum(net.runelite.api.EnumID.RUNEPOUCH_RUNE);
+			for (int slot = 0; slot < POUCH_TYPES.length; slot++)
+			{
+				int type = client.getVarbitValue(POUCH_TYPES[slot]);
+				int amount = client.getVarbitValue(POUCH_AMOUNTS[slot]);
+				int rune = type > 0 && runes != null ? runes.getIntValue(type) : -1;
+				if (rune > 0 && amount > 0)
+				{
+					out.merge(rune, amount, Integer::sum);
 				}
 			}
 		}

@@ -826,11 +826,14 @@ public class TaskPaneOverlay extends Overlay
 			String quest = questName(task);
 			hits.add(new Hit(wiki, () -> clientThread.invoke(() ->
 			{
-				// The start first: Quest Helper's own path to its first step then takes over.
-				pathToStart(task);
-				pathing.markQuestStart();
-				openInQuestHelper(quest);
-				questHelperQuest = quest;
+				if (config.shortestPath() && !questHelperPaths())
+				{
+					// Without Quest Helper's Shortest Path setting there'd be a path to the start
+					// and nothing after it: say so first.
+					askTask = task;
+					return;
+				}
+				startInQuestHelper(task, true);
 			})));
 			boolean hover = wiki.contains(mx, my);
 			if (hover)
@@ -927,6 +930,10 @@ public class TaskPaneOverlay extends Overlay
 			drawScrollbar(graphics, body, detailHeight(lines), paneScroll);
 		}
 		graphics.setClip(oldClip);
+		if (askTask == task && task != null)
+		{
+			drawAsk(graphics, pane, mx, my);
+		}
 		graphics.translate(-(int) (16 * (1 - in) * (1 - in)), 0);
 		graphics.setComposite(oldComposite);
 		paneIn = pane.contains(mx, my);
@@ -1353,6 +1360,82 @@ public class TaskPaneOverlay extends Overlay
 		}
 	}
 
+	// The quest whose Quest Helper button asked about Quest Helper's Shortest Path setting.
+	private volatile NuzlockeTask askTask;
+
+	/** Whether Quest Helper sends its steps' paths (its "Use 'Shortest Path' plugin" setting). */
+	private boolean questHelperPaths()
+	{
+		return Boolean.parseBoolean(configManager.getConfiguration("questhelper", "useShortestPath"));
+	}
+
+	/** Open the quest in Quest Helper, with a path to where it starts if {@code path}. Client thread. */
+	private void startInQuestHelper(NuzlockeTask task, boolean path)
+	{
+		String quest = questName(task);
+		if (path)
+		{
+			// The start first: Quest Helper's own path to its first step then takes over.
+			pathToStart(task);
+			pathing.markQuestStart();
+		}
+		openInQuestHelper(quest);
+		questHelperQuest = path ? quest : null;
+	}
+
+	/**
+	 * Over the quest box: Quest Helper's Shortest Path setting is off, so a path would stop at
+	 * the quest's start. Turn it on (then carry on, path and all), or open it with no path.
+	 */
+	private void drawAsk(Graphics2D graphics, Rectangle pane, int mx, int my)
+	{
+		NuzlockeTask task = askTask;
+		graphics.setFont(Skin.small());
+		FontMetrics fm = graphics.getFontMetrics();
+		int width = pane.width - 16;
+		List<String> lines = wrap(fm, "Turn on Quest Helper's \"Use 'Shortest Path' plugin\" (in its Hints settings) for a path to every step.", width - 16);
+		int height = 26 + lines.size() * 13 + 34;
+		Rectangle box = new Rectangle(pane.x + 8, pane.y + Math.max(30, (pane.height - height) / 2), width, height);
+		hits.clear();
+		// Nothing under it takes a click or shows a tooltip while it's up.
+		tip = null;
+		Skin.panel(graphics, box, 20, null);
+		graphics.setFont(Skin.bold());
+		Skin.text(graphics, "Quest paths are off", box.x + 8, box.y + 15);
+		graphics.setFont(Skin.small());
+		int y = box.y + 32;
+		for (String line : lines)
+		{
+			Skin.text(graphics, line, box.x + 8, y);
+			y += 13;
+		}
+		Rectangle on = new Rectangle(box.x + 8, box.y + box.height - 22, 80, 14);
+		Rectangle cancel = new Rectangle(box.x + box.width - 8 - 50, box.y + box.height - 22, 50, 14);
+		hits.add(new Hit(on, () -> clientThread.invoke(() ->
+		{
+			askTask = null;
+			startInQuestHelper(task, true);
+		})));
+		hits.add(new Hit(cancel, () -> clientThread.invoke(() ->
+		{
+			askTask = null;
+			startInQuestHelper(task, false);
+		})));
+		hits.add(new Hit(box, () ->
+		{
+		}));
+		pill(graphics, on, questHelperPaths() ? "Carry on" : "Turned it on", on.contains(mx, my));
+		pill(graphics, cancel, "Cancel", cancel.contains(mx, my));
+		if (on.contains(mx, my))
+		{
+			tip = "Open the quest in Quest Helper, with a path to its start and then each step";
+		}
+		else if (cancel.contains(mx, my))
+		{
+			tip = "Open the quest in Quest Helper without a path";
+		}
+	}
+
 	/** The quest Quest Helper was last asked to open from here, while the path goes to its start. */
 	private String questHelperQuest;
 
@@ -1378,7 +1461,30 @@ public class TaskPaneOverlay extends Overlay
 		{
 			pathing.clear();
 			questHelperQuest = null;
+			return;
 		}
+		// Started, and Quest Helper isn't sending its steps' paths: the start's path is done
+		// with, and there's nothing to follow without that setting.
+		if (questStarted(questHelperQuest)
+			&& !Boolean.parseBoolean(configManager.getConfiguration("questhelper", "useShortestPath")))
+		{
+			pathing.clear();
+			questHelperQuest = null;
+		}
+	}
+
+	/** Whether this quest (by its name in the quest list) has been started. Client thread. */
+	private boolean questStarted(String quest)
+	{
+		// Recipe for Disaster's parts each have their own ("Recipe for Disaster - Evil Dave").
+		for (net.runelite.api.Quest q : net.runelite.api.Quest.values())
+		{
+			if (q.getName().equalsIgnoreCase(quest))
+			{
+				return q.getState(client) != net.runelite.api.QuestState.NOT_STARTED;
+			}
+		}
+		return false;
 	}
 
 	/**

@@ -77,7 +77,7 @@ public final class ChunkPathfinder
 		visits.put(start, 0, start);
 		queue.add(start & 0xFFFFFFFFL);
 		int closest = start;
-		int closestDistance = PathTile.distance(start, target);
+		int closestDistance = near(start, target);
 		int settled = 0;
 		int[] step = new int[8];
 		while (!queue.isEmpty())
@@ -93,7 +93,7 @@ public final class ChunkPathfinder
 			{
 				return new Result(visits.trace(start, tile), true);
 			}
-			int distance = PathTile.distance(tile, target);
+			int distance = near(tile, target);
 			if (distance < closestDistance)
 			{
 				closest = tile;
@@ -152,8 +152,32 @@ public final class ChunkPathfinder
 					relax(queue, visits, open, tile, link.to, at + link.cost * STRAIGHT);
 				}
 			}
+			// Teleports go from where you start (into an open chunk only, like anything else).
+			List<Transports.Link> teleports = tile == start ? links.get(Transports.ANYWHERE) : null;
+			if (teleports != null)
+			{
+				for (Transports.Link link : teleports)
+				{
+					relax(queue, visits, open, tile, link.to, at + link.cost * STRAIGHT);
+				}
+			}
 		}
-		return new Result(visits.trace(start, closest), closest == target);
+		// A target you can't stand on (a cave mouth, a door, an NPC's tile) counts as reached from
+		// right beside it: Quest Helper's "enter the stronghold" step is the entrance itself.
+		boolean beside = PathTile.z(closest) == PathTile.z(target) && near(closest, target) <= 2;
+		return new Result(visits.trace(start, closest), closest == target || beside);
+	}
+
+	/**
+	 * How near a tile is to the target, for where a path stops when it can't get there: across
+	 * the ground, with a floor's difference worth only a short walk. Otherwise the nearest
+	 * tile on the target's floor wins however far off it is: up the pub's stairs when the
+	 * target's upstairs in the Heroes' Guild next door, which those stairs don't reach.
+	 */
+	private static int near(int tile, int target)
+	{
+		int d = Math.max(Math.abs(PathTile.x(tile) - PathTile.x(target)), Math.abs(PathTile.y(tile) - PathTile.y(target)));
+		return d + 16 * Math.abs(PathTile.z(tile) - PathTile.z(target));
 	}
 
 	/**
