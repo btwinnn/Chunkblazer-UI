@@ -122,7 +122,7 @@
   "type": "Other"
  },
  "Obtain_ore_pack": {
-  "cost": "40 coins (value)",
+  "cost": "40 coins",
   "level": "15 Smithing",
   "npcIds": [
    11468,
@@ -628,7 +628,7 @@
   "type": "Drop"
  },
  "equip_adamant_battleaxe": {
-  "cost": "4,160 coins (value)",
+  "cost": "4,160 coins",
   "level": "30 Attack",
   "npcIds": [
    2892
@@ -640,7 +640,7 @@
   "type": "Shop"
  },
  "equip_adamant_chainbody": {
-  "cost": "4,800 coins (value)",
+  "cost": "4,800 coins",
   "level": "30 Defence",
   "npcIds": [
    5897
@@ -715,7 +715,7 @@
   "type": "Drop"
  },
  "equip_ancient_staff": {
-  "cost": "100,000 coins (value)",
+  "cost": "100,000 coins",
   "level": "50 Attack, 50 Magic",
   "source": "Eblis",
   "type": "Shop"
@@ -1057,19 +1057,19 @@
   "type": "Other"
  },
  "equip_decorative_armour_(gold_platebody)": {
-  "cost": "12,800 coins (value)",
+  "cost": "12,800 coins",
   "level": "30 Defence",
   "source": "Lanthus",
   "type": "Shop"
  },
  "equip_decorative_armour_(red_platebody)": {
-  "cost": "2,000 coins (value)",
+  "cost": "2,000 coins",
   "level": "5 Defence",
   "source": "Lanthus",
   "type": "Shop"
  },
  "equip_decorative_armour_(white_platebody)": {
-  "cost": "2,000 coins (value)",
+  "cost": "2,000 coins",
   "level": "20 Defence",
   "source": "Lanthus",
   "type": "Shop"
@@ -1731,7 +1731,7 @@
   "type": "Drop"
  },
  "equip_mythical_cape": {
-  "cost": "10,000 coins (value)",
+  "cost": "10,000 coins",
   "source": "Jack",
   "type": "Shop"
  },
@@ -2340,7 +2340,7 @@
   "type": "Shop"
  },
  "equip_willow_shortbow": {
-  "cost": "200 coins (value)",
+  "cost": "200 coins",
   "level": "20 Ranged",
   "npcIds": [
    2883
@@ -2693,7 +2693,7 @@
   "type": "Reward"
  },
  "obtain_Alchemist_set": {
-  "cost": "380 coins (value)",
+  "cost": "380 coins",
   "level": "60 Herblore",
   "npcIds": [
    13920,
@@ -2782,7 +2782,7 @@
   "type": "Drop"
  },
  "obtain_adept_potion_pack": {
-  "cost": "200 coins (value)",
+  "cost": "200 coins",
   "level": "60 Herblore",
   "npcIds": [
    13920,
@@ -2801,7 +2801,7 @@
   "type": "Drop"
  },
  "obtain_alchemist's_amulet": {
-  "cost": "1,050 coins (value)",
+  "cost": "1,050 coins",
   "level": "60 Herblore",
   "npcIds": [
    13920,
@@ -3056,7 +3056,7 @@
   "type": "Made"
  },
  "obtain_apprentice_potion_pack": {
-  "cost": "145 coins (value)",
+  "cost": "145 coins",
   "level": "60 Herblore",
   "npcIds": [
    13920,
@@ -3369,12 +3369,12 @@
   "type": "Shop"
  },
  "obtain_book_law": {
-  "cost": "200 coins (value)",
+  "cost": "200 coins",
   "source": "Jossik",
   "type": "Shop"
  },
  "obtain_book_war": {
-  "cost": "200 coins (value)",
+  "cost": "200 coins",
   "source": "Jossik",
   "type": "Shop"
  },
@@ -3963,7 +3963,7 @@
   "type": "Other"
  },
  "obtain_eclipse_red": {
-  "cost": "1,000 coins (value)",
+  "cost": "1,000 coins",
   "source": "The Flaming Arrow",
   "type": "Shop"
  },
@@ -4194,7 +4194,7 @@
   "type": "Reward"
  },
  "obtain_expert_potion_pack": {
-  "cost": "400 coins (value)",
+  "cost": "400 coins",
   "level": "60 Herblore",
   "npcIds": [
    13920,
@@ -4936,7 +4936,7 @@
   "type": "Made"
  },
  "obtain_karamjan_rum": {
-  "cost": "30 coins (value)",
+  "cost": "30 coins",
   "outline": [
    "Zambo"
   ],
@@ -5219,7 +5219,7 @@
   "type": "Other"
  },
  "obtain_monkey_talisman": {
-  "cost": "1,000 coins (value)",
+  "cost": "1,000 coins",
   "npcIds": [
    5251
   ],
@@ -5465,7 +5465,7 @@
   "type": "Other"
  },
  "obtain_ore_pack": {
-  "cost": "40 coins (value)",
+  "cost": "40 coins",
   "level": "50 Mining",
   "npcIds": [
    11468,
@@ -5574,7 +5574,7 @@
   "type": "Other"
  },
  "obtain_prescription_goggles": {
-  "cost": "320 coins (value)",
+  "cost": "320 coins",
   "level": "60 Herblore",
   "npcIds": [
    13920,
@@ -5651,7 +5651,7 @@
   "type": "Other"
  },
  "obtain_raw_beef": {
-  "cost": "1 coin (value)",
+  "cost": "1 coin",
   "npcIds": [
    6478
   ],
@@ -5662,7 +5662,7 @@
   "type": "Shop"
  },
  "obtain_reagent_pouch": {
-  "cost": "100 coins (value)",
+  "cost": "100 coins",
   "level": "60 Herblore",
   "npcIds": [
    13920,
@@ -5843,7 +5843,7 @@
   "type": "Made"
  },
  "obtain_sandworms": {
-  "cost": "90 coins (value)",
+  "cost": "90 coins",
   "npcIds": [
    6964
   ],
@@ -6057,7 +6057,7 @@
   "type": "Drop"
  },
  "obtain_spirit_angler_set": {
-  "cost": "120 coins (value)",
+  "cost": "120 coins",
   "level": "35 Fishing",
   "source": "Gita Prymes",
   "type": "Shop"
@@ -6232,7 +6232,7 @@
   "type": "Drop"
  },
  "obtain_the_stuff": {
-  "cost": "5 coins (value)",
+  "cost": "5 coins",
   "npcIds": [
    1816
   ],
@@ -6436,7 +6436,7 @@
   "type": "Other"
  },
  "obtain_wilderness_crab_teleport": {
-  "cost": "63 coins (value)",
+  "cost": "63 coins",
   "npcIds": [
    8721
   ],

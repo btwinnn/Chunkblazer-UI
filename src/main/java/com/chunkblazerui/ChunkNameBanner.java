@@ -387,7 +387,21 @@ public class ChunkNameBanner extends Overlay
 		{
 			startDrop(id);
 		}
+		else if ("unlockSweepSkipped".equals(message.getName()))
+		{
+			// Unlocked out of sight, so no sweep: the sign falls now, and the cards follow it.
+			skippedDrop = dropsForUnlocks() && chunkName(id) != null;
+			if (skippedDrop)
+			{
+				startDrop(id);
+			}
+			skippedAt = System.currentTimeMillis();
+		}
 	}
+
+	/** When ChunkBlazer GPU last unlocked a chunk out of sight (no sweep), and whether the sign fell for it. */
+	volatile long skippedAt;
+	volatile boolean skippedDrop;
 
 	/** Whether an unlock now gets the falling sign (so the cards wait for it). */
 	public boolean dropsForUnlocks()

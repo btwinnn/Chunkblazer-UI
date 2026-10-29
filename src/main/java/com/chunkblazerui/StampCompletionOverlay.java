@@ -91,7 +91,7 @@ public class StampCompletionOverlay extends Overlay
 		this.client = client;
 		this.sounds = sounds;
 		setPosition(OverlayPosition.DYNAMIC);
-		setLayer(OverlayLayer.ABOVE_WIDGETS);
+		setLayer(OverlayLayer.ALWAYS_ON_TOP);
 		setPriority(OverlayPriority.HIGH);
 	}
 

@@ -89,6 +89,19 @@ public interface ChunkBlazerUiConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "routeStyle",
+		hidden = true, // the task window's Settings page (Assists)
+		name = "Route",
+		description = "How Shortest path picks its way: fastest (teleports for walks over 80 steps) or scenic (walks)",
+		section = taskSection,
+		position = 26
+	)
+	default RouteStyle routeStyle()
+	{
+		return RouteStyle.FASTEST;
+	}
+
+	@ConfigItem(
 		keyName = "cardEntrance",
 		hidden = true, // shown on the task window's Settings page
 		name = "Card Entrance",

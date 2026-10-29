@@ -219,6 +219,8 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 	/** A deal is being held for a sweep; released by the sweep finishing or holdUntil. */
 	private volatile boolean holding;
 	private volatile long holdUntil;
+	// When the deal being held started waiting.
+	private volatile long holdFrom;
 
 	/** Set (from any thread) to deal a few demo cards; consumed in render. */
 	private volatile boolean demoRequested;
@@ -485,6 +487,12 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 
 		if (holding)
 		{
+			ChunkNameBanner sign = banner.get();
+			if (sweepsRunning == 0 && sign.skippedAt >= holdFrom)
+			{
+				// Waiting for a sweep that won't come (out of sight): just the sign's fall.
+				holdUntil = sign.skippedDrop ? sign.skippedAt + ChunkNameBanner.CARDS_AFTER_SWEEP_MS : now;
+			}
 			if (now < holdUntil)
 			{
 				return null; // waiting for the chunk's unlock sweep to finish
@@ -594,8 +602,10 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 		}
 		lastPendingRaw = raw;
 
-		List<String> pending = plugin.getUnrevealedTaskIds();
+		List<String> pending = new ArrayList<>(plugin.getUnrevealedTaskIds());
 		boolean wasEmpty = pile().isEmpty();
+		// Lowest points on top of the pile: dealt last and turned first, the rarest dealt first and turned last.
+		pending.sort(java.util.Comparator.comparingInt(id -> TaskCardTier.fromTask(plugin.getTaskById(id)).ordinal()));
 
 		// A card the player has started drops out of the pending set as soon as it
 		// finishes turning, so match on "not started" — otherwise every face-up card
@@ -847,7 +857,16 @@ public class TaskCardOverlay extends Overlay implements TaskCardShow
 
 		long now = System.currentTimeMillis();
 		long sinceUnlock = now - plugin.getLastUnlockChangeMs();
-		if (sweepsRunning > 0)
+		holdFrom = now;
+		ChunkNameBanner sign = banner.get();
+		if (sweepsRunning == 0 && now - sign.skippedAt < UNLOCK_LINK_MS)
+		{
+			// ChunkBlazer GPU unlocked it out of sight, with no sweep: only the sign's fall to wait for.
+			holding = sign.skippedDrop;
+			holdUntil = sign.skippedAt + ChunkNameBanner.CARDS_AFTER_SWEEP_MS;
+			dealStart = now;
+		}
+		else if (sweepsRunning > 0)
 		{
 			holding = true;
 			holdUntil = sweepEndsAt > 0 ? sweepEndsAt + afterSweep() : now + MAX_SWEEP_WAIT_MS;

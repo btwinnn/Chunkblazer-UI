@@ -268,6 +268,12 @@ public class QuestRequirements
 		nextToCheck = 0;
 	}
 
+	/** Whether every watched quest's state has been read since logging in. */
+	public boolean allChecked()
+	{
+		return states.keySet().containsAll(watched);
+	}
+
 	/** Forget quest states, e.g. after logging out (the next account may differ). */
 	public void reset()
 	{
@@ -292,6 +298,7 @@ public class QuestRequirements
 			}
 			catch (RuntimeException e)
 			{
+				states.put(quest, QuestState.NOT_STARTED);
 			}
 		}
 	}

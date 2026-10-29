@@ -497,7 +497,8 @@ public class TaskPaneOverlay extends Overlay
 			return;
 		}
 		followQuestHelper();
-		if (isWindowOpen() || questPane != null)
+		// Always until every quest is read once after login, so the New tab has a true starting point.
+		if (isWindowOpen() || questPane != null || !quests.allChecked())
 		{
 			quests.refreshStates(QUEST_CHECKS_PER_TICK);
 		}
@@ -1315,7 +1316,7 @@ public class TaskPaneOverlay extends Overlay
 
 	/**
 	 * Everything under an expanded task: its requirements, where an Obtain or Equip task's
-	 * item comes from (source, part, drop rate, cost, then how), then a quest's requirement
+	 * item comes from (source, part, how, then drop rate and cost), then a quest's requirement
 	 * sections. The item's wiki page is on its picture.
 	 */
 	public List<QuestRequirements.Line> detailLines(NuzlockeTask task)
@@ -1330,8 +1331,10 @@ public class TaskPaneOverlay extends Overlay
 		{
 			String text = sourceLines.get(i);
 			boolean how = source != null && text.equals(source.how);
-			Color color = how ? SOURCE_HOW : text.startsWith("Drop rate: ") ? RATE : DETAIL;
-			lines.add(i == 0 && !lines.isEmpty() || how && i > 0
+			boolean price = text.startsWith("Drop rate: ") || text.startsWith("Cost: ");
+			boolean firstPrice = price && (i == 0 || !sourceLines.get(i - 1).startsWith("Drop rate: "));
+			Color color = how ? SOURCE_HOW : price ? RATE : DETAIL;
+			lines.add(i == 0 && !lines.isEmpty() || (how || firstPrice) && i > 0
 				? QuestRequirements.Line.spaced(text, color)
 				: new QuestRequirements.Line(text, color));
 		}

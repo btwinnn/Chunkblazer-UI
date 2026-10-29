@@ -178,8 +178,8 @@ public final class TaskSources
 	}
 
 	/**
-	 * The lines shown under an expanded task: "Source: Imp (drop)", "Drop rate: 1/16",
-	 * "Cost: ...", "Part: ...", then the where/how note. Empty if the task has no entry.
+	 * The lines shown under an expanded task: "Source: Imp (drop)",
+	 * "Part: ...", the where/how note, then "Drop rate: 1/16" and "Cost: ...". Empty if the task has no entry.
 	 */
 	public static List<String> lines(NuzlockeTask task)
 	{
@@ -207,6 +207,11 @@ public final class TaskSources
 		{
 			lines.add("Part: " + s.part);
 		}
+		if (s.how != null)
+		{
+			lines.add(s.how);
+		}
+		// The drop rate and cost always last, so they sit at the bottom of every task.
 		if (s.rate != null)
 		{
 			lines.add("Drop rate: " + s.rate);
@@ -214,10 +219,6 @@ public final class TaskSources
 		if (s.cost != null)
 		{
 			lines.add("Cost: " + s.cost);
-		}
-		if (s.how != null)
-		{
-			lines.add(s.how);
 		}
 		return lines;
 	}

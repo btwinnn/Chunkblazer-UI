@@ -29,6 +29,7 @@ import com.chunkblazerui.ChunkBlazerCore;
 import com.chunkblazerui.ChunkBlazerUiConfig;
 import com.chunkblazerui.NuzlockeTask;
 import com.chunkblazerui.QuestRequirements;
+import com.chunkblazerui.RouteStyle;
 import com.chunkblazerui.TaskSources;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -624,18 +625,19 @@ public class ChunkPathing
 		cooldown = 5;
 		CollisionMap tiles = map;
 		Set<Integer> extra = fallback;
+		RouteStyle style = config.routeStyle();
 		executor.submit(() ->
 		{
 			try
 			{
-				ChunkPathfinder.Result result = ChunkPathfinder.find(tiles, links, open::contains, start, goal,
+				ChunkPathfinder.Result result = ChunkPathfinder.find(tiles, links, open::contains, start, goal, style,
 					() -> generation.get() != run);
 				if (!result.reached && !extra.isEmpty() && generation.get() == run)
 				{
 					// Your chunks don't get there: try again through the quest's chunks too.
 					Set<Integer> wider = new HashSet<>(open);
 					wider.addAll(extra);
-					ChunkPathfinder.Result through = ChunkPathfinder.find(tiles, links, wider::contains, start, goal,
+					ChunkPathfinder.Result through = ChunkPathfinder.find(tiles, links, wider::contains, start, goal, style,
 						() -> generation.get() != run);
 					if (through.reached)
 					{
@@ -648,7 +650,7 @@ public class ChunkPathing
 					// Out of reach only for want of a level, an item or a quest on the way: show
 					// that way, and say what it needs, rather than stopping somewhere beside it.
 					Map<Integer, List<Transports.Link>> any = new HashMap<>(transports.everything());
-					ChunkPathfinder.Result needing = ChunkPathfinder.find(tiles, any, open::contains, start, goal,
+					ChunkPathfinder.Result needing = ChunkPathfinder.find(tiles, any, open::contains, start, goal, style,
 						() -> generation.get() != run);
 					if (needing.reached && generation.get() == run)
 					{
@@ -676,7 +678,7 @@ public class ChunkPathing
 						// No teleporting off just to end up nearer something out of reach.
 						Map<Integer, List<Transports.Link>> walking = new HashMap<>(links);
 						walking.remove(Transports.ANYWHERE);
-						result = ChunkPathfinder.find(tiles, walking, open::contains, start, goal, () -> generation.get() != run);
+						result = ChunkPathfinder.find(tiles, walking, open::contains, start, goal, style, () -> generation.get() != run);
 					}
 				}
 				if (generation.get() != run)
@@ -1070,7 +1072,6 @@ public class ChunkPathing
 		int here = PathTile.pack(WorldPoint.fromLocalInstance(client, player.getLocalLocation()));
 		if (reached && PathTile.distance(here, target) <= 1)
 		{
-			message("You've arrived.");
 			clear();
 			return;
 		}
@@ -1114,13 +1115,25 @@ public class ChunkPathing
 		}
 	}
 
-	/** Shortest path switched off: the path showing goes too. */
+	/** Shortest path switched off: the path showing goes too. A new route style finds it again. */
 	@Subscribe
 	public void onConfigChanged(ConfigChanged event)
 	{
 		if (ChunkBlazerUiConfig.GROUP.equals(event.getGroup()) && "shortestPath".equals(event.getKey()) && !enabled())
 		{
 			clientThread.invoke(this::clear);
+		}
+		else if (ChunkBlazerUiConfig.GROUP.equals(event.getGroup()) && "routeStyle".equals(event.getKey()))
+		{
+			// The path showing is found again the new way.
+			clientThread.invoke(() ->
+			{
+				if (target >= 0)
+				{
+					path = null;
+					search();
+				}
+			});
 		}
 	}
 

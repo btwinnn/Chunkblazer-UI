@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import com.chunkblazerui.RouteStyle;
 import java.util.function.BooleanSupplier;
 import java.util.function.IntPredicate;
 
@@ -70,7 +71,7 @@ public final class ChunkPathfinder
 	}
 
 	public static Result find(CollisionMap map, Map<Integer, List<Transports.Link>> links, IntPredicate open,
-		int start, int target, BooleanSupplier cancelled)
+		int start, int target, RouteStyle style, BooleanSupplier cancelled)
 	{
 		Visits visits = new Visits();
 		ChunkCalculator.LongHeap queue = new ChunkCalculator.LongHeap();
@@ -149,7 +150,7 @@ public final class ChunkPathfinder
 			{
 				for (Transports.Link link : out)
 				{
-					relax(queue, visits, open, tile, link.to, at + link.cost * STRAIGHT);
+					relax(queue, visits, open, tile, link.to, at + (link.cost + style.extra(link)) * STRAIGHT);
 				}
 			}
 			// Teleports go from where you start (into an open chunk only, like anything else).
@@ -158,7 +159,7 @@ public final class ChunkPathfinder
 			{
 				for (Transports.Link link : teleports)
 				{
-					relax(queue, visits, open, tile, link.to, at + link.cost * STRAIGHT);
+					relax(queue, visits, open, tile, link.to, at + (link.cost + style.extra(link)) * STRAIGHT);
 				}
 			}
 		}

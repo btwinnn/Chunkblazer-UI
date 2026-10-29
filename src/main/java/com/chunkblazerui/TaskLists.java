@@ -543,9 +543,22 @@ public class TaskLists
 		return task.getConstraints() == null ? 0 : task.getConstraints().getRequiredLevel();
 	}
 
+	// The last chunk you stood in that's a known chunk.
+	private volatile String lastChunkName = "";
+
+	/**
+	 * The chunk you're in. Down stairs or a ladder into an area that isn't a chunk of its own
+	 * (a basement, a dungeon under it), it's the chunk you came down from: its underground tasks.
+	 */
 	public String currentChunkName()
 	{
-		return chunkNameFor(plugin.getCurrentRegionId());
+		String name = chunkNameFor(plugin.getCurrentRegionId());
+		if (name.isEmpty())
+		{
+			return lastChunkName;
+		}
+		lastChunkName = name;
+		return name;
 	}
 
 	/** Chunk name without its "(region id)" suffix; "" if it isn't a known chunk. */
@@ -607,6 +620,12 @@ public class TaskLists
 	public boolean canDo(NuzlockeTask task)
 	{
 		return TaskTargetExtras.canDo(client, plugin, task) && quests.isReady(task);
+	}
+
+	/** Whether quest states are all read since logging in (until then quest tasks look not ready). */
+	public boolean questsLoaded()
+	{
+		return quests.allChecked();
 	}
 
 	/** "(20 Defence, 20 Ranged)", "(Lvl 40)" or "(Not ready)" for a task you can't do yet. */

@@ -89,6 +89,8 @@ public final class Transports
 		public final int kind;
 		/** A teleport's highest Wilderness level it works from, or -1 for anything else. */
 		final int maxWilderness;
+		/** The coins it costs (a charter's fare), or 0. */
+		public final int coins;
 
 		Link(int from, int to, int cost, List<Requirement> requirements, String place, String how)
 		{
@@ -105,8 +107,12 @@ public final class Transports
 			this.how = how;
 			this.maxWilderness = maxWilderness;
 			this.kind = from == ANYWHERE ? TELEPORT : kind(how, from, to, place);
+			java.util.regex.Matcher fare = FARE.matcher(how);
+			this.coins = fare.find() ? Integer.parseInt(fare.group(1).replace(",", "")) : 0;
 		}
 	}
+
+	private static final java.util.regex.Pattern FARE = java.util.regex.Pattern.compile("([\\d,]+) coins$");
 
 	/** Up stairs or a ladder. */
 	public static final int UP = 1;

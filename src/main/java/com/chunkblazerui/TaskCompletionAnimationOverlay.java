@@ -87,7 +87,7 @@ public class TaskCompletionAnimationOverlay extends Overlay
 		this.core = core;
 		this.client = client;
 		setPosition(OverlayPosition.DYNAMIC);
-		setLayer(OverlayLayer.ABOVE_WIDGETS);
+		setLayer(OverlayLayer.ALWAYS_ON_TOP);
 		setPriority(OverlayPriority.HIGH);
 	}
 

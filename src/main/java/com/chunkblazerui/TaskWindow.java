@@ -1549,6 +1549,8 @@ public class TaskWindow implements TaskWindowHook
 					"Using an NPC or object a task needs tracks that task. A task you picked yourself is kept."),
 				toggle("Shortest path", "shortestPath", config::shortestPath,
 					"Paths through your unlocked chunks (Path here, the map's path key, Quest Helper) and the quest Calc button."),
+				choice("Route", "routeStyle", config::routeStyle, RouteStyle.values(),
+					"Fastest: quickest there, teleporting only for walks over 80 steps. Scenic: walks wherever it can. Click to change."),
 				heading("Keybinds"),
 				keybind("View chunk tasks", "worldMapTasksKey", () -> coreKey("worldMapTasksKey", Keybind.CTRL),
 					"Hold this and click an unlocked chunk on the world map to see its tasks. Click, then press the new key."),
@@ -2909,6 +2911,8 @@ public class TaskWindow implements TaskWindowHook
 	@Override
 	public void settledTick()
 	{
+		// Notes the chunk you're in, so going underground keeps showing its tasks.
+		lists.currentChunkName();
 		checkUnlocks();
 		checkDoable();
 		Set<String> active = new LinkedHashSet<>();
@@ -2977,7 +2981,8 @@ public class TaskWindow implements TaskWindowHook
 	 */
 	private void checkDoable()
 	{
-		if (doableBefore != null && ++checkTicks % 5 != 0)
+		// Wait for every quest's state: quest tasks read as not ready until then, then "become" doable.
+		if (doableBefore != null && ++checkTicks % 5 != 0 || !lists.questsLoaded())
 		{
 			return;
 		}
