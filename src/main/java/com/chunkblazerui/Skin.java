@@ -710,7 +710,7 @@ public final class Skin
 	}
 
 	/** A scrollbar down the right of {@code area}: a sunk track and a raised thumb. */
-	public static void scrollbar(Graphics2D g, Rectangle area, int thumbY, int thumbHeight)
+	public static void scrollbar(Graphics2D g, Rectangle area, int thumbY, int thumbHeight, boolean glow)
 	{
 		Rectangle track = new Rectangle(area.x + area.width - 8, area.y + 1, 7, area.height - 2);
 		Rectangle thumb = new Rectangle(track.x, Math.max(track.y, thumbY), track.width, thumbHeight);
@@ -719,15 +719,26 @@ public final class Skin
 			// Varlamore: a gold thumb in a dark groove.
 			g.setColor(new Color(30, 22, 16));
 			g.fillRect(track.x, track.y, track.width, track.height);
-			g.setColor(palette.frameInner);
+			g.setColor(glow ? new Color(255, 236, 160) : palette.frameInner);
 			g.fillRect(thumb.x + 1, thumb.y, thumb.width - 2, thumb.height);
 			g.setColor(new Color(240, 220, 150));
 			g.drawLine(thumb.x + 2, thumb.y + 1, thumb.x + 2, thumb.y + thumb.height - 2);
-			return;
 		}
-		g.setColor(FIELD);
-		g.fillRect(track.x, track.y, track.width, track.height);
-		button(g, thumb, false, false);
+		else
+		{
+			g.setColor(FIELD);
+			g.fillRect(track.x, track.y, track.width, track.height);
+			button(g, thumb, glow, false);
+		}
+		if (glow)
+		{
+			// A soft halo round the thumb, fading out.
+			for (int i = 1; i <= 3; i++)
+			{
+				g.setColor(new Color(255, 220, 90, 150 / (i * i)));
+				g.drawRect(thumb.x - i, thumb.y - i, thumb.width - 1 + 2 * i, thumb.height - 1 + 2 * i);
+			}
+		}
 	}
 
 	/** A hint by the mouse: the game's yellow examine box. */

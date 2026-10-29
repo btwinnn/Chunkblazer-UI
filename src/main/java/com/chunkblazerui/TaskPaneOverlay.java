@@ -1215,9 +1215,14 @@ public class TaskPaneOverlay extends Overlay
 		}
 		int thumbHeight = Math.max(20, area.height * area.height / contentHeight);
 		int thumbY = area.y + (area.height - thumbHeight) * scroll / Math.max(1, contentHeight - area.height);
-		Skin.scrollbar(graphics, area, thumbY, thumbHeight);
 		Rectangle track = graphics.getTransform().createTransformedShape(
 			new Rectangle(area.x + area.width - 10, area.y, 11, area.height)).getBounds();
+		// Glows under the mouse (and while held), so it's clear a click will grab it.
+		Object[] held = dragBar;
+		net.runelite.api.Point mouse = client.getMouseCanvasPosition();
+		boolean hot = held != null ? held[0].equals(track)
+			: mouse != null && track.contains(mouse.getX(), mouse.getY());
+		Skin.scrollbar(graphics, area, thumbY, thumbHeight, hot);
 		double scale = Math.max(0.01, graphics.getTransform().getScaleY());
 		Object[] bar = {track, (contentHeight - area.height) / Math.max(1.0, (area.height - thumbHeight) * scale), scroll,
 			thumbHeight * scale, inPane};
