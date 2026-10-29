@@ -1219,9 +1219,8 @@ public class TaskPaneOverlay extends Overlay
 			new Rectangle(area.x + area.width - 10, area.y, 11, area.height)).getBounds();
 		// Glows under the mouse (and while held), so it's clear a click will grab it.
 		Object[] held = dragBar;
-		net.runelite.api.Point mouse = client.getMouseCanvasPosition();
-		boolean hot = held != null ? held[0].equals(track)
-			: mouse != null && track.contains(mouse.getX(), mouse.getY());
+		// The window's own mouse: over it, the game's is moved off screen.
+		boolean hot = held != null ? held[0].equals(track) : track.contains(paneMouse);
 		Skin.scrollbar(graphics, area, thumbY, thumbHeight, hot);
 		double scale = Math.max(0.01, graphics.getTransform().getScaleY());
 		Object[] bar = {track, (contentHeight - area.height) / Math.max(1.0, (area.height - thumbHeight) * scale), scroll,
