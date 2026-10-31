@@ -83,6 +83,25 @@ public final class TaskTiles
 		return at == null || at.length < 3 ? -1 : PathTile.pack(at[0], at[1], at[2]);
 	}
 
+	/** Every tile the task has, by the chunk it's for: {region, packed tile} pairs. */
+	public static java.util.List<int[]> tilesOf(String taskId)
+	{
+		java.util.List<int[]> out = new java.util.ArrayList<>();
+		Map<String, int[]> byRegion = tiles.get(taskId);
+		if (byRegion != null)
+		{
+			for (Map.Entry<String, int[]> e : byRegion.entrySet())
+			{
+				int[] at = e.getValue();
+				if (at.length >= 3)
+				{
+					out.add(new int[]{Integer.parseInt(e.getKey()), PathTile.pack(at[0], at[1], at[2])});
+				}
+			}
+		}
+		return out;
+	}
+
 	/** Whether the task is done at its tile, so a path stays on it rather than heading for its NPC. */
 	public static boolean tileOnly(String taskId, int region)
 	{

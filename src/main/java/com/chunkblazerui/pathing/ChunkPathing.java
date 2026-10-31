@@ -724,20 +724,18 @@ public class ChunkPathing
 				}
 				if (!result.reached && generation.get() == run)
 				{
-					// Out of reach only for want of a level, an item or a quest on the way: show
-					// that way, and say what it needs, rather than stopping somewhere beside it.
+					// Out of reach only for want of a level, an item or a quest on the way (a shortcut, a
+					// balloon): the path still stops as near as you can get, never through something you
+					// can't use, and says what the way there needs.
 					Map<Integer, List<Transports.Link>> any = new HashMap<>(transports.everything());
 					ChunkPathfinder.Result needing = ChunkPathfinder.find(tiles, any, open::contains, start, goal, style, budget,
 						() -> generation.get() != run);
-					if (needing.reached && generation.get() == run)
+					if (needing.reached && generation.get() == run && goal != toldNeeds)
 					{
 						String needs = missing(needing.path, links);
-						if (!needs.isEmpty() && goal != toldNeeds)
-						{
-							toldNeeds = goal;
-							message("The way there needs " + needs + ".");
-						}
-						result = needing;
+						toldNeeds = goal;
+						message("You can't get all the way there yet: the way needs "
+							+ (needs.isEmpty() ? "something you haven't unlocked" : needs) + ".");
 					}
 				}
 				if (!result.reached && generation.get() == run)
@@ -977,6 +975,18 @@ public class ChunkPathing
 		{
 			return;
 		}
+		if (doneAnywhere(task))
+		{
+			// Copper, a range, willows: the nearest one in a chunk you have.
+			int spot = anywhereSpot(task);
+			if (spot >= 0)
+			{
+				pathTo(spot);
+				taskPath = task.getTaskId();
+				toChunkOnly = false;
+			}
+			return;
+		}
 		int region = core.findRegionForTask(task.getTaskId());
 		// Where the task's done, when that's known (a boss's entrance, a shop, an altar), else
 		// its chunk; either way its NPC instead once one's in sight, unless its tile is the place to be.
@@ -998,6 +1008,33 @@ public class ChunkPathing
 		pathTo(exact >= 0 ? exact : walkableNear(region));
 		taskPath = task.getTaskId();
 		toChunkOnly = !tileOnly;
+	}
+
+	/**
+	 * For a task done almost anywhere (copper, a range, willows): the nearest of its tiles, from
+	 * every chunk it's in, that's in a chunk you have; or -1.
+	 */
+	private int anywhereSpot(NuzlockeTask task)
+	{
+		Player player = client.getLocalPlayer();
+		if (player == null)
+		{
+			return -1;
+		}
+		int here = PathTile.pack(WorldPoint.fromLocalInstance(client, player.getLocalLocation()));
+		int best = -1;
+		int bestDistance = Integer.MAX_VALUE;
+		for (int[] spot : TaskTiles.tilesOf(task.getTaskId()))
+		{
+			// The chunk the tile's for has to be yours (the tile itself may be down a ladder from it).
+			int distance = PathTile.distance(here, spot[1]);
+			if (distance < bestDistance && core.isRegionUnlocked(spot[0]))
+			{
+				best = spot[1];
+				bestDistance = distance;
+			}
+		}
+		return best;
 	}
 
 	/** The nearest of the task's NPCs in the scene (by id, or by the names it's outlined by), or -1. */
@@ -1102,7 +1139,9 @@ public class ChunkPathing
 			}
 			// Already in its chunk, there's only somewhere to go when its exact tile's known.
 			int region = tracked == null ? -1 : core.findRegionForTask(id);
-			if (tracked != null && !doneAnywhere(tracked) && (region != core.getCurrentRegionId() || TaskTiles.tile(id, region) >= 0))
+			// A task done almost anywhere (copper, a range, willows) goes to the nearest one you have.
+			if (tracked != null && (doneAnywhere(tracked) ? anywhereSpot(tracked) >= 0
+				: region != core.getCurrentRegionId() || TaskTiles.tile(id, region) >= 0))
 			{
 				pathToTask(tracked);
 			}
