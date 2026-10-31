@@ -38,7 +38,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * The exact tile each task is done at, chunk by chunk, from task_tiles.json (filled in by hand
- * from the task tiles sheet): {taskId: {regionId: [x, y, plane]}}. A path to a task goes here
+ * from the task tiles sheet): {taskId: {regionId: [x, y, plane]}}, or [x, y, plane, 1] for a task
+ * done at the tile itself, not at its NPC once that's in sight. A path to a task goes here
  * before its chunk.
  */
 @Slf4j
@@ -78,16 +79,25 @@ public final class TaskTiles
 	/** The task's tile in this region (or its only one), packed, or -1. */
 	public static int tile(String taskId, int region)
 	{
+		int[] at = entry(taskId, region);
+		return at == null || at.length < 3 ? -1 : PathTile.pack(at[0], at[1], at[2]);
+	}
+
+	/** Whether the task is done at its tile, so a path stays on it rather than heading for its NPC. */
+	public static boolean tileOnly(String taskId, int region)
+	{
+		int[] at = entry(taskId, region);
+		return at != null && at.length > 3 && at[3] == 1;
+	}
+
+	private static int[] entry(String taskId, int region)
+	{
 		Map<String, int[]> byRegion = tiles.get(taskId);
 		if (byRegion == null || byRegion.isEmpty())
 		{
-			return -1;
+			return null;
 		}
 		int[] at = byRegion.get(String.valueOf(region));
-		if (at == null && byRegion.size() == 1)
-		{
-			at = byRegion.values().iterator().next();
-		}
-		return at == null || at.length < 3 ? -1 : PathTile.pack(at[0], at[1], at[2]);
+		return at == null && byRegion.size() == 1 ? byRegion.values().iterator().next() : at;
 	}
 }

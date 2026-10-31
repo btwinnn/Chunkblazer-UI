@@ -139,7 +139,7 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 		"verify");
 	// The task box's book archives the tracked task; the next steps bring that same task back
 	// from the Archived list, so nothing's left archived by accident.
-	private static final List<String> TOUR = Arrays.asList("cards", "orb", "track", "close", "taskshow", "assist", "tracker", "boxmode", "boxbook",
+	private static final List<String> TOUR = Arrays.asList("cards", "orb", "track", "close", "taskshow", "assist", "tracker", "boxpath", "boxmode", "boxbook",
 		"archived", "unarchive", "newtab", "filters", "settings", "save", "sclose", "boss", "strack",
 		"unlocking", "panel", "done");
 	// Steps done in the task window: their box sits over the chat box instead.
@@ -152,6 +152,9 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 
 	@javax.inject.Inject
 	private TaskArchive archive;
+	// Whether the path line showed when "boxpath" began, and whether it's been switched since.
+	private boolean lineBefore;
+	private boolean lineFlipped;
 	// The task box's look when "boxmode" began, the archived tasks when "boxbook" began, and
 	// the one archived then (for "unarchive" to point at).
 	private TaskTrackerStyle styleBefore;
@@ -1168,6 +1171,14 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 			case "boss":
 				// Or straight on, with the saved tasks button turned off.
 				return pane.isSavedPaneOpen() || savedButton.getButtonBounds() == null;
+			case "boxpath":
+				// The line hidden and shown again, or straight on with no path button (Shortest path off, no box).
+				if (config.showPathLine() != lineBefore)
+				{
+					lineFlipped = true;
+				}
+				return lineFlipped && config.showPathLine() == lineBefore
+					|| stepTicks > 10 && taskBox.getButtonOnScreen(2) == null && !boxHasSwitch();
 			case "boxmode":
 				// Switched, or straight on when the box has no switch (Simple, Off, nothing tracked).
 				return config.taskTrackerStyle() != styleBefore || stepTicks > 10 && !boxHasSwitch();
@@ -1287,6 +1298,11 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 		if (id.equals("boxmode"))
 		{
 			styleBefore = config.taskTrackerStyle();
+		}
+		if (id.equals("boxpath"))
+		{
+			lineBefore = config.showPathLine();
+			lineFlipped = false;
 		}
 		if (id.equals("strack"))
 		{
@@ -2459,6 +2475,14 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 			{
 				// The switch; on the compact strip it only shows while hovered, so the strip until then.
 				Rectangle button = taskBox.getButtonOnScreen(0);
+				Rectangle strip = taskBox.getBounds();
+				targets.add(button != null ? button : strip == null || strip.isEmpty() ? null : strip);
+				break;
+			}
+			case "boxpath":
+			{
+				// The path button, left of the X; on the compact strip, the strip until it's hovered open.
+				Rectangle button = taskBox.getButtonOnScreen(2);
 				Rectangle strip = taskBox.getBounds();
 				targets.add(button != null ? button : strip == null || strip.isEmpty() ? null : strip);
 				break;

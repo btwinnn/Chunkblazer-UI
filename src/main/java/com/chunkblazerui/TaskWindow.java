@@ -96,13 +96,7 @@ public class TaskWindow implements TaskWindowHook
 	private TaskArchive archive;
 
 	@Inject
-	private TaskCardOverlay cardOverlay;
-	@Inject
-	private StampCompletionOverlay stampCompletion;
-	@Inject
 	private CardSounds cardSounds;
-	@Inject
-	private com.chunkblazerui.TaskCompletionAnimationOverlay originalCompletion;
 
 	@Inject
 	private ChatboxPanelManager chatboxPanelManager;
@@ -437,7 +431,7 @@ public class TaskWindow implements TaskWindowHook
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
-		if (open && !tasksKeyHeld && event.getMenuAction() != MenuAction.CANCEL
+		if (open && !tasksKeyHeld && !config.stickyTaskWindow() && event.getMenuAction() != MenuAction.CANCEL
 			&& event.getMenuEntry().getWidget() == null)
 		{
 			close();
@@ -541,48 +535,6 @@ public class TaskWindow implements TaskWindowHook
 			}
 			return openedSearch != input || ++tries[0] > 50;
 		});
-	}
-
-	/**
-	 * Settings > Theme's Test button: closes this window and deals 5 sample cards (one of each tier),
-	 * arriving the way Card entrance is set and drawn in the current Theme.
-	 */
-	/** Settings' Test beside Task complete popup: the popup for this theme, for made-up tasks (one of each tier). */
-	private void testCompletion()
-	{
-		close();
-		// And the sound a real completion plays (on Old School and Varlamore, each popup plays its own).
-		plugin.playTaskCompleteSound();
-		if (Skin.theme() == Theme.ORIGINAL)
-		{
-			originalCompletion.showTaskCompletion(demoTask(2), 3, "Kalphite Lair");
-			return;
-		}
-		List<NuzlockeTask> demos = new ArrayList<>();
-		for (int tier = 0; tier < DEMO_TASKS.length; tier++)
-		{
-			demos.add(demoTask(tier));
-		}
-		stampCompletion.showTests(demos, "Lumbridge");
-	}
-
-	/** Made-up tasks for the popup's Test, Easy to Master (Medium's long, to see long names drawn small). */
-	private static final String[] DEMO_TASKS = {"Plant some Potatoes", "Complete every Grandmaster Combat Achievement in the Theatre of Blood: Hard Mode",
-		"Defeat the Kalphite Queen", "Equip an Ancient Wyvern Shield", "Obtain the Olm Pet"};
-
-	private static NuzlockeTask demoTask(int tier)
-	{
-		NuzlockeTask demo = new NuzlockeTask();
-		demo.setTaskId("demo_completion_" + tier);
-		demo.setName(DEMO_TASKS[tier]);
-		demo.setBasePoints(tier + 1);
-		return demo;
-	}
-
-	private void testCards()
-	{
-		close();
-		cardOverlay.requestDemoDeal(5);
 	}
 
 	private void markSeen(Set<String> ids)
@@ -1520,9 +1472,8 @@ public class TaskWindow implements TaskWindowHook
 		{
 			List<Setting> all = new ArrayList<>(Arrays.asList(
 				heading("Look"),
-				withAction(choice("Theme", "theme", config::theme, Theme.values(),
-					"ChunkBlazer's look: cards, this window, boxes and the side panel. Click to change; Test deals 5 cards, one of each tier."),
-					"Test", this::testCards),
+				choice("Theme", "theme", config::theme, Theme.values(),
+					"ChunkBlazer's look: cards, this window, boxes and the side panel. Click to change."),
 				choice("Card entrance", "cardEntrance", config::cardEntrance, CardEntrance.values(),
 					"How a fresh deal of task cards arrives on screen. Click to change."),
 				toggle("Theme sounds", "themeSounds", config::themeSounds,
@@ -1536,6 +1487,8 @@ public class TaskWindow implements TaskWindowHook
 					"A bubble that opens your saved tasks (Alt + drag to move)."),
 				toggle("Movable quest/saved box", "movableTaskBox", config::movableTaskBox,
 					"Open quest requirements and saved tasks in a box you can Alt + drag, instead of over the inventory."),
+				toggle("Auto-track tasks", "autoTrackTasks", config::autoTrackTasks,
+					"Using an NPC or object a task needs tracks that task. A task you picked yourself is kept."),
 				heading("Assists"),
 				toggle("Task details", "showTaskDetails", config::showTaskDetails,
 					"Where a task's item comes from: its source, drop rate, cost and how to get it. Off for no help."),
@@ -1545,12 +1498,8 @@ public class TaskWindow implements TaskWindowHook
 					"Outline items your tasks need (gear, tools) in your inventory, bank and shops."),
 				toggle("Right-click Tasks menu", "taskRightClickMenu", config::taskRightClickMenu,
 					"Adds a Tasks submenu when right-clicking NPCs and objects your tasks need, to track one."),
-				toggle("Auto-track tasks", "autoTrackTasks", config::autoTrackTasks,
-					"Using an NPC or object a task needs tracks that task. A task you picked yourself is kept."),
 				toggle("Shortest path", "shortestPath", config::shortestPath,
 					"Paths through your unlocked chunks (Path here, the map's path key, Quest Helper) and the quest Calc button."),
-				choice("Route", "routeStyle", config::routeStyle, RouteStyle.values(),
-					"Fastest: quickest there, teleporting only for walks over 80 steps. Scenic: walks wherever it can. Click to change."),
 				heading("Keybinds"),
 				keybind("View chunk tasks", "worldMapTasksKey", () -> coreKey("worldMapTasksKey", Keybind.CTRL),
 					"Hold this and click an unlocked chunk on the world map to see its tasks. Click, then press the new key."),
@@ -1566,16 +1515,19 @@ public class TaskWindow implements TaskWindowHook
 				toggle("Keys legend", "showMapKeys", config::showMapKeys,
 					"Show the world map's click keys (tasks, path) in its bottom-right corner."),
 				heading("In game"),
+				choice("Route", "routeStyle", config::routeStyle, RouteStyle.values(),
+					"How paths pick their way. Fastest: quickest there, teleporting only for walks over 80 steps. Scenic: walks wherever it can. Click to change."),
+				new Setting("Travel cost", "The most coins a whole path may spend on fares (charters, boats, carts). - and + change it by 1,000.",
+					"travelBudget", config::travelBudget, null, 0, 100000, 1000),
+				toggle("Sticky task viewer", "stickyTaskWindow", config::stickyTaskWindow,
+					"Nothing closes the task viewer but you (its X, Esc or the Tasks orb): not clicking in game, not the world map."),
 				toggle("Chunk name banner", "showChunkNamePopups", config::showChunkNamePopups,
 					"Show a chunk's name at the top of the screen when you enter it."),
-				withAction(toggle("Task complete popup", "showTaskCompletionPopup", plugin::showTaskCompletionPopup,
-					"The popup when you complete a task (also in RuneLite's settings). Test shows one of each tier, Easy to Master."),
-					"Test", this::testCompletion),
+				toggle("Task complete popup", "showTaskCompletionPopup", plugin::showTaskCompletionPopup,
+					"The popup when you complete a task (also in RuneLite's settings)."),
 				heading("Tutorial"),
 				withAction(new Setting("Tutorial", "Go through the tutorial's tour of the interface again, from the mainland part.",
-					"", () -> null, null, 0, 0, 0), "Restart", () -> clientThread.invoke(() -> tutorial.get().replay())),
-				withAction(new Setting("Start over", "This account's whole tutorial again from its first box: Tutorial Island's on the island, Lumbridge's anywhere else.",
-					"", () -> null, null, 0, 0, 0), "Reset", () -> clientThread.invoke(() -> tutorial.get().reset()))));
+					"", () -> null, null, 0, 0, 0), "Restart", () -> clientThread.invoke(() -> tutorial.get().replay()))));
 			settings = all;
 		}
 		return settings;
@@ -1769,7 +1721,8 @@ public class TaskWindow implements TaskWindowHook
 				String sign = b == minus ? "-" : "+";
 				Skin.text(graphics, sign, b.x + (b.width - fm.stringWidth(sign)) / 2, textY);
 			}
-			String n = String.valueOf(current);
+			// Thousands as "10k" (Travel cost), so they fit.
+			String n = setting.step >= 1000 && current >= 1000 ? current / 1000 + "k" : String.valueOf(current);
 			graphics.setColor(POINTS);
 			Skin.text(graphics, n, minus.x + minus.width + (controlWidth - 36 - fm.stringWidth(n)) / 2, textY);
 		}
@@ -3038,11 +2991,11 @@ public class TaskWindow implements TaskWindowHook
 		knownBefore = known;
 	}
 
-	/** Opening the world map closes the window (the tasks key + click opens it again). */
+	/** Opening the world map closes the window (the tasks key + click opens it again), unless it's sticky. */
 	@Subscribe
 	public void onWidgetLoaded(WidgetLoaded event)
 	{
-		if (event.getGroupId() == InterfaceID.WORLDMAP && open)
+		if (event.getGroupId() == InterfaceID.WORLDMAP && open && !config.stickyTaskWindow())
 		{
 			close();
 		}

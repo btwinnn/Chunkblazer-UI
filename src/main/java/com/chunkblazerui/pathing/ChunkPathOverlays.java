@@ -31,7 +31,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
@@ -87,6 +86,12 @@ final class ChunkPathOverlays
 		overlays.remove(travelMenu);
 	}
 
+	/** The path to draw: none while its line is hidden (the tracked task box's path button). */
+	private int[] drawnPath()
+	{
+		return pathing.lineShown() ? pathing.path() : null;
+	}
+
 	/** The next far-off transport the path takes (a charter, glider, teleport), or null. */
 	private Transports.Link nextTravel(int[] path)
 	{
@@ -112,7 +117,7 @@ final class ChunkPathOverlays
 		return -1;
 	}
 
-	/** The path as a line along the ground through each tile's middle; its end tile outlined (red if it couldn't get there). */
+	/** The path as a line along the ground through each tile's middle (no square at its end). */
 	private final class SceneOverlay extends Overlay
 	{
 		SceneOverlay()
@@ -123,7 +128,7 @@ final class ChunkPathOverlays
 
 		public Dimension render(Graphics2D graphics)
 		{
-			int[] path = pathing.path();
+			int[] path = drawnPath();
 			if (path == null)
 			{
 				return null;
@@ -167,18 +172,6 @@ final class ChunkPathOverlays
 			graphics.setStroke(new BasicStroke(2.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 			graphics.setColor(PATH);
 			graphics.draw(line);
-			int end = path[last];
-			LocalPoint endLocal = PathTile.z(end) == plane ? LocalPoint.fromWorld(view, PathTile.x(end), PathTile.y(end)) : null;
-			Polygon poly = endLocal == null ? null : Perspective.getCanvasTilePoly(client, endLocal);
-			if (poly != null)
-			{
-				Color ring = pathing.reached() ? TARGET : STOPPED;
-				graphics.setColor(new Color(ring.getRed(), ring.getGreen(), ring.getBlue(), 70));
-				graphics.fill(poly);
-				graphics.setStroke(new BasicStroke(1.5f));
-				graphics.setColor(ring);
-				graphics.draw(poly);
-			}
 			stepIcons(graphics, view, plane, path);
 			graphics.setStroke(oldStroke);
 			nextTransport(graphics, view, plane, path);
@@ -312,7 +305,7 @@ final class ChunkPathOverlays
 
 		public Dimension render(Graphics2D graphics)
 		{
-			int[] path = pathing.path();
+			int[] path = drawnPath();
 			Transports.Link link = path == null ? null : nextTravel(path);
 			if (link == null)
 			{
@@ -423,7 +416,7 @@ final class ChunkPathOverlays
 
 		public Dimension render(Graphics2D graphics)
 		{
-			int[] path = pathing.path();
+			int[] path = drawnPath();
 			if (path == null)
 			{
 				return null;
@@ -465,6 +458,8 @@ final class ChunkPathOverlays
 		}
 	}
 
+	// Underground areas (dungeons, caves) sit this far north of the surface in game coordinates.
+	private static final int UNDERGROUND = 6400;
 	// A transport that moves you further than this (in tiles) gets map links instead of a line.
 	private static final int FAR = 8;
 	// The world map's transport links, from the last frame: {where on screen, the tile it goes to}.
@@ -548,16 +543,115 @@ final class ChunkPathOverlays
 	/** The tile a world map transport link at this point goes to, or -1 if there isn't one there. */
 	int mapLinkAt(int x, int y)
 	{
+		Object[] link = linkAt(x, y);
+		return link == null ? -1 : (int) link[1];
+	}
+
+	/** Where the game's own link a dungeon link of ours at this point stands for is on screen, or null. */
+	int[] gameLinkAt(int x, int y)
+	{
+		Object[] link = linkAt(x, y);
+		return link == null || link.length < 3 ? null : (int[]) link[2];
+	}
+
+	private Object[] linkAt(int x, int y)
+	{
 		for (Object[] link : mapLinks)
 		{
 			if (((Rectangle) link[0]).contains(x, y))
 			{
-				return (int) link[1];
+				return link;
 			}
 		}
-		return -1;
+		return null;
 	}
 
+
+	// The game's own clickable links into another map: the map function sprites of its down and
+	// up arrows. Which map element types use one, found once each.
+	private static final int[] LINK_SPRITES = {86, 87};
+	private final java.util.Map<Integer, Boolean> linkTypes = new java.util.HashMap<>();
+
+	/**
+	 * Where on screen the game's own link into another map nearest {@code from} (within 10 tiles)
+	 * is drawn, from its own icon's bounds, or null if there isn't one in view.
+	 */
+	private int[] gameLinkNear(int from, Rectangle bounds)
+	{
+		net.runelite.api.worldmap.WorldMapRenderer renderer = client.getWorldMap().getWorldMapRenderer();
+		if (renderer == null || !renderer.isLoaded() || renderer.getMapRegions() == null)
+		{
+			return null;
+		}
+		int[] best = null;
+		int bestDistance = 11;
+		for (net.runelite.api.worldmap.WorldMapRegion[] column : renderer.getMapRegions())
+		{
+			for (net.runelite.api.worldmap.WorldMapRegion region : column)
+			{
+				if (region == null)
+				{
+					continue;
+				}
+				for (net.runelite.api.worldmap.WorldMapIcon icon : region.getMapIcons())
+				{
+					net.runelite.api.coords.WorldPoint at = icon.getCoordinate();
+					if (at == null || !isGameLink(icon.getType()))
+					{
+						continue;
+					}
+					int distance = Math.max(Math.abs(at.getX() - PathTile.x(from)), Math.abs(at.getY() - PathTile.y(from)));
+					if (distance < bestDistance)
+					{
+						bestDistance = distance;
+						best = mapPoint(at.getX(), at.getY(), bounds);
+					}
+				}
+			}
+		}
+		return best;
+	}
+
+	/** A tile's spot on the world map on screen, worked out the way RuneLite places its own map icons. */
+	private int[] mapPoint(int x, int y, Rectangle bounds)
+	{
+		WorldMap map = client.getWorldMap();
+		float perTile = map.getWorldMapZoom();
+		Point position = map.getWorldMapPosition();
+		int wide = (int) Math.ceil(bounds.getWidth() / perTile);
+		int high = (int) Math.ceil(bounds.getHeight() / perTile);
+		int yOffset = (position.getY() - high / 2 - y - 1) * -1;
+		int xOffset = x + wide / 2 - position.getX();
+		int gx = (int) (xOffset * perTile);
+		int gy = (int) (yOffset * perTile);
+		gy -= perTile - Math.ceil(perTile / 2);
+		gx += perTile - Math.ceil(perTile / 2);
+		return new int[]{gx + bounds.x, bounds.height - gy + bounds.y};
+	}
+
+	private boolean isGameLink(int type)
+	{
+		return linkTypes.computeIfAbsent(type, t ->
+		{
+			net.runelite.api.worldmap.MapElementConfig config = client.getMapElementConfig(t);
+			net.runelite.api.SpritePixels sprite = config == null ? null : config.getMapIcon(false);
+			net.runelite.api.SpritePixels[] functions = client.getMapIcons();
+			if (sprite == null || functions == null)
+			{
+				return false;
+			}
+			for (int index : LINK_SPRITES)
+			{
+				net.runelite.api.SpritePixels link = index < functions.length ? functions[index] : null;
+				if (link != null && (link == sprite || link.getWidth() == sprite.getWidth() && link.getHeight() == sprite.getHeight()
+					&& java.util.Arrays.equals(link.getPixels(), sprite.getPixels())))
+				{
+					return true;
+				}
+			}
+			return false;
+		});
+	}
 
 	/** A line on the world map, dashed where it takes a transport, with a ring at the end. */
 	private final class WorldMapOverlay extends Overlay
@@ -572,7 +666,7 @@ final class ChunkPathOverlays
 
 		public Dimension render(Graphics2D graphics)
 		{
-			int[] path = pathing.path();
+			int[] path = drawnPath();
 			Widget widget = client.getWidget(InterfaceID.Worldmap.MAP_CONTAINER);
 			WorldMap map = client.getWorldMap();
 			if (path == null || widget == null || map == null || map.getWorldMapPosition() == null)
@@ -610,8 +704,23 @@ final class ChunkPathOverlays
 						Transports.Link link = pathing.link(a, b);
 						String to = place(link, b);
 						int kind = link == null ? Transports.TRAVEL : link.kind;
-						links.add(mapLink(graphics, kind, (kind == Transports.TELEPORT ? "Teleport: " : "To ") + to,
-							ax, ay, b, mouse, bounds));
+						int lx = ax;
+						int ly = ay;
+						int[] game = null;
+						if (kind != Transports.TELEPORT && PathTile.y(b) >= UNDERGROUND && PathTile.y(a) < UNDERGROUND)
+						{
+							// Into a dungeon: on the game's own link there (its up or down arrow). A click on
+							// ours is passed on to the game's, at the spot it's drawn, so its dungeon map opens.
+							game = gameLinkNear(a, bounds);
+							if (game != null)
+							{
+								lx = game[0];
+								ly = game[1];
+							}
+						}
+						Object[] made = mapLink(graphics, kind, (kind == Transports.TELEPORT ? "Teleport: " : "To ") + to,
+							lx, ly, b, mouse, bounds);
+						links.add(new Object[]{made[0], made[1], game});
 					}
 					continue;
 				}

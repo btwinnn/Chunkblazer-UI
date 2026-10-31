@@ -147,25 +147,6 @@ public class StampCompletionOverlay extends Overlay
 		sounds.complete(tier.ordinal());
 	}
 
-	/** Popups for made-up tasks, one after another, whatever the popup setting (the Settings page's Test). */
-	void showTests(java.util.List<NuzlockeTask> tasks, String region)
-	{
-		if (tasks.isEmpty())
-		{
-			return;
-		}
-		synchronized (queue)
-		{
-			queue.clear();
-			for (NuzlockeTask task : tasks.subList(1, tasks.size()))
-			{
-				queue.add(new Object[]{task, task.getBasePoints(), region, Boolean.TRUE});
-			}
-		}
-		start(tasks.get(0), tasks.get(0).getBasePoints(), region);
-		test = true;
-	}
-
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{

@@ -101,6 +101,9 @@ public class SelectedTaskOverlay extends OverlayPanel
 	// Beside the book: switch between the compact strip and the detailed box.
 	private volatile Rectangle modeButton;
 	private volatile boolean modeHovered;
+	// The path button, left of the X: hides or shows the shortest path's line.
+	private volatile Rectangle pathButton;
+	private volatile boolean pathHovered;
 	private final ConfigManager configManager;
 	private volatile String shownTaskId;
 
@@ -324,6 +327,8 @@ public class SelectedTaskOverlay extends OverlayPanel
 		archiveHovered = isHovered(mouse, bounds, book);
 		Rectangle mode = new Rectangle(book.x + book.width + 5, CLOSE_MARGIN + 3, CLOSE_SIZE, CLOSE_SIZE);
 		modeHovered = isHovered(mouse, bounds, mode);
+		Rectangle line = config.shortestPath() ? new Rectangle(box.x - CLOSE_SIZE - 8, box.y, CLOSE_SIZE + 2, CLOSE_SIZE) : null;
+		pathHovered = line != null && isHovered(mouse, bounds, line);
 
 		graphics.setColor(closeHovered ? CLOSE_HOVER : CLOSE_IDLE);
 		graphics.setStroke(new BasicStroke(2));
@@ -341,6 +346,22 @@ public class SelectedTaskOverlay extends OverlayPanel
 			graphics.fillRect(mode.x, mode.y + mode.height - 3, mode.width, 2);
 		}
 		modeButton = mode;
+		if (line != null)
+		{
+			// A path: two dashes rising to a pin. Crossed through while the line's hidden.
+			boolean lineOn = config.showPathLine();
+			graphics.setColor(pathHovered ? CLOSE_HOVER : CLOSE_IDLE);
+			graphics.setStroke(new BasicStroke(1.5f));
+			graphics.drawLine(line.x, line.y + line.height, line.x + 3, line.y + line.height - 3);
+			graphics.drawLine(line.x + 5, line.y + line.height - 5, line.x + 7, line.y + line.height - 7);
+			graphics.fillOval(line.x + line.width - 4, line.y - 1, 4, 4);
+			if (!lineOn)
+			{
+				graphics.setColor(new Color(255, 80, 80));
+				graphics.drawLine(line.x - 1, line.y - 1, line.x + line.width + 1, line.y + line.height + 1);
+			}
+		}
+		pathButton = line;
 
 		closeButton = box;
 		archiveButton = book;
@@ -611,13 +632,15 @@ public class SelectedTaskOverlay extends OverlayPanel
 		archiveHovered = false;
 		modeButton = null;
 		modeHovered = false;
+		pathButton = null;
+		pathHovered = false;
 		shownTaskId = null;
 	}
 
-	/** The compact/detailed switch (0) or the archive book (1) on screen, for the tutorial; null when not drawn. */
+	/** The compact/detailed switch (0), the archive book (1) or the path button (2) on screen, for the tutorial; null when not drawn. */
 	Rectangle getButtonOnScreen(int which)
 	{
-		Rectangle button = which == 0 ? modeButton : archiveButton;
+		Rectangle button = which == 0 ? modeButton : which == 1 ? archiveButton : pathButton;
 		Rectangle bounds = getBounds();
 		// The compact strip's buttons only show once it's fully open under the mouse.
 		boolean opening = config.taskTrackerStyle() == TaskTrackerStyle.COMPACT && expand < 1;
@@ -644,6 +667,18 @@ public class SelectedTaskOverlay extends OverlayPanel
 	boolean isModeHovered()
 	{
 		return modeButton != null && modeHovered;
+	}
+
+	/** True while the mouse is over the path button. */
+	boolean isPathHovered()
+	{
+		return pathButton != null && pathHovered;
+	}
+
+	/** Hide or show the shortest path's line. */
+	void togglePathLine()
+	{
+		configManager.setConfiguration(ChunkBlazerUiConfig.GROUP, "showPathLine", !config.showPathLine());
 	}
 
 	/** Switch the box between the compact strip and the detailed box. */

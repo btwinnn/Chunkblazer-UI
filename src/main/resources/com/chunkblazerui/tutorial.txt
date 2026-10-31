@@ -187,6 +187,10 @@ Pick your assists: outlines on what tasks need, task details, menus and tooltips
 The task box
 Your tracked task shows here with its progress. Hover it for details.
 
+[boxpath]
+Show or hide the path
+The path button next to the X hides the line to your task, in game and on the maps, and shows it again. Click it twice: off, then back on.
+
 [boxmode]
 Bigger or smaller
 Click the little button at the top of the task box to switch it between detailed and compact. On the compact one, hover it first.

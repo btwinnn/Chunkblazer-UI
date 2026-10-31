@@ -71,11 +71,11 @@ public final class ChunkPathfinder
 	}
 
 	public static Result find(CollisionMap map, Map<Integer, List<Transports.Link>> links, IntPredicate open,
-		int start, int target, RouteStyle style, BooleanSupplier cancelled)
+		int start, int target, RouteStyle style, int budget, BooleanSupplier cancelled)
 	{
 		Visits visits = new Visits();
 		ChunkCalculator.LongHeap queue = new ChunkCalculator.LongHeap();
-		visits.put(start, 0, start);
+		visits.put(start, 0, start, 0);
 		queue.add(start & 0xFFFFFFFFL);
 		int closest = start;
 		int closestDistance = near(start, target);
@@ -141,16 +141,21 @@ public final class ChunkPathfinder
 			{
 				step[n++] = PathTile.pack(x - 1, y - 1, z);
 			}
+			// Coins spent getting here: a fare is only taken while the route's total stays in the travel budget.
+			int spent = visits.spent(tile);
 			for (int i = 0; i < n; i++)
 			{
-				relax(queue, visits, open, tile, step[i], at + (i < straight ? STRAIGHT : DIAGONAL));
+				relax(queue, visits, open, tile, step[i], at + (i < straight ? STRAIGHT : DIAGONAL), spent);
 			}
 			List<Transports.Link> out = links.get(tile);
 			if (out != null)
 			{
 				for (Transports.Link link : out)
 				{
-					relax(queue, visits, open, tile, link.to, at + (link.cost + style.extra(link)) * STRAIGHT);
+					if (spent + link.coins <= budget)
+					{
+						relax(queue, visits, open, tile, link.to, at + (link.cost + style.extra(link)) * STRAIGHT, spent + link.coins);
+					}
 				}
 			}
 			// Teleports go from where you start (into an open chunk only, like anything else).
@@ -159,7 +164,10 @@ public final class ChunkPathfinder
 			{
 				for (Transports.Link link : teleports)
 				{
-					relax(queue, visits, open, tile, link.to, at + (link.cost + style.extra(link)) * STRAIGHT);
+					if (spent + link.coins <= budget)
+					{
+						relax(queue, visits, open, tile, link.to, at + (link.cost + style.extra(link)) * STRAIGHT, spent + link.coins);
+					}
 				}
 			}
 		}
@@ -191,13 +199,14 @@ public final class ChunkPathfinder
 		return open.test(CollisionMap.regionOf(x + dx, y)) && open.test(CollisionMap.regionOf(x, y + dy));
 	}
 
-	private static void relax(ChunkCalculator.LongHeap queue, Visits visits, IntPredicate open, int from, int to, int at)
+	private static void relax(ChunkCalculator.LongHeap queue, Visits visits, IntPredicate open, int from, int to, int at,
+		int spent)
 	{
 		if (at >= visits.cost(to) || !open.test(PathTile.region(to)))
 		{
 			return;
 		}
-		visits.put(to, at, from);
+		visits.put(to, at, from, spent);
 		queue.add(((long) at << 32) | (to & 0xFFFFFFFFL));
 	}
 
@@ -208,6 +217,7 @@ public final class ChunkPathfinder
 		private int[] keys = new int[1 << 16];
 		private int[] costs = new int[1 << 16];
 		private int[] previous = new int[1 << 16];
+		private int[] spent = new int[1 << 16];
 		private int size;
 
 		Visits()
@@ -237,7 +247,12 @@ public final class ChunkPathfinder
 			return previous[slot(key)];
 		}
 
-		void put(int key, int cost, int from)
+		int spent(int key)
+		{
+			return spent[slot(key)];
+		}
+
+		void put(int key, int cost, int from, int coins)
 		{
 			int i = slot(key);
 			if (keys[i] == EMPTY)
@@ -251,6 +266,7 @@ public final class ChunkPathfinder
 			}
 			costs[i] = cost;
 			previous[i] = from;
+			spent[i] = coins;
 		}
 
 		private void grow()
@@ -258,9 +274,11 @@ public final class ChunkPathfinder
 			int[] oldKeys = keys;
 			int[] oldCosts = costs;
 			int[] oldPrevious = previous;
+			int[] oldSpent = spent;
 			keys = new int[oldKeys.length * 2];
 			costs = new int[keys.length];
 			previous = new int[keys.length];
+			spent = new int[keys.length];
 			Arrays.fill(keys, EMPTY);
 			for (int j = 0; j < oldKeys.length; j++)
 			{
@@ -270,6 +288,7 @@ public final class ChunkPathfinder
 					keys[i] = oldKeys[j];
 					costs[i] = oldCosts[j];
 					previous[i] = oldPrevious[j];
+					spent[i] = oldSpent[j];
 				}
 			}
 		}

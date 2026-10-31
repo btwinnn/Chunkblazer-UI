@@ -76,6 +76,45 @@ public interface ChunkBlazerUiConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "showPathLine",
+		hidden = true, // the tracked task box's path button
+		name = "Show Path Line",
+		description = "Draw the shortest path's line (in game, on the minimap and the world map)",
+		section = taskSection,
+		position = 29
+	)
+	default boolean showPathLine()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "travelBudget",
+		hidden = true, // the task window's Settings page (In game)
+		name = "Travel Cost",
+		description = "The most coins a whole route may spend on fares (charters, boats, carts)",
+		section = taskSection,
+		position = 28
+	)
+	default int travelBudget()
+	{
+		return 10000;
+	}
+
+	@ConfigItem(
+		keyName = "stickyTaskWindow",
+		hidden = true, // the task window's Settings page (In game)
+		name = "Sticky Task Viewer",
+		description = "Nothing closes the task viewer but you: not clicking in game, not the world map",
+		section = taskSection,
+		position = 27
+	)
+	default boolean stickyTaskWindow()
+	{
+		return false;
+	}
+
+	@ConfigItem(
 		keyName = "shortestPath",
 		hidden = true, // the task window's Settings page (Assists)
 		name = "Shortest Path",

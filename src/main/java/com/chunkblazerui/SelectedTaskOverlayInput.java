@@ -68,6 +68,11 @@ public class SelectedTaskOverlayInput extends MouseAdapter
 			overlay.archiveShownTask();
 			event.consume();
 		}
+		else if (overlay.isPathHovered())
+		{
+			overlay.togglePathLine();
+			event.consume();
+		}
 		else if (overlay.isModeHovered())
 		{
 			overlay.toggleMode();

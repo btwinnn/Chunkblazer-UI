@@ -160,6 +160,12 @@ public class ChunkPathing
 		return name == null || name.startsWith("Unknown") ? "there" : name.replaceAll("\\s*\\(\\d+\\)$", "").trim();
 	}
 
+	/** Whether the path's line is drawn (the tracked task box's path button hides it). */
+	boolean lineShown()
+	{
+		return config.showPathLine();
+	}
+
 	/** Whether paths are on (Settings > Assists > Shortest path). */
 	public boolean enabled()
 	{
@@ -187,10 +193,16 @@ public class ChunkPathing
 					return event;
 				}
 				// It comes out on another of the map's layers (a dungeon): the click goes on to the
-				// game's own link underneath, which opens that layer, and the map is then moved to
-				// where it comes out. With no link of the game's there, it's moved there anyway.
+				// game's own link, moved to exactly where the game draws it (at any zoom), which opens
+				// that layer; the map is then moved to where it comes out.
 				panAfterLoad = there;
 				panAfterLoadAt = System.currentTimeMillis();
+				int[] game = overlays.gameLinkAt(event.getX(), event.getY());
+				if (game != null)
+				{
+					redirect = game;
+					return moved(event, game);
+				}
 				return event;
 			}
 			if (!pathKeyHeld || !enabled() || event.getButton() != MouseEvent.BUTTON1)
@@ -215,7 +227,24 @@ public class ChunkPathing
 			event.consume();
 			return event;
 		}
+
+		@Override
+		public MouseEvent mouseReleased(MouseEvent event)
+		{
+			int[] to = redirect;
+			redirect = null;
+			return to == null ? event : moved(event, to);
+		}
 	};
+
+	// A press passed on to the game's own map link: its release goes there too, so it's a click, not a drag.
+	private volatile int[] redirect;
+
+	private static MouseEvent moved(MouseEvent event, int[] to)
+	{
+		return new MouseEvent(event.getComponent(), event.getID(), event.getWhen(), event.getModifiersEx(),
+			to[0], to[1], event.getClickCount(), event.isPopupTrigger(), event.getButton());
+	}
 
 	// A transport link into another layer of the world map: where to move it once that layer's open.
 	private volatile WorldPoint panAfterLoad;
@@ -227,12 +256,47 @@ public class ChunkPathing
 	@Subscribe
 	public void onScriptPostFired(net.runelite.api.events.ScriptPostFired event)
 	{
-		WorldPoint there = panAfterLoad;
-		if (event.getScriptId() == net.runelite.api.ScriptID.WORLDMAP_LOADMAP && there != null)
+		if (event.getScriptId() != net.runelite.api.ScriptID.WORLDMAP_LOADMAP)
 		{
-			panAfterLoad = null;
-			clientThread.invokeLater(() -> client.getWorldMap().setWorldMapPositionTarget(there));
+			return;
 		}
+		WorldPoint there = panAfterLoad;
+		panAfterLoad = null;
+		if (there == null)
+		{
+			// The game's own link into a dungeon: on the path's way through it, move to where it comes out.
+			there = underground(client.getWorldMap().getWorldMapData());
+		}
+		if (there != null)
+		{
+			WorldPoint to = there;
+			clientThread.invokeLater(() -> client.getWorldMap().setWorldMapPositionTarget(to));
+		}
+	}
+
+	/** The first underground tile still ahead on the path that's on this map (a dungeon's), or null. */
+	private WorldPoint underground(net.runelite.api.worldmap.WorldMapData opened)
+	{
+		int[] tiles = path;
+		Player player = client.getLocalPlayer();
+		if (tiles == null || opened == null || player == null)
+		{
+			return null;
+		}
+		WorldPoint me = WorldPoint.fromLocalInstance(client, player.getLocalLocation());
+		if (opened.surfaceContainsPosition(me.getX(), me.getY()))
+		{
+			return null; // the map you're on: it opens on you, as always
+		}
+		for (int i = Math.max(0, progress); i < tiles.length; i++)
+		{
+			int tile = tiles[i];
+			if (PathTile.y(tile) >= 6400 && opened.surfaceContainsPosition(PathTile.x(tile), PathTile.y(tile)))
+			{
+				return new WorldPoint(PathTile.x(tile), PathTile.y(tile), 0);
+			}
+		}
+		return null;
 	}
 
 	/** No layer opened for a transport link: move the map there on its own. */
@@ -558,6 +622,8 @@ public class ChunkPathing
 		}
 		// Whoever asked for this path (a task, Quest Helper) says so after; a fresh one is nobody's.
 		taskPath = null;
+		toNpc = false;
+		nearHidden = false;
 		fromQuestHelper = false;
 		questStart = false;
 		this.fallback = new HashSet<>(fallback);
@@ -578,9 +644,19 @@ public class ChunkPathing
 		search();
 	}
 
+	/** Client thread: the same path on to a new spot (an NPC that's moved), the old line kept until the new one's ready. */
+	private void retarget(int tile)
+	{
+		target = tile;
+		reached = false;
+		search();
+	}
+
 	public void clear()
 	{
+		nearHidden = false;
 		taskPath = null;
+		toNpc = false;
 		fromQuestHelper = false;
 		questStart = false;
 		generation.incrementAndGet();
@@ -626,18 +702,19 @@ public class ChunkPathing
 		CollisionMap tiles = map;
 		Set<Integer> extra = fallback;
 		RouteStyle style = config.routeStyle();
+		int budget = config.travelBudget();
 		executor.submit(() ->
 		{
 			try
 			{
-				ChunkPathfinder.Result result = ChunkPathfinder.find(tiles, links, open::contains, start, goal, style,
+				ChunkPathfinder.Result result = ChunkPathfinder.find(tiles, links, open::contains, start, goal, style, budget,
 					() -> generation.get() != run);
 				if (!result.reached && !extra.isEmpty() && generation.get() == run)
 				{
 					// Your chunks don't get there: try again through the quest's chunks too.
 					Set<Integer> wider = new HashSet<>(open);
 					wider.addAll(extra);
-					ChunkPathfinder.Result through = ChunkPathfinder.find(tiles, links, wider::contains, start, goal, style,
+					ChunkPathfinder.Result through = ChunkPathfinder.find(tiles, links, wider::contains, start, goal, style, budget,
 						() -> generation.get() != run);
 					if (through.reached)
 					{
@@ -650,7 +727,7 @@ public class ChunkPathing
 					// Out of reach only for want of a level, an item or a quest on the way: show
 					// that way, and say what it needs, rather than stopping somewhere beside it.
 					Map<Integer, List<Transports.Link>> any = new HashMap<>(transports.everything());
-					ChunkPathfinder.Result needing = ChunkPathfinder.find(tiles, any, open::contains, start, goal, style,
+					ChunkPathfinder.Result needing = ChunkPathfinder.find(tiles, any, open::contains, start, goal, style, budget,
 						() -> generation.get() != run);
 					if (needing.reached && generation.get() == run)
 					{
@@ -678,7 +755,7 @@ public class ChunkPathing
 						// No teleporting off just to end up nearer something out of reach.
 						Map<Integer, List<Transports.Link>> walking = new HashMap<>(links);
 						walking.remove(Transports.ANYWHERE);
-						result = ChunkPathfinder.find(tiles, walking, open::contains, start, goal, style, () -> generation.get() != run);
+						result = ChunkPathfinder.find(tiles, walking, open::contains, start, goal, style, budget, () -> generation.get() != run);
 					}
 				}
 				if (generation.get() != run)
@@ -838,6 +915,11 @@ public class ChunkPathing
 	// The tracked task this path heads for, and whether it's still only to its chunk (no NPC seen yet).
 	private String taskPath;
 	private boolean toChunkOnly;
+	// A task path's line hidden because you're nearly there (within NEAR steps of its tile).
+	private boolean nearHidden;
+	private static final int NEAR = 8;
+	// The path is after the task's NPC: it follows it every tick, and on to the next once it dies.
+	private boolean toNpc;
 	private String lastTracked;
 
 	/**
@@ -895,25 +977,27 @@ public class ChunkPathing
 		{
 			return;
 		}
-		int npc = taskNpcTile(task);
+		int region = core.findRegionForTask(task.getTaskId());
+		// Where the task's done, when that's known (a boss's entrance, a shop, an altar), else
+		// its chunk; either way its NPC instead once one's in sight, unless its tile is the place to be.
+		int exact = region > 0 ? TaskTiles.tile(task.getTaskId(), region) : -1;
+		boolean tileOnly = exact >= 0 && TaskTiles.tileOnly(task.getTaskId(), region);
+		int npc = tileOnly ? -1 : taskNpcTile(task);
 		if (npc >= 0)
 		{
 			pathTo(npc);
 			taskPath = task.getTaskId();
 			toChunkOnly = false;
+			toNpc = true;
 			return;
 		}
-		int region = core.findRegionForTask(task.getTaskId());
 		if (region <= 0)
 		{
 			return;
 		}
-		// Where the task's done, when that's known (a boss's entrance, a shop, an altar), else
-		// its chunk; either way its NPC instead once one's in sight.
-		int exact = TaskTiles.tile(task.getTaskId(), region);
 		pathTo(exact >= 0 ? exact : walkableNear(region));
 		taskPath = task.getTaskId();
-		toChunkOnly = true;
+		toChunkOnly = !tileOnly;
 	}
 
 	/** The nearest of the task's NPCs in the scene (by id, or by the names it's outlined by), or -1. */
@@ -939,7 +1023,7 @@ public class ChunkPathing
 		int bestDistance = Integer.MAX_VALUE;
 		for (NPC npc : client.getTopLevelWorldView().npcs())
 		{
-			if (npc == null || !ids.contains(npc.getId()) && (npc.getName() == null || !names.contains(npc.getName().toLowerCase())))
+			if (npc == null || npc.isDead() || !ids.contains(npc.getId()) && (npc.getName() == null || !names.contains(npc.getName().toLowerCase())))
 			{
 				continue;
 			}
@@ -1032,6 +1116,18 @@ public class ChunkPathing
 				pathTo(npc);
 				taskPath = id;
 				toChunkOnly = false;
+				toNpc = true;
+			}
+		}
+		else if (taskPath != null && toNpc && tracked != null && taskPath.equals(id))
+		{
+			// Stay on it as it moves; once it's dead, on to the nearest of the rest.
+			int npc = taskNpcTile(tracked);
+			Player player = client.getLocalPlayer();
+			int here = player == null ? -1 : PathTile.pack(WorldPoint.fromLocalInstance(client, player.getLocalLocation()));
+			if (npc >= 0 && (PathTile.distance(npc, target) > 1 || path == null && here >= 0 && PathTile.distance(npc, here) > 1))
+			{
+				retarget(npc);
 			}
 		}
 	}
@@ -1065,13 +1161,42 @@ public class ChunkPathing
 		}
 		Player player = client.getLocalPlayer();
 		int[] tiles = path;
+		if (player != null && tiles == null && nearHidden && !searching)
+		{
+			// Its line was hidden once you were close: back if you wander off again.
+			int at = PathTile.pack(WorldPoint.fromLocalInstance(client, player.getLocalLocation()));
+			if (taskPath == null || PathTile.distance(at, target) > NEAR + 7)
+			{
+				nearHidden = false;
+				if (taskPath != null)
+				{
+					retarget(target);
+				}
+			}
+			return;
+		}
 		if (player == null || tiles == null || searching)
 		{
 			return;
 		}
 		int here = PathTile.pack(WorldPoint.fromLocalInstance(client, player.getLocalLocation()));
+		if (reached && taskPath != null && !toNpc && !toChunkOnly && tiles.length - 1 - progress <= NEAR
+			&& PathTile.distance(here, target) <= NEAR)
+		{
+			// A few steps from where the task's done (its tree, rock, patch or fishing spot is in
+			// sight): the line goes, as it does beside an NPC.
+			path = null;
+			nearHidden = true;
+			return;
+		}
 		if (reached && PathTile.distance(here, target) <= 1)
 		{
+			if (toNpc && taskPath != null)
+			{
+				// Beside the NPC: the line goes, but it's still followed (and the next one after it).
+				path = null;
+				return;
+			}
 			clear();
 			return;
 		}
@@ -1123,7 +1248,8 @@ public class ChunkPathing
 		{
 			clientThread.invoke(this::clear);
 		}
-		else if (ChunkBlazerUiConfig.GROUP.equals(event.getGroup()) && "routeStyle".equals(event.getKey()))
+		else if (ChunkBlazerUiConfig.GROUP.equals(event.getGroup()) && ("routeStyle".equals(event.getKey())
+			|| "travelBudget".equals(event.getKey())))
 		{
 			// The path showing is found again the new way.
 			clientThread.invoke(() ->
