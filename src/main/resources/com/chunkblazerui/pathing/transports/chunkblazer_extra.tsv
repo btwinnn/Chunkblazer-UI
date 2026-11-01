@@ -3,3 +3,17 @@
 # Heroes' Guild staircase (the guild itself needs Heroes' Quest)
 2894 3513 0	2896 3512 1	Climb-up Staircase 16671			Heroes' Quest			1	
 2896 3512 1	2894 3513 0	Climb-down Staircase 16673			Heroes' Quest			1	
+# Recorded in game with the debug link recorder (1 Nov 2026)
+2310 2919 0	2167 9308 0	Enter Cave 40736						2	
+2167 9308 0	2310 2919 0	Exit Opening 40737						2	
+3285 3492 1	3285 3496 0	Climb-down Staircase 11799						2	
+3285 3496 0	3285 3492 1	Climb-up Staircase 11797						2	
+2578 2840 0	2578 2838 1	Cross Gangplank 31756						2	
+2578 2837 1	2578 2839 0	Cross Gangplank 31756						2	
+2683 3263 1	2683 3266 0	Cross Gangplank 2086						2	
+3361 3149 0	3366 11483 0	Enter Cave 44635						2	
+3366 11483 0	3361 3148 0	Exit Exit 44636						2	
+3364 3304 0	3369 3307 1	Climb-up Stairs 10771						2	
+3362 3304 0	3357 3307 1	Climb-up Stairs 10775						2	
+3488 9510 2	3226 3108 0	Climb-up Rope 3829						2	
+3307 2958 0	3206 9379 0	Climb-down Smokey well 6279						2	

@@ -317,6 +317,7 @@ public class TaskWindow implements TaskWindowHook
 	public void close()
 	{
 		open = false;
+		pathPage = false;
 		clientThread.invokeLater(this::closeSearchInput);
 		lists.pinnedChunk = null;
 		finishNew();
@@ -1466,8 +1467,46 @@ public class TaskWindow implements TaskWindowHook
 	 * borders, popups, sounds, chat messages), colours, keybinds and server sync are in
 	 * RuneLite's settings panel, so they're there with or without ChunkBlazer UI.
 	 */
+	// Shortest path's own settings page (its Settings button), in the order it works things out.
+	private volatile boolean pathPage;
+	private List<Setting> pathSettings;
+
 	private List<Setting> settings()
 	{
+		if (pathPage)
+		{
+			if (pathSettings == null)
+			{
+				pathSettings = new ArrayList<>(Arrays.asList(
+					heading("Shortest path"),
+					withAction(new Setting("All settings", "Back to the rest of the settings.", "", () -> null, null, 0, 0, 0),
+						"Back", () ->
+						{
+							pathPage = false;
+							patchScroll = 0;
+						}),
+					toggle("Shortest path", "shortestPath", config::shortestPath,
+						"1. Paths on or off: Path here, the map's path key, Quest Helper's steps, tracked tasks and the quest Calc button."),
+					choice("Route", "routeStyle", config::routeStyle, RouteStyle.values(),
+						"2. How it picks its way. Fastest: quickest there, teleporting only for walks over 80 steps. Scenic: walks wherever it can."),
+					new Setting("Travel cost", "3. The most coins a whole path may spend on fares (charters, boats, carts). - and + change it by 1,000.",
+						"travelBudget", config::travelBudget, null, 0, 100000, 1000),
+					toggle("Walking path too", "showWalkingPath", config::showWalkingPath,
+						"4. When a path starts with a teleport, the way on foot shows too (in blue). The X by the teleport under your feet walks instead."),
+					toggle("Path line", "showPathLine", config::showPathLine,
+						"5. Draw the path in game, on the minimap and the world map (the path button on the task box does the same)."),
+					keybind("Set path", "pathKey", config::pathKey,
+						"6. Hold this and click the world map to set a path there, or clear the one showing. Click, then press the new key."),
+					heading("Transport it may use")));
+				for (String[] kind : com.chunkblazerui.pathing.ChunkPathing.KINDS)
+				{
+					String key = com.chunkblazerui.pathing.ChunkPathing.USE_PREFIX + kind[0];
+					pathSettings.add(toggle(kind[1], key, () -> !"false".equals(configManager.getConfiguration(ChunkBlazerUiConfig.GROUP, key)),
+						"Paths may use " + kind[1].toLowerCase() + " (when you can: levels, quests and items are checked). Off: never."));
+				}
+			}
+			return pathSettings;
+		}
 		if (settings == null)
 		{
 			List<Setting> all = new ArrayList<>(Arrays.asList(
@@ -1498,15 +1537,18 @@ public class TaskWindow implements TaskWindowHook
 					"Outline items your tasks need (gear, tools) in your inventory, bank and shops."),
 				toggle("Right-click Tasks menu", "taskRightClickMenu", config::taskRightClickMenu,
 					"Adds a Tasks submenu when right-clicking NPCs and objects your tasks need, to track one."),
-				toggle("Shortest path", "shortestPath", config::shortestPath,
-					"Paths through your unlocked chunks (Path here, the map's path key, Quest Helper) and the quest Calc button."),
+				withAction(toggle("Shortest path", "shortestPath", config::shortestPath,
+					"Paths through your unlocked chunks (Path here, the map's path key, Quest Helper) and the quest Calc button. Settings: how it picks its way."),
+					"Settings", () ->
+					{
+						pathPage = true;
+						patchScroll = 0;
+					}),
 				heading("Keybinds"),
 				keybind("View chunk tasks", "worldMapTasksKey", () -> coreKey("worldMapTasksKey", Keybind.CTRL),
 					"Hold this and click an unlocked chunk on the world map to see its tasks. Click, then press the new key."),
 				keybind("Unlock chunk", "worldMapUnlockKey", () -> coreKey("worldMapUnlockKey", Keybind.SHIFT),
 					"Hold this and click a chunk next to yours on the world map to unlock it. Click, then press the new key."),
-				keybind("Set path", "pathKey", config::pathKey,
-					"Hold this and click the world map to set a path there, or clear the one showing. Click, then press the new key."),
 				keyChoice("Task tooltip key", "taskTooltipKey", config::taskTooltipKey, TaskTooltipKey.values(),
 					"Hold this key over an NPC or object to list its tasks in a tooltip (an assist). Click to change."),
 				heading("World map"),
@@ -1515,10 +1557,6 @@ public class TaskWindow implements TaskWindowHook
 				toggle("Keys legend", "showMapKeys", config::showMapKeys,
 					"Show the world map's click keys (tasks, path) in its bottom-right corner."),
 				heading("In game"),
-				choice("Route", "routeStyle", config::routeStyle, RouteStyle.values(),
-					"How paths pick their way. Fastest: quickest there, teleporting only for walks over 80 steps. Scenic: walks wherever it can. Click to change."),
-				new Setting("Travel cost", "The most coins a whole path may spend on fares (charters, boats, carts). - and + change it by 1,000.",
-					"travelBudget", config::travelBudget, null, 0, 100000, 1000),
 				toggle("Sticky task viewer", "stickyTaskWindow", config::stickyTaskWindow,
 					"Nothing closes the task viewer but you (its X, Esc or the Tasks orb): not clicking in game, not the world map."),
 				toggle("Chunk name banner", "showChunkNamePopups", config::showChunkNamePopups,

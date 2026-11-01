@@ -160,6 +160,30 @@ public class ChunkPathing
 		return name == null || name.startsWith("Unknown") ? "there" : name.replaceAll("\\s*\\(\\d+\\)$", "").trim();
 	}
 
+	/** Shortest path's settings: each kind of transport it may use, by table, with its name there. */
+	public static final String[][] KINDS = {
+		{"agility_shortcuts", "Agility shortcuts"}, {"teleportation_spells", "Teleport spells"},
+		{"teleportation_spells_home", "Home teleports"}, {"teleportation_items", "Teleport items (jewellery, tablets)"},
+		{"teleportation_minigames", "Minigame teleports"}, {"fairy_rings", "Fairy rings"}, {"spirit_trees", "Spirit trees"},
+		{"gnome_gliders", "Gnome gliders"}, {"charter_ships", "Charter ships"}, {"ships", "Ships"}, {"boats", "Boats"},
+		{"canoes", "Canoes"}, {"hot_air_balloons", "Hot air balloons"}, {"magic_carpets", "Magic carpets"},
+		{"magic_mushtrees", "Magic mushtrees"}, {"minecarts", "Minecarts"}, {"quetzals", "Quetzals"}};
+	/** A kind's on/off is kept under this prefix and its table's name ("pathUse_fairy_rings"); on unless set false. */
+	public static final String USE_PREFIX = "pathUse_";
+
+	private java.util.Set<String> kindsOff()
+	{
+		java.util.Set<String> turnedOff = new HashSet<>();
+		for (String[] kind : KINDS)
+		{
+			if ("false".equals(configManager.getConfiguration(ChunkBlazerUiConfig.GROUP, USE_PREFIX + kind[0])))
+			{
+				turnedOff.add(kind[0]);
+			}
+		}
+		return turnedOff;
+	}
+
 	/** Whether the path's line is drawn (the tracked task box's path button hides it). */
 	boolean lineShown()
 	{
@@ -178,6 +202,14 @@ public class ChunkPathing
 		@Override
 		public MouseEvent mousePressed(MouseEvent event)
 		{
+			// The X on the teleport under your feet: walk instead.
+			java.awt.Rectangle skip = overlays == null ? null : overlays.teleportSkip();
+			if (skip != null && event.getButton() == MouseEvent.BUTTON1 && skip.contains(event.getPoint()))
+			{
+				clientThread.invoke(ChunkPathing.this::skipTeleport);
+				event.consume();
+				return event;
+			}
 			// A transport's link on the world map: the map moves to where it comes out.
 			Widget map = client.getWidget(InterfaceID.Worldmap.MAP_CONTAINER);
 			int goes = overlays == null || map == null || event.getButton() != MouseEvent.BUTTON1
@@ -426,6 +458,7 @@ public class ChunkPathing
 		}
 		if (usable == null || fresh || usableAge >= TRANSPORT_REFRESH_TICKS)
 		{
+			Transports.off = kindsOff();
 			Map<Integer, List<Transports.Link>> now = transports.usable(client);
 			if (!now.equals(usable))
 			{
@@ -624,6 +657,8 @@ public class ChunkPathing
 		taskPath = null;
 		toNpc = false;
 		nearHidden = false;
+		noTeleport = false;
+		walkPath = null;
 		fromQuestHelper = false;
 		questStart = false;
 		this.fallback = new HashSet<>(fallback);
@@ -655,6 +690,8 @@ public class ChunkPathing
 	public void clear()
 	{
 		nearHidden = false;
+		noTeleport = false;
+		walkPath = null;
 		taskPath = null;
 		toNpc = false;
 		fromQuestHelper = false;
@@ -693,7 +730,10 @@ public class ChunkPathing
 		}
 		// Wherever you're standing counts, or you couldn't step off it.
 		open.add(PathTile.region(start));
-		Map<Integer, List<Transports.Link>> links = usableNow(false);
+		Map<Integer, List<Transports.Link>> usableLinks = usableNow(false);
+		// Teleports turned down for this trip (the X on the teleport under your feet): walking only.
+		Map<Integer, List<Transports.Link>> links = noTeleport && usableLinks != null ? withoutTeleports(usableLinks) : usableLinks;
+		boolean walkToo = config.showWalkingPath() && !noTeleport;
 		int goal = target;
 		int run = generation.incrementAndGet();
 		searching = true;
@@ -760,6 +800,19 @@ public class ChunkPathing
 				{
 					return;
 				}
+				// Starting with a teleport: the way on foot too, to pick between them.
+				int[] walk = null;
+				if (walkToo && result.reached && teleportsFirst(result.path, links))
+				{
+					ChunkPathfinder.Result walking = ChunkPathfinder.find(tiles, withoutTeleports(links), open::contains, start, goal,
+						style, budget, () -> generation.get() != run);
+					walk = walking.reached ? walking.path : null;
+				}
+				if (generation.get() != run)
+				{
+					return;
+				}
+				walkPath = walk;
 				path = result.path;
 				reached = result.reached;
 				progress = 0;
@@ -810,6 +863,41 @@ public class ChunkPathing
 	}
 
 	/** Whether the path's first step is a teleport. */
+	/** The same transports with the teleports left out. */
+	private static Map<Integer, List<Transports.Link>> withoutTeleports(Map<Integer, List<Transports.Link>> links)
+	{
+		Map<Integer, List<Transports.Link>> walking = new HashMap<>(links);
+		walking.remove(Transports.ANYWHERE);
+		return walking;
+	}
+
+	/** The way there on foot, shown beside a path that starts with a teleport; null for none. */
+	int[] walkPath()
+	{
+		return walkPath;
+	}
+
+	/**
+	 * The X on the teleport under your feet: no teleport this trip, the way on foot instead
+	 * (straight away when it's already worked out). Client thread.
+	 */
+	void skipTeleport()
+	{
+		noTeleport = true;
+		int[] walk = walkPath;
+		walkPath = null;
+		if (walk != null)
+		{
+			path = walk;
+			reached = true;
+			progress = 0;
+		}
+		else if (target >= 0)
+		{
+			search();
+		}
+	}
+
 	private static boolean teleportsFirst(int[] path, Map<Integer, List<Transports.Link>> links)
 	{
 		List<Transports.Link> teleports = links == null ? null : links.get(Transports.ANYWHERE);
@@ -913,6 +1001,9 @@ public class ChunkPathing
 	// The tracked task this path heads for, and whether it's still only to its chunk (no NPC seen yet).
 	private String taskPath;
 	private boolean toChunkOnly;
+	// The way on foot beside a path that starts with a teleport; and teleports turned down this trip.
+	private volatile int[] walkPath;
+	private volatile boolean noTeleport;
 	// A task path's line hidden because you're nearly there (within NEAR steps of its tile).
 	private boolean nearHidden;
 	private static final int NEAR = 8;
@@ -1288,11 +1379,15 @@ public class ChunkPathing
 			clientThread.invoke(this::clear);
 		}
 		else if (ChunkBlazerUiConfig.GROUP.equals(event.getGroup()) && ("routeStyle".equals(event.getKey())
-			|| "travelBudget".equals(event.getKey())))
+			|| "travelBudget".equals(event.getKey()) || event.getKey().startsWith(USE_PREFIX)))
 		{
 			// The path showing is found again the new way.
 			clientThread.invoke(() ->
 			{
+				if (event.getKey().startsWith(USE_PREFIX))
+				{
+					usableNow(true);
+				}
 				if (target >= 0)
 				{
 					path = null;

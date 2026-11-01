@@ -89,6 +89,8 @@ public final class Transports
 		public final int kind;
 		/** A teleport's highest Wilderness level it works from, or -1 for anything else. */
 		final int maxWilderness;
+		/** The table it's from ("fairy_rings", "teleportation_items"), to turn its kind off in Shortest path's settings. */
+		String category = "";
 		/** The coins it costs (a charter's fare), or 0. */
 		public final int coins;
 
@@ -262,7 +264,31 @@ public final class Transports
 		return Arrays.stream(list.split(",")).map(String::trim).filter(s -> !s.isEmpty()).mapToInt(Integer::parseInt).toArray();
 	}
 
+	/** The kinds of transport turned off in Shortest path's settings (their table names). */
+	public static volatile java.util.Set<String> off = Collections.emptySet();
+
 	private void loadFile(String file) throws IOException
+	{
+		int linksBefore = links.size();
+		int teleportsBefore = teleports.size();
+		try
+		{
+			readFile(file);
+		}
+		finally
+		{
+			for (int i = linksBefore; i < links.size(); i++)
+			{
+				links.get(i).category = file;
+			}
+			for (int i = teleportsBefore; i < teleports.size(); i++)
+			{
+				teleports.get(i).category = file;
+			}
+		}
+	}
+
+	private void readFile(String file) throws IOException
 	{
 		boolean teleport = file.startsWith("teleportation_");
 		boolean fairy = file.equals("fairy_rings");
@@ -542,9 +568,10 @@ public final class Transports
 		Map<String, Boolean> quests = new HashMap<>();
 		Map<Integer, Integer> carried = carried(client);
 		Map<Integer, List<Link>> out = new HashMap<>();
+		java.util.Set<String> turnedOff = off;
 		for (Link link : links)
 		{
-			boolean ok = true;
+			boolean ok = !turnedOff.contains(link.category);
 			for (Requirement need : link.requirements)
 			{
 				Boolean met = checked.get(need);
@@ -563,7 +590,7 @@ public final class Transports
 		int wilderness = wildernessLevel(client);
 		for (Link link : teleports)
 		{
-			if (wilderness > link.maxWilderness)
+			if (wilderness > link.maxWilderness || turnedOff.contains(link.category))
 			{
 				continue;
 			}

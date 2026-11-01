@@ -56,6 +56,14 @@ final class ChunkPathOverlays
 	private static final Color PATH = new Color(255, 150, 40);
 	private static final Color STOPPED = new Color(255, 80, 80);
 	private static final Color TARGET = new Color(255, 215, 90);
+	private static final Color WALK = new Color(110, 190, 255);
+	// The X beside the teleport under your feet, on screen this frame (null when there isn't one).
+	private volatile Rectangle teleportSkip;
+
+	Rectangle teleportSkip()
+	{
+		return teleportSkip;
+	}
 
 	private final ChunkPathing pathing;
 	private final Client client;
@@ -128,6 +136,7 @@ final class ChunkPathOverlays
 
 		public Dimension render(Graphics2D graphics)
 		{
+			teleportSkip = null;
 			int[] path = drawnPath();
 			if (path == null)
 			{
@@ -135,11 +144,43 @@ final class ChunkPathOverlays
 			}
 			WorldView view = client.getTopLevelWorldView();
 			int plane = view.getPlane();
+			Object aa = Skin.smooth(graphics);
+			Stroke oldStroke = graphics.getStroke();
+			int[] walk = pathing.walkPath();
+			if (walk != null)
+			{
+				// The way on foot, beside a path that starts with a teleport: thinner, in blue.
+				java.awt.geom.Path2D onFoot = groundLine(view, plane, walk, 0);
+				graphics.setStroke(new BasicStroke(4f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+				graphics.setColor(new Color(0, 0, 0, 90));
+				graphics.draw(onFoot);
+				graphics.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+				graphics.setColor(WALK);
+				graphics.draw(onFoot);
+			}
+			java.awt.geom.Path2D line = groundLine(view, plane, path, Math.max(0, pathing.progress()));
+			// A dark edge under it, so it reads on grass, sand and snow alike.
+			graphics.setStroke(new BasicStroke(5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+			graphics.setColor(new Color(0, 0, 0, 110));
+			graphics.draw(line);
+			graphics.setStroke(new BasicStroke(2.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+			graphics.setColor(PATH);
+			graphics.draw(line);
+			stepIcons(graphics, view, plane, path);
+			graphics.setStroke(oldStroke);
+			nextTransport(graphics, view, plane, path);
+			Skin.restore(graphics, aa);
+			return null;
+		}
+
+		/** A path from {@code from} on as a line along the ground, broken where it leaves the scene or takes a transport. */
+		private java.awt.geom.Path2D groundLine(WorldView view, int plane, int[] path, int from)
+		{
 			int last = path.length - 1;
 			java.awt.geom.Path2D line = new java.awt.geom.Path2D.Double();
 			boolean drawing = false;
 			int previous = -1;
-			for (int i = Math.max(0, pathing.progress()); i <= last; i++)
+			for (int i = from; i <= last; i++)
 			{
 				int tile = path[i];
 				LocalPoint local = PathTile.z(tile) == plane ? LocalPoint.fromWorld(view, PathTile.x(tile), PathTile.y(tile)) : null;
@@ -163,20 +204,7 @@ final class ChunkPathOverlays
 				}
 				previous = tile;
 			}
-			Object aa = Skin.smooth(graphics);
-			Stroke oldStroke = graphics.getStroke();
-			// A dark edge under it, so it reads on grass, sand and snow alike.
-			graphics.setStroke(new BasicStroke(5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-			graphics.setColor(new Color(0, 0, 0, 110));
-			graphics.draw(line);
-			graphics.setStroke(new BasicStroke(2.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-			graphics.setColor(PATH);
-			graphics.draw(line);
-			stepIcons(graphics, view, plane, path);
-			graphics.setStroke(oldStroke);
-			nextTransport(graphics, view, plane, path);
-			Skin.restore(graphics, aa);
-			return null;
+			return line;
 		}
 
 		/**
@@ -262,14 +290,17 @@ final class ChunkPathOverlays
 		{
 			int i = nextTravelAt(path);
 			Transports.Link link = i < 0 ? null : pathing.link(path[i], path[i + 1]);
-			// Where it's taken: its own tile, or for a teleport, the tile you cast it from.
+			// Where it's taken: its own tile, or for a teleport, under your feet wherever you are.
 			int from = i < 0 ? -1 : path[i];
-			if (link == null || PathTile.z(from) != plane)
+			boolean teleport = link != null && link.kind == Transports.TELEPORT;
+			if (link == null || !teleport && PathTile.z(from) != plane)
 			{
 				return;
 			}
-			LocalPoint local = LocalPoint.fromWorld(view, PathTile.x(from), PathTile.y(from));
-			Point at = local == null ? null : Perspective.localToCanvas(client, local, plane, 150);
+			net.runelite.api.Player me = client.getLocalPlayer();
+			LocalPoint local = teleport ? (me == null ? null : me.getLocalLocation())
+				: LocalPoint.fromWorld(view, PathTile.x(from), PathTile.y(from));
+			Point at = local == null ? null : Perspective.localToCanvas(client, local, plane, teleport ? 0 : 150);
 			if (at == null)
 			{
 				return;
@@ -287,6 +318,20 @@ final class ChunkPathOverlays
 			graphics.drawString(text, x + 5, y + metrics.getAscent() + 3);
 			graphics.setColor(TARGET);
 			graphics.drawString(text, x + 4, y + metrics.getAscent() + 2);
+			if (teleport)
+			{
+				// An X beside it: no teleport, walk (the blue line) instead.
+				Rectangle skip = new Rectangle(x + width + 3, y, height, height);
+				net.runelite.api.Point mouse = client.getMouseCanvasPosition();
+				boolean hover = mouse != null && skip.contains(mouse.getX(), mouse.getY());
+				graphics.setColor(new Color(20, 16, 12, 190));
+				graphics.fillRoundRect(skip.x, skip.y, skip.width, skip.height, 4, 4);
+				graphics.setColor(hover ? Color.WHITE : STOPPED);
+				graphics.setStroke(new BasicStroke(1.6f));
+				graphics.drawLine(skip.x + 3, skip.y + 3, skip.x + skip.width - 4, skip.y + skip.height - 4);
+				graphics.drawLine(skip.x + 3, skip.y + skip.height - 4, skip.x + skip.width - 4, skip.y + 3);
+				teleportSkip = skip;
+			}
 		}
 	}
 
@@ -427,6 +472,22 @@ final class ChunkPathOverlays
 			Object aa = Skin.smooth(graphics);
 			Stroke oldStroke = graphics.getStroke();
 			graphics.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+			int[] walk = pathing.walkPath();
+			if (walk != null)
+			{
+				graphics.setColor(WALK);
+				Point was = null;
+				for (int i = 0; i < walk.length; i++)
+				{
+					LocalPoint local = PathTile.z(walk[i]) == plane ? LocalPoint.fromWorld(view, PathTile.x(walk[i]), PathTile.y(walk[i])) : null;
+					Point dot = local == null ? null : Perspective.localToMinimap(client, local);
+					if (dot != null && was != null && PathTile.distance(walk[i - 1], walk[i]) <= 1)
+					{
+						graphics.drawLine(was.getX(), was.getY(), dot.getX(), dot.getY());
+					}
+					was = dot;
+				}
+			}
 			graphics.setColor(PATH);
 			Point before = null;
 			int previous = -1;
@@ -684,6 +745,24 @@ final class ChunkPathOverlays
 			graphics.setClip(bounds);
 			Skin.smooth(graphics);
 			Stroke solid = new BasicStroke(Math.max(2f, zoom * 0.6f), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+			int[] walk = pathing.walkPath();
+			if (walk != null)
+			{
+				// The way on foot, beside a path that starts with a teleport.
+				graphics.setStroke(new BasicStroke(Math.max(1.5f, zoom * 0.45f), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+				graphics.setColor(WALK);
+				for (int i = 1; i < walk.length; i++)
+				{
+					if (PathTile.distance(walk[i - 1], walk[i]) > 1)
+					{
+						continue;
+					}
+					graphics.drawLine(midX + (int) ((PathTile.x(walk[i - 1]) - centre.getX() + 0.5f) * zoom),
+						midY - (int) ((PathTile.y(walk[i - 1]) - centre.getY() + 0.5f) * zoom),
+						midX + (int) ((PathTile.x(walk[i]) - centre.getX() + 0.5f) * zoom),
+						midY - (int) ((PathTile.y(walk[i]) - centre.getY() + 0.5f) * zoom));
+				}
+			}
 			int start = Math.max(0, pathing.progress());
 			List<Object[]> links = new ArrayList<>();
 			net.runelite.api.Point mouse = client.getMouseCanvasPosition();

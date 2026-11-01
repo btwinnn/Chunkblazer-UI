@@ -89,6 +89,19 @@ public interface ChunkBlazerUiConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "showWalkingPath",
+		hidden = true, // the Shortest path settings page
+		name = "Walking Path Too",
+		description = "When a path starts with a teleport, also show the way on foot",
+		section = taskSection,
+		position = 30
+	)
+	default boolean showWalkingPath()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 		keyName = "travelBudget",
 		hidden = true, // the task window's Settings page (In game)
 		name = "Travel Cost",
