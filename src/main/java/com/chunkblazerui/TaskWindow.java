@@ -2937,6 +2937,11 @@ public class TaskWindow implements TaskWindowHook
 		unlockedBefore = null;
 	}
 
+	private static Set<String> newestOr(Set<String> newest)
+	{
+		return newest == null ? Collections.singleton("") : newest;
+	}
+
 	/** Chunks unlocked since the last look become the New tab's newest chunk, replacing the last. */
 	private void checkUnlocks()
 	{
@@ -2961,6 +2966,12 @@ public class TaskWindow implements TaskWindowHook
 				lists.storeIds(NEWEST_CHUNK_KEY, newest);
 				rowsBuiltAt = 0;
 			}
+		}
+		else if (!unlocked.isEmpty() && unlocked.size() <= 3 && !unlocked.containsAll(newestOr(lists.idSet(NEWEST_CHUNK_KEY))))
+		{
+			// A fresh start (Lumbridge just unlocked with the mode, or a run started over): its chunk is the newest.
+			lists.storeIds(NEWEST_CHUNK_KEY, new LinkedHashSet<>(unlocked));
+			rowsBuiltAt = 0;
 		}
 		unlockedBefore = new HashSet<>(unlocked);
 	}

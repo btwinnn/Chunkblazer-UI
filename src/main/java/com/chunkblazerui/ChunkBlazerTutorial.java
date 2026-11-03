@@ -2463,8 +2463,8 @@ public class ChunkBlazerTutorial extends Overlay implements TutorialHooks
 				targets.add(toward("ACTIVE", practiceTasks.get(0).getTaskId(), 0));
 				break;
 			case "track":
-				// Any task on the list showing (Active or New), or back to Active from anywhere else.
-				targets.add(toward(browser.isOnTab("NEW") ? "NEW" : "ACTIVE", browser.getFirstRowId(), 0));
+				// A task on the Active list: from the New tab (or anywhere else), its tab first.
+				targets.add(toward("ACTIVE", browser.getFirstRowId(), 0));
 				break;
 			case "save":
 				// The star on the tracked task's row (or the first one) on the Active list.
