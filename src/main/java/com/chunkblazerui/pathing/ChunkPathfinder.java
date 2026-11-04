@@ -27,7 +27,10 @@ package com.chunkblazerui.pathing;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import com.chunkblazerui.RouteStyle;
@@ -104,77 +107,140 @@ public final class ChunkPathfinder
 			{
 				break;
 			}
-			int x = PathTile.x(tile);
-			int y = PathTile.y(tile);
-			int z = PathTile.z(tile);
-			int n = 0;
-			if (map.n(x, y, z))
-			{
-				step[n++] = PathTile.pack(x, y + 1, z);
-			}
-			if (map.s(x, y, z))
-			{
-				step[n++] = PathTile.pack(x, y - 1, z);
-			}
-			if (map.e(x, y, z))
-			{
-				step[n++] = PathTile.pack(x + 1, y, z);
-			}
-			if (map.w(x, y, z))
-			{
-				step[n++] = PathTile.pack(x - 1, y, z);
-			}
-			int straight = n;
-			if (map.ne(x, y, z) && corner(open, x, y, 1, 1))
-			{
-				step[n++] = PathTile.pack(x + 1, y + 1, z);
-			}
-			if (map.nw(x, y, z) && corner(open, x, y, -1, 1))
-			{
-				step[n++] = PathTile.pack(x - 1, y + 1, z);
-			}
-			if (map.se(x, y, z) && corner(open, x, y, 1, -1))
-			{
-				step[n++] = PathTile.pack(x + 1, y - 1, z);
-			}
-			if (map.sw(x, y, z) && corner(open, x, y, -1, -1))
-			{
-				step[n++] = PathTile.pack(x - 1, y - 1, z);
-			}
-			// Coins spent getting here: a fare is only taken while the route's total stays in the travel budget.
-			int spent = visits.spent(tile);
-			for (int i = 0; i < n; i++)
-			{
-				relax(queue, visits, open, tile, step[i], at + (i < straight ? STRAIGHT : DIAGONAL), spent);
-			}
-			List<Transports.Link> out = links.get(tile);
-			if (out != null)
-			{
-				for (Transports.Link link : out)
-				{
-					if (spent + link.coins <= budget)
-					{
-						relax(queue, visits, open, tile, link.to, at + (link.cost + style.extra(link)) * STRAIGHT, spent + link.coins);
-					}
-				}
-			}
-			// Teleports go from where you start (into an open chunk only, like anything else).
-			List<Transports.Link> teleports = tile == start ? links.get(Transports.ANYWHERE) : null;
-			if (teleports != null)
-			{
-				for (Transports.Link link : teleports)
-				{
-					if (spent + link.coins <= budget)
-					{
-						relax(queue, visits, open, tile, link.to, at + (link.cost + style.extra(link)) * STRAIGHT, spent + link.coins);
-					}
-				}
-			}
+			expand(map, links, open, queue, visits, start, tile, at, style, budget, step);
 		}
 		// A target you can't stand on (a cave mouth, a door, an NPC's tile) counts as reached from
 		// right beside it: Quest Helper's "enter the stronghold" step is the entrance itself.
 		boolean beside = PathTile.z(closest) == PathTile.z(target) && near(closest, target) <= 2;
 		return new Result(visits.trace(start, closest), closest == target || beside);
+	}
+
+	/** Every step on from {@code tile} (reached at cost {@code at}) onto the queue. */
+	private static void expand(CollisionMap map, Map<Integer, List<Transports.Link>> links, IntPredicate open,
+		ChunkCalculator.LongHeap queue, Visits visits, int start, int tile, int at, RouteStyle style, int budget, int[] step)
+	{
+		int x = PathTile.x(tile);
+		int y = PathTile.y(tile);
+		int z = PathTile.z(tile);
+		int n = 0;
+		if (map.n(x, y, z))
+		{
+			step[n++] = PathTile.pack(x, y + 1, z);
+		}
+		if (map.s(x, y, z))
+		{
+			step[n++] = PathTile.pack(x, y - 1, z);
+		}
+		if (map.e(x, y, z))
+		{
+			step[n++] = PathTile.pack(x + 1, y, z);
+		}
+		if (map.w(x, y, z))
+		{
+			step[n++] = PathTile.pack(x - 1, y, z);
+		}
+		int straight = n;
+		if (map.ne(x, y, z) && corner(open, x, y, 1, 1))
+		{
+			step[n++] = PathTile.pack(x + 1, y + 1, z);
+		}
+		if (map.nw(x, y, z) && corner(open, x, y, -1, 1))
+		{
+			step[n++] = PathTile.pack(x - 1, y + 1, z);
+		}
+		if (map.se(x, y, z) && corner(open, x, y, 1, -1))
+		{
+			step[n++] = PathTile.pack(x + 1, y - 1, z);
+		}
+		if (map.sw(x, y, z) && corner(open, x, y, -1, -1))
+		{
+			step[n++] = PathTile.pack(x - 1, y - 1, z);
+		}
+		// Coins spent getting here: a fare is only taken while the route's total stays in the travel budget.
+		int spent = visits.spent(tile);
+		for (int i = 0; i < n; i++)
+		{
+			relax(queue, visits, open, tile, step[i], at + (i < straight ? STRAIGHT : DIAGONAL), spent);
+		}
+		List<Transports.Link> out = links.get(tile);
+		if (out != null)
+		{
+			for (Transports.Link link : out)
+			{
+				if (spent + link.coins <= budget)
+				{
+					relax(queue, visits, open, tile, link.to, at + (link.cost + style.extra(link)) * STRAIGHT, spent + link.coins);
+				}
+			}
+		}
+		// Teleports go from where you start (into an open chunk only, like anything else).
+		List<Transports.Link> teleports = tile == start ? links.get(Transports.ANYWHERE) : null;
+		if (teleports != null)
+		{
+			for (Transports.Link link : teleports)
+			{
+				if (spent + link.coins <= budget)
+				{
+					relax(queue, visits, open, tile, link.to, at + (link.cost + style.extra(link)) * STRAIGHT, spent + link.coins);
+				}
+			}
+		}
+	}
+
+	/**
+	 * How far each of {@code targets} is from {@code start} (a tile within 2 of it counts, as for a
+	 * path), in one search: its cost (for sorting) and that in tiles. Targets not
+	 * reached are left out.
+	 */
+	public static Map<Integer, int[]> costs(CollisionMap map, Map<Integer, List<Transports.Link>> links, IntPredicate open,
+		int start, Collection<Integer> targets, RouteStyle style, int budget, BooleanSupplier cancelled)
+	{
+		Map<Integer, List<Integer>> beside = new HashMap<>();
+		for (int target : targets)
+		{
+			for (int dx = -2; dx <= 2; dx++)
+			{
+				for (int dy = -2; dy <= 2; dy++)
+				{
+					int near = PathTile.pack(PathTile.x(target) + dx, PathTile.y(target) + dy, PathTile.z(target));
+					beside.computeIfAbsent(near, k -> new ArrayList<>()).add(target);
+				}
+			}
+		}
+		Map<Integer, int[]> found = new HashMap<>();
+		int wanted = new HashSet<>(targets).size();
+		Visits visits = new Visits();
+		ChunkCalculator.LongHeap queue = new ChunkCalculator.LongHeap();
+		visits.put(start, 0, start, 0);
+		queue.add(start & 0xFFFFFFFFL);
+		int settled = 0;
+		int[] step = new int[8];
+		while (!queue.isEmpty() && found.size() < wanted)
+		{
+			long head = queue.poll();
+			int tile = (int) head;
+			int at = (int) (head >>> 32);
+			if (at > visits.cost(tile))
+			{
+				continue;
+			}
+			List<Integer> here = beside.get(tile);
+			if (here != null)
+			{
+				for (int target : here)
+				{
+					// In tiles walked: a teleport or fare counts as the walk it's worth, so the
+					// number shown always agrees with the order.
+					found.putIfAbsent(target, new int[]{at, (at + STRAIGHT / 2) / STRAIGHT});
+				}
+			}
+			if (++settled > MAX_TILES || (settled & 0xFFFF) == 0 && cancelled.getAsBoolean())
+			{
+				break;
+			}
+			expand(map, links, open, queue, visits, start, tile, at, style, budget, step);
+		}
+		return found;
 	}
 
 	/**

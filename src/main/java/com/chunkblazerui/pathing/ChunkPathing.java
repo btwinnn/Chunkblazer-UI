@@ -116,6 +116,8 @@ public class ChunkPathing
 	@Inject
 	private ChunkBlazerCore core;
 	@Inject
+	private javax.inject.Provider<com.chunkblazerui.TaskLists> lists;
+	@Inject
 	private MouseManager mouseManager;
 	@Inject
 	private KeyManager keyManager;
@@ -1276,6 +1278,141 @@ public class ChunkPathing
 		}
 	}
 
+	// How far each saved task is by path (task id -> cost), for sorting the saved list nearest
+	// first. One search reaches them all; it runs again as you walk (every 8 tiles, at most every
+	// 3 ticks), when the saved list or your chunks change, or once a minute.
+	private static volatile Map<String, Integer> savedDistance = Collections.emptyMap();
+	private int distanceAge;
+	private int distanceFrom = -1;
+	private Set<String> distanceFor = Collections.emptySet();
+	private volatile boolean distanceBusy;
+	private long distanceStamp;
+	private final Set<Integer> unreachable = ConcurrentHashMap.newKeySet();
+
+	public static Map<String, Integer> savedDistances()
+	{
+		return savedDistance;
+	}
+
+	// Each saved task's distance in tiles (transport counted as the walk it's worth), shown on its row.
+	private static volatile Map<String, Integer> savedTiles = Collections.emptyMap();
+
+	public static Map<String, Integer> savedTiles()
+	{
+		return savedTiles;
+	}
+
+	private void updateSavedDistances()
+	{
+		Player player = client.getLocalPlayer();
+		if (!config.savedByDistance())
+		{
+			savedDistance = Collections.emptyMap();
+			savedTiles = Collections.emptyMap();
+			distanceFor = Collections.emptySet();
+			return;
+		}
+		// Loads the path data the first time (without it nothing could be sorted until a path was asked for).
+		if (distanceBusy || searching || player == null || !ensureLoaded())
+		{
+			return;
+		}
+		int start = PathTile.pack(WorldPoint.fromLocalInstance(client, player.getLocalLocation()));
+		List<NuzlockeTask> saved = lists.get().savedTasks();
+		Set<String> ids = new HashSet<>();
+		saved.forEach(t -> ids.add(t.getTaskId()));
+		boolean changed = !ids.equals(distanceFor) || core.getLastUnlockChangeMs() != distanceStamp;
+		boolean moved = distanceFrom < 0 || PathTile.distance(start, distanceFrom) >= 8;
+		// While walking, at most every 3 ticks; standing still, once a minute.
+		if (saved.isEmpty() || !changed && (moved ? ++distanceAge < 3 : ++distanceAge < 100))
+		{
+			return;
+		}
+		if (changed)
+		{
+			unreachable.clear();
+		}
+		distanceAge = 0;
+		distanceFrom = start;
+		distanceFor = ids;
+		distanceStamp = core.getLastUnlockChangeMs();
+		Map<Integer, List<String>> spots = new HashMap<>();
+		for (NuzlockeTask task : saved)
+		{
+			int spot = taskSpot(task);
+			// A spot the last search couldn't reach would make every search cover the whole map: left out
+			// until the list or your chunks change.
+			if (spot >= 0 && !unreachable.contains(spot))
+			{
+				spots.computeIfAbsent(spot, k -> new ArrayList<>()).add(task.getTaskId());
+			}
+		}
+		if (spots.isEmpty())
+		{
+			return;
+		}
+		Set<Integer> open = new HashSet<>();
+		for (int region : map.regionIds())
+		{
+			if (quests.reachable(region) || quests.freeToEnter(region))
+			{
+				open.add(region);
+			}
+		}
+		open.add(PathTile.region(start));
+		Map<Integer, List<Transports.Link>> links = usableNow(false);
+		CollisionMap tiles = map;
+		RouteStyle style = config.routeStyle();
+		int budget = config.travelBudget();
+		distanceBusy = true;
+		executor.submit(() ->
+		{
+			try
+			{
+				Map<Integer, int[]> costs = ChunkPathfinder.costs(tiles, links, open::contains, start, spots.keySet(),
+					style, budget, () -> false);
+				Map<String, Integer> byTask = new HashMap<>();
+				Map<String, Integer> walked = new HashMap<>();
+				costs.forEach((spot, cost) -> spots.get(spot).forEach(id ->
+				{
+					byTask.put(id, cost[0]);
+					walked.put(id, cost[1]);
+				}));
+				savedDistance = byTask;
+				savedTiles = walked;
+				spots.keySet().stream().filter(spot -> !costs.containsKey(spot)).forEach(unreachable::add);
+			}
+			catch (RuntimeException e)
+			{
+				log.warn("Saved task distances failed", e);
+			}
+			finally
+			{
+				distanceBusy = false;
+			}
+		});
+	}
+
+	/** Where a task is done, for its distance (no NPC chasing, no side effects); -1 if unknown. */
+	private int taskSpot(NuzlockeTask task)
+	{
+		if (task == null || task.getTaskId() == null || QuestRequirements.isQuestTask(task))
+		{
+			return -1;
+		}
+		if (doneAnywhere(task))
+		{
+			return anywhereSpot(task);
+		}
+		int region = core.findRegionForTask(task.getTaskId());
+		if (region <= 0)
+		{
+			return -1;
+		}
+		int exact = TaskTiles.tile(task.getTaskId(), region);
+		return exact >= 0 ? exact : walkableNear(region);
+	}
+
 	@Subscribe
 	public void onGameTick(GameTick event)
 	{
@@ -1284,6 +1421,12 @@ public class ChunkPathing
 		if (enabled() && client.getGameState() == GameState.LOGGED_IN)
 		{
 			followTrackedTask();
+			updateSavedDistances();
+		}
+		else
+		{
+			savedDistance = Collections.emptyMap();
+			savedTiles = Collections.emptyMap();
 		}
 		// Checked once when the data's loaded; after that only when a path is worked out
 		// (usableNow), not over and over while the calculator's answer sits on screen.

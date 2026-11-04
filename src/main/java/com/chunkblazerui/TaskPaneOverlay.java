@@ -1021,7 +1021,12 @@ public class TaskPaneOverlay extends Overlay
 		// so the rest keep their order).
 		String hereChunk = lists.currentChunkName();
 		saved = new ArrayList<>(saved);
-		saved.sort(Comparator.comparing((NuzlockeTask t) -> !lists.isHere(t, hereChunk)));
+		// Sorted by distance already, when the shortest path has worked it out.
+		Map<String, Integer> away = com.chunkblazerui.pathing.ChunkPathing.savedTiles();
+		if (away.isEmpty())
+		{
+			saved.sort(Comparator.comparing((NuzlockeTask t) -> !lists.isHere(t, hereChunk)));
+		}
 		// Long names wrap onto a second line (and the card grows) rather than being cut off.
 		int width = body.width - 28;
 		List<List<String>> names = new ArrayList<>();
@@ -1035,7 +1040,8 @@ public class TaskPaneOverlay extends Overlay
 			List<QuestRequirements.Line> detail = paneExpanded.contains(task.getTaskId())
 				? keptDetail(fm, task, width) : Collections.emptyList();
 			details.add(detail);
-			total += 24 + 12 * names.get(names.size() - 1).size() + paneDetailHeight(detail);
+			total += 24 + 12 * names.get(names.size() - 1).size() + paneDetailHeight(detail)
+				+ (away.containsKey(task.getTaskId()) ? 12 : 0);
 		}
 		paneScroll = Math.max(0, Math.min(paneScroll, total - body.height));
 		boolean shift = client.isKeyPressed(KeyCode.KC_SHIFT);
@@ -1049,7 +1055,9 @@ public class TaskPaneOverlay extends Overlay
 			List<QuestRequirements.Line> detail = details.get(i);
 			// Each task is a small rounded card: its tier colour down the left, like the side
 			// panel's, and a thin progress bar along the bottom for counted tasks.
-			Rectangle row = new Rectangle(body.x + 4, y, body.width - 14, 20 + 12 * name.size() + paneDetailHeight(detail));
+			Integer tiles = away.get(task.getTaskId());
+			int extra = tiles == null ? 0 : 12;
+			Rectangle row = new Rectangle(body.x + 4, y, body.width - 14, 20 + 12 * name.size() + extra + paneDetailHeight(detail));
 			y += row.height + 4;
 			if (firstRow == null && row.intersects(body) && !QuestRequirements.isQuestTask(task))
 			{
@@ -1096,7 +1104,7 @@ public class TaskPaneOverlay extends Overlay
 			}
 			if (!detail.isEmpty())
 			{
-				int dy = row.y + 20 + 12 * name.size() + 2;
+				int dy = row.y + 20 + 12 * name.size() + extra + 2;
 				graphics.setColor(new Color(0, 0, 0, 60));
 				graphics.fillRect(row.x + 8, dy - 2, row.width - 12, paneDetailHeight(detail) - 2);
 				for (QuestRequirements.Line line : detail)
@@ -1126,6 +1134,12 @@ public class TaskPaneOverlay extends Overlay
 				row.x + 8 + fm.stringWidth(why), lineY);
 			graphics.setColor(SUBTEXT);
 			Skin.text(graphics, progress, row.x + row.width - 5 - fm.stringWidth(progress), lineY);
+			if (tiles != null)
+			{
+				// How far by path, on its own line, in the path's blue.
+				graphics.setColor(new Color(120, 190, 255));
+				Skin.text(graphics, tiles + (tiles == 1 ? " tile" : " tiles"), row.x + 8, lineY + 12);
+			}
 		}
 		return total;
 	}

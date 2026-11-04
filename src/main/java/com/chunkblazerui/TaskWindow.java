@@ -1493,6 +1493,8 @@ public class TaskWindow implements TaskWindowHook
 						"3. When a path starts with a teleport, the way on foot shows too (in blue). The X by the teleport under your feet walks instead."),
 					toggle("Path line", "showPathLine", config::showPathLine,
 						"4. Draw the path in game, on the minimap and the world map (the path button on the task box does the same)."),
+					toggle("Saved tasks by distance", "savedByDistance", config::savedByDistance,
+						"5. Saved tasks nearest first, by path through your chunks (worked out as you move). Off: in the order you saved them."),
 					heading("Transport it may use")));
 				String[][] kinds = com.chunkblazerui.pathing.ChunkPathing.KINDS;
 				for (int i = 0; i < kinds.length; i++)

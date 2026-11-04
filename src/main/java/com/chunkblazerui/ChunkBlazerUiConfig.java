@@ -89,6 +89,19 @@ public interface ChunkBlazerUiConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "savedByDistance",
+		hidden = true, // the Shortest path settings page
+		name = "Saved Tasks By Distance",
+		description = "Sort saved tasks nearest first, by the shortest path through your chunks",
+		section = taskSection,
+		position = 30
+	)
+	default boolean savedByDistance()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 		keyName = "showWalkingPath",
 		hidden = true, // the Shortest path settings page
 		name = "Walking Path Too",

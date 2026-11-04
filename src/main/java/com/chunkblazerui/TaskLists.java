@@ -160,7 +160,7 @@ public class TaskLists
 		List<NuzlockeTask> kept = saved;
 		if (kept != null && last != null && sameLists(from, last))
 		{
-			return new ArrayList<>(kept);
+			return byDistance(new ArrayList<>(kept));
 		}
 		Map<String, NuzlockeTask> byId = new HashMap<>();
 		pool(true).forEach(t -> byId.put(t.getTaskId(), t));
@@ -175,7 +175,18 @@ public class TaskLists
 		}
 		saved = list;
 		savedFrom = from;
-		return new ArrayList<>(list);
+		return byDistance(new ArrayList<>(list));
+	}
+
+	/** Nearest first when the shortest path has worked out how far they are; the rest after, as saved. */
+	private static List<NuzlockeTask> byDistance(List<NuzlockeTask> list)
+	{
+		Map<String, Integer> far = com.chunkblazerui.pathing.ChunkPathing.savedDistances();
+		if (!far.isEmpty())
+		{
+			list.sort(java.util.Comparator.comparingInt(t -> far.getOrDefault(t.getTaskId(), Integer.MAX_VALUE)));
+		}
+		return list;
 	}
 
 	private volatile List<NuzlockeTask> saved;
