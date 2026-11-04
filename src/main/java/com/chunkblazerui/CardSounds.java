@@ -123,11 +123,15 @@ public class CardSounds
 		return Math.max(0, Math.min(TIERS - 1, tier));
 	}
 
-	/** The task complete popup: the card dropping in and turning, then stamped COMPLETE (each tier its own fanfare). */
+	/** The task complete popup: the card dropping in and turning, then stamped COMPLETE (any of the theme's fanfares, never the same twice running). */
 	void complete(int tier)
 	{
-		play(folder(Skin.theme()) + "complete_" + tier(tier));
+		int pick = lastComplete < 0 ? (int) (Math.random() * TIERS) : (lastComplete + 1 + (int) (Math.random() * (TIERS - 1))) % TIERS;
+		lastComplete = pick;
+		play(folder(Skin.theme()) + "complete_" + pick);
 	}
+
+	private int lastComplete = -1;
 
 	/** The chunk's sign falling for an unlock ("banner_drop"), or turning to Unlocked ("banner_unlock"). */
 	void banner(String name)

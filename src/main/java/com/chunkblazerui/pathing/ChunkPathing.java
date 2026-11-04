@@ -1501,6 +1501,11 @@ public class ChunkPathing
 			}
 		}
 		progress = bestIndex;
+		if (walkPath != null && progress > 0 && bestDistance <= 1)
+		{
+			// Took the teleport (you're on the path past its start): the way on foot is no longer an option.
+			walkPath = null;
+		}
 		if (cooldown > 0)
 		{
 			cooldown--;
