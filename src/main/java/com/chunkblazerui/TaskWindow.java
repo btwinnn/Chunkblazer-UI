@@ -1485,21 +1485,24 @@ public class TaskWindow implements TaskWindowHook
 							pathPage = false;
 							patchScroll = 0;
 						}),
-					toggle("Shortest path", "shortestPath", config::shortestPath,
-						"1. Paths on or off: Path here, the map's path key, Quest Helper's steps, tracked tasks and the quest Calc button."),
 					choice("Route", "routeStyle", config::routeStyle, RouteStyle.values(),
-						"2. How it picks its way. Fastest: quickest there, teleporting only for walks over 80 steps. Scenic: walks wherever it can."),
-					new Setting("Travel cost", "3. The most coins a whole path may spend on fares (charters, boats, carts). - and + change it by 1,000.",
+						"1. How it picks its way. Fastest: quickest there, teleporting only for walks over 80 steps. Scenic: walks wherever it can."),
+					new Setting("Travel cost", "2. The most coins a whole path may spend on fares (charters, boats, carts). - and + change it by 1,000.",
 						"travelBudget", config::travelBudget, null, 0, 100000, 1000),
 					toggle("Walking path too", "showWalkingPath", config::showWalkingPath,
-						"4. When a path starts with a teleport, the way on foot shows too (in blue). The X by the teleport under your feet walks instead."),
+						"3. When a path starts with a teleport, the way on foot shows too (in blue). The X by the teleport under your feet walks instead."),
 					toggle("Path line", "showPathLine", config::showPathLine,
-						"5. Draw the path in game, on the minimap and the world map (the path button on the task box does the same)."),
-					keybind("Set path", "pathKey", config::pathKey,
-						"6. Hold this and click the world map to set a path there, or clear the one showing. Click, then press the new key."),
+						"4. Draw the path in game, on the minimap and the world map (the path button on the task box does the same)."),
 					heading("Transport it may use")));
-				for (String[] kind : com.chunkblazerui.pathing.ChunkPathing.KINDS)
+				String[][] kinds = com.chunkblazerui.pathing.ChunkPathing.KINDS;
+				for (int i = 0; i < kinds.length; i++)
 				{
+					String[] kind = kinds[i];
+					if (i == 5)
+					{
+						// The rest under a second heading, so the page fills both columns.
+						pathSettings.add(heading("More transport"));
+					}
 					String key = com.chunkblazerui.pathing.ChunkPathing.USE_PREFIX + kind[0];
 					pathSettings.add(toggle(kind[1], key, () -> !"false".equals(configManager.getConfiguration(ChunkBlazerUiConfig.GROUP, key)),
 						"Paths may use " + kind[1].toLowerCase() + " (when you can: levels, quests and items are checked). Off: never."));
@@ -1549,6 +1552,8 @@ public class TaskWindow implements TaskWindowHook
 					"Hold this and click an unlocked chunk on the world map to see its tasks. Click, then press the new key."),
 				keybind("Unlock chunk", "worldMapUnlockKey", () -> coreKey("worldMapUnlockKey", Keybind.SHIFT),
 					"Hold this and click a chunk next to yours on the world map to unlock it. Click, then press the new key."),
+				keybind("Set path", "pathKey", config::pathKey,
+					"Hold this and click the world map to set a path there, or clear the one showing. Click, then press the new key."),
 				keyChoice("Task tooltip key", "taskTooltipKey", config::taskTooltipKey, TaskTooltipKey.values(),
 					"Hold this key over an NPC or object to list its tasks in a tooltip (an assist). Click to change."),
 				heading("World map"),

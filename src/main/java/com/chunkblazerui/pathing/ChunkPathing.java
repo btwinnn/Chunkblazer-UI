@@ -996,6 +996,10 @@ public class ChunkPathing
 	}
 	// The path is Quest Helper's current step (it asked Shortest Path for it).
 	private volatile boolean fromQuestHelper;
+	// Quest Helper's latest step (and the quest chunks its path may use), kept while a tracked
+	// task's path is shown instead, so untracking the task brings the quest's path back.
+	private volatile int questHelperTile = -1;
+	private volatile Set<Integer> questHelperThrough = Collections.emptySet();
 	// The path is to a quest's start, from the quest pane's Quest Helper button.
 	private boolean questStart;
 	// The tracked task this path heads for, and whether it's still only to its chunk (no NPC seen yet).
@@ -1027,6 +1031,8 @@ public class ChunkPathing
 		}
 		if ("clear".equals(event.getName()))
 		{
+			// Quest Helper closed its quest (or its step has no place): nothing to come back to.
+			questHelperTile = -1;
 			if (fromQuestHelper || questStart)
 			{
 				clientThread.invoke(this::clear);
@@ -1050,6 +1056,8 @@ public class ChunkPathing
 			NuzlockeTask tracked = core.getSelectedTask();
 			Set<Integer> through = tracked != null && QuestRequirements.isQuestTask(tracked)
 				? quests.lockedChunksFor(tracked) : Collections.emptySet();
+			questHelperTile = tile;
+			questHelperThrough = through;
 			pathTo(tile, through);
 			fromQuestHelper = true;
 		});
@@ -1235,6 +1243,12 @@ public class ChunkPathing
 				: region != core.getCurrentRegionId() || TaskTiles.tile(id, region) >= 0))
 			{
 				pathToTask(tracked);
+			}
+			// No task path now (untracked, or a quest task): back to Quest Helper's step, if one's open.
+			if (taskPath == null && target < 0 && questHelperTile >= 0)
+			{
+				pathTo(questHelperTile, questHelperThrough);
+				fromQuestHelper = true;
 			}
 			return;
 		}
